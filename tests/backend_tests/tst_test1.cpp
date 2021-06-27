@@ -1,14 +1,14 @@
 #include <QtTest>
 
-#include "../../main.h"
 // add necessary includes here
+
+#include "../../include/backend/Converter.hpp"
 
 class test1 : public QObject
 {
     Q_OBJECT
 
 public:
-    Receiver rec_;
     test1();
     ~test1();
 
@@ -17,8 +17,7 @@ private slots:
 
 };
 
-test1::test1():
-    rec_{}
+test1::test1()
 {
 
 }
@@ -30,7 +29,7 @@ test1::~test1()
 
 void test1::test_case1()
 {
-    QCOMPARE(rec_.objectName(), "xd");
+    test_class x{5};
 }
 
 QTEST_APPLESS_MAIN(test1)

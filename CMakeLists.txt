@@ -23,12 +23,13 @@ endif()
 
 endif()
 
+add_compile_definitions(MAIN_PROGRAM)
+
 find_package(QT NAMES Qt5 REQUIRED)
 find_package(Qt5 COMPONENTS Core Quick SerialPort REQUIRED)
 
 set(PROJECT_SOURCES
         main.cpp
-        main.h
         qml.qrc
 )
 
@@ -52,7 +53,8 @@ endif()
 target_compile_definitions(uart_unit_test_visualizer
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 
-target_link_libraries(uart_unit_test_visualizer Qt5::Core Qt5::Quick Qt5::SerialPort)
+include_directories(uart_unit_test_visualizer PRIVATE /include/backend)
+target_link_libraries(uart_unit_test_visualizer Qt5::Core Qt5::Quick Qt5::SerialPort ALL_LIBRARIES)
 
 set_target_properties(uart_unit_test_visualizer PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

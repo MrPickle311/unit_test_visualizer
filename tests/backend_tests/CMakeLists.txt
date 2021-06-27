@@ -13,11 +13,18 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 enable_testing()
 
-link_directories(${CMAKE_SOURCE_DIR}/../..)
+set(TO_TEST_SUBDIRS backend)
 
-add_executable(test1 tst_test1.cpp ../../main.cpp )
+set(SRC ../../src/backend/Converter.cpp)
+
+set(INC ../../include/backend)
+
+include_directories(test1 PRIVATE ${INC})
+
+add_executable(test1 tst_test1.cpp ${SRC})
 add_test(NAME test1 COMMAND test1)
 
 target_link_libraries(test1 PRIVATE Qt5::Core Qt5::Quick Qt5::Test Qt5::SerialPort )

@@ -1,11 +1,38 @@
 #include "../../include/backend/Converter.hpp"
 
-test_class::test_class(int a)
+PortScanner::PortScanner():
+    avalaible_ports_{QSerialPortInfo::availablePorts()}
+{}
+
+template<typename DataType>
+QList<DataType> PortScanner::getSerialInfoStringList(std::function<DataType(const QSerialPortInfo& )> method_to_call) const
 {
-    x = a;
+    QList<DataType> data_list;
+
+    for(auto&& avalaible_port : this->avalaible_ports_)
+        data_list.push_back(method_to_call(avalaible_port));
+
+    return data_list;
 }
 
-void test_class::xd()
+QSerialPortInfo PortScanner::getSelectedPort(uint port_nmbr) const
 {
+    if(port_nmbr >= static_cast<uint>(avalaible_ports_.size()))
+        throw std::logic_error{"port_nmbr >= avalaible ports number!\n"};
+    return avalaible_ports_.at(port_nmbr);
+}
 
+QList<int> PortScanner::getProductIndetifiers() const
+{
+    return  getSerialInfoStringList<int>(&QSerialPortInfo::productIdentifier);
+}
+
+QList<QString> PortScanner::getPortNames() const
+{
+    return getSerialInfoStringList<QString>(&QSerialPortInfo::portName);
+}
+
+QList<QString> PortScanner::getPortDescriptions() const
+{
+    return getSerialInfoStringList<QString>(&QSerialPortInfo::description);
 }

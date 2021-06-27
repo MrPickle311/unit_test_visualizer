@@ -4,34 +4,81 @@
 
 #include "../../include/backend/Converter.hpp"
 
-class test1 : public QObject
+///
+
+class DebugLogger
+{
+public:
+    template<typename DataType>
+    static void sendListDataToDebug(QList<DataType>&& data);
+};
+
+template<typename DataType>
+void DebugLogger::sendListDataToDebug(QList<DataType>&& data)
+{
+    for(auto&& line : data)
+        qDebug() << line;
+}
+
+///
+
+class ScannerTests : public DebugLogger
+{
+private :
+    PortScanner scanner_;
+public:
+    void segvTests();
+    void throwingTests();
+};
+
+void ScannerTests::segvTests()
+{
+    sendListDataToDebug(scanner_.getPortNames());
+    sendListDataToDebug(scanner_.getPortDescriptions());
+    sendListDataToDebug(scanner_.getProductIndetifiers());
+}
+
+void ScannerTests::throwingTests()
+{
+    QVERIFY_EXCEPTION_THROWN(scanner_.getSelectedPort(50), std::logic_error );
+}
+
+
+class ConverterTests : public QObject
 {
     Q_OBJECT
 
+private:
+    ScannerTests scanner_test_;
 public:
-    test1();
-    ~test1();
+    ConverterTests();
+    ~ConverterTests();
 
 private slots:
-    void test_case1();
+    void segvTests();
+    void throwingTests();
 
 };
 
-test1::test1()
-{
+ConverterTests::ConverterTests():
+    scanner_test_{}
+{}
 
+ConverterTests::~ConverterTests()
+{}
+
+
+void ConverterTests::segvTests()
+{
+    scanner_test_.segvTests();
 }
 
-test1::~test1()
+void ConverterTests::throwingTests()
 {
-
+    scanner_test_.throwingTests();
 }
 
-void test1::test_case1()
-{
-    test_class x{5};
-}
 
-QTEST_APPLESS_MAIN(test1)
+QTEST_APPLESS_MAIN(ConverterTests)
 
 #include "tst_test1.moc"

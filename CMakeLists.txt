@@ -17,6 +17,7 @@ find_package(Qt5 COMPONENTS Core Quick SerialPort REQUIRED)
 
 set(PROJECT_SOURCES
         main.cpp
+        main.h
         qml.qrc
 )
 

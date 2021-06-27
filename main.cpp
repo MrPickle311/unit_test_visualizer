@@ -1,26 +1,53 @@
-#include <QGuiApplication>
-#include <QQmlApplicationEngine>
+#include "main.h"
+#include <algorithm>
 
-#include <QtSerialPort/QSerialPort>
-#include <QtSerialPort/QSerialPortInfo>
-#include <QDebug>
-#include <QString>
-#include <QList>
-
-
-void test()
+Receiver::Receiver():
+    port_list_{QSerialPortInfo::availablePorts()},
+    device_{new QSerialPort}
 {
-    qDebug() << "Looking for devices...\n" ;
+    qDebug() << "Looking for devices..." ;
+    if(!port_list_.empty())
+        qDebug() << "Found something!" ;
 
-    QSerialPort port;
-    port.setBaudRate(QSerialPort::Baud9600);
+    if(!port_list_.empty())
+    {
+        device_->setPort(port_list_.first());
+        if(device_->open(QSerialPort::ReadWrite))
+        {
+            qDebug() << "port name found!";
+            device_->setBaudRate(QSerialPort::Baud9600);
+            device_->setDataBits(QSerialPort::Data8);
+            device_->setParity(QSerialPort::NoParity);
+            device_->setStopBits(QSerialPort::OneStop);
+            device_->setFlowControl(QSerialPort::NoFlowControl);
+        }
+    }
 
-    QList<QSerialPortInfo> port_list{QSerialPortInfo::availablePorts()};
+    connect(this->device_.data() , SIGNAL(readyRead()) , this , SLOT(readFromPort() ) );
 
+}
 
-    for(auto&& port_info : port_list)
-           qDebug() << port_info.portName() << " " << port_info.description();
+void Receiver::writeOutPortInfo() const
+{
+    for(auto&& port_info : port_list_)
+        qDebug() << port_info.portName() << " " << port_info.description() << " " << port_info.manufacturer() << " " << port_info.systemLocation();
+}
 
+QVector<int> getUint(const QByteArray& bytes)
+{
+    QVector<int> bytes_numeric {};
+    bytes_numeric.resize(bytes.size());
+
+    for(int i{0}; i < bytes.size() ; ++i)
+        bytes_numeric[i] = bytes.at(i);
+
+    return bytes_numeric;
+}
+
+void Receiver::readFromPort() const
+{
+    for(auto&& byte : getUint(this->device_->readAll()))
+        qDebug() << byte;
 }
 
 int main(int argc, char *argv[])
@@ -40,9 +67,10 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
     engine.load(url);
 
-   qDebug() << "Xd";
+    Receiver rec{};
 
-    test();
+    rec.writeOutPortInfo();
 
     return app.exec();
 }
+

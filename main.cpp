@@ -33,9 +33,9 @@ void Receiver::writeOutPortInfo() const
         qDebug() << port_info.portName() << " " << port_info.description() << " " << port_info.manufacturer() << " " << port_info.systemLocation();
 }
 
-QVector<int> getUint(const QByteArray& bytes)
+QVector<uint> getUint(const QByteArray& bytes)
 {
-    QVector<int> bytes_numeric {};
+    QVector<uint> bytes_numeric {};
     bytes_numeric.resize(bytes.size());
 
     for(int i{0}; i < bytes.size() ; ++i)
@@ -50,11 +50,14 @@ void Receiver::readFromPort() const
         qDebug() << byte;
 }
 
+
+/*
 int main(int argc, char *argv[])
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
+
 
     QGuiApplication app(argc, argv);
 
@@ -74,3 +77,4 @@ int main(int argc, char *argv[])
     return app.exec();
 }
 
+*/

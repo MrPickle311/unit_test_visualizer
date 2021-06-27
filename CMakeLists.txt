@@ -11,6 +11,17 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if (UNIX)
+
+if(SAN STREQUAL P)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
+    set(CMAKE_LINKER_FLAGS  "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
+elseif(SAN STREQUAL T)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=thread ")
+    set(CMAKE_LINKER_FLAGS  "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=thread ")
+endif()
+
+endif()
 
 find_package(QT NAMES Qt5 REQUIRED)
 find_package(Qt5 COMPONENTS Core Quick SerialPort REQUIRED)
@@ -48,6 +59,8 @@ set_target_properties(uart_unit_test_visualizer PROPERTIES
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 )
+
+add_subdirectory(src)
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_import_qml_plugins(uart_unit_test_visualizer)

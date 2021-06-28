@@ -4,6 +4,7 @@
 #include <QSerialPortInfo>
 #include <QList>
 #include <functional>
+#include <QSharedPointer>
 
 class PortScanner : public QObject
 {
@@ -17,17 +18,18 @@ private:
     QList<DataType> getSerialInfoStringList(SerialPortInfoMethod<DataType> method_to_call) const;
 public:
     PortScanner();
-    QSerialPortInfo getSelectedPort(uint port_nmbr) const;
-    QList<int>      getProductIndetifiers() const;
-    QList<QString>  getPortNames() const;
-    QList<QString>  getPortDescriptions() const;
+    const QSerialPortInfo* getSelectedPort(uint port_nmbr) const;
+    QList<int>             getProductIndetifiers() const;
+    QList<QString>         getPortNames() const;
+    QList<QString>         getPortDescriptions() const;
 };
 
 class PortOperator : public QObject
 {
     Q_OBJECT;
 private:
-
+    QSerialPort current_port_;
+    QSharedPointer<const QSerialPortInfo> current_port_info_;//dependency
 public:
 };
 

@@ -24,7 +24,7 @@ set(INC ../../include/backend)
 
 include_directories(test1 PRIVATE ${INC})
 
-add_executable(test1 tst_test1.cpp ../../include/backend/Converter.hpp  ${SRC})
+add_executable(test1 tst_test1.cpp ../../include/backend/Converter.hpp common.h ${SRC})
 #add_executable(PortScanner_TEST PortScanner_TEST.cpp ${SRC})
 
 add_test(NAME test1 COMMAND test1)

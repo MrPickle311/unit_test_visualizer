@@ -5,7 +5,7 @@ PortScanner::PortScanner():
 {}
 
 template<typename DataType>
-QList<DataType> PortScanner::getSerialInfoStringList(std::function<DataType(const QSerialPortInfo& )> method_to_call) const
+QList<DataType> PortScanner::getSerialInfoStringList(SerialPortInfoMethod<DataType> method_to_call) const
 {
     QList<DataType> data_list;
 
@@ -24,7 +24,7 @@ QSerialPortInfo PortScanner::getSelectedPort(uint port_nmbr) const
 
 QList<int> PortScanner::getProductIndetifiers() const
 {
-    return  getSerialInfoStringList<int>(&QSerialPortInfo::productIdentifier);
+    return getSerialInfoStringList<int>(&QSerialPortInfo::productIdentifier);
 }
 
 QList<QString> PortScanner::getPortNames() const

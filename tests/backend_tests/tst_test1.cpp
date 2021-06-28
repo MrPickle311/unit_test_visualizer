@@ -1,26 +1,9 @@
-#include <QtTest>
+#include "common.h"
 
 // add necessary includes here
 
 #include "../../include/backend/Converter.hpp"
 
-///
-
-class DebugLogger
-{
-public:
-    template<typename DataType>
-    static void sendListDataToDebug(QList<DataType>&& data);
-};
-
-template<typename DataType>
-void DebugLogger::sendListDataToDebug(QList<DataType>&& data)
-{
-    for(auto&& line : data)
-        qDebug() << line;
-}
-
-///
 
 class ScannerTests : public DebugLogger
 {
@@ -43,6 +26,35 @@ void ScannerTests::throwingTests()
     QVERIFY_EXCEPTION_THROWN(scanner_.getSelectedPort(50), std::logic_error );
 }
 
+class PortOperatorTest
+{
+private :
+    PortOperator operator_;
+public:
+    void segvTests();
+    void throwingTests();
+
+};
+
+
+class DataHandlerTests
+{
+private :
+    DataHandler dataHandler_;
+public:
+    void segvTests();
+    void throwingTests();
+};
+
+class DataPackageTests
+{
+private :
+    DataPackage data_package_;
+public:
+    void segvTests();
+    void throwingTests();
+};
+
 
 class ConverterTests : public QObject
 {
@@ -57,7 +69,8 @@ public:
 private slots:
     void segvTests();
     void throwingTests();
-
+    void booleanTests();
+    void valueTests();
 };
 
 ConverterTests::ConverterTests():
@@ -76,6 +89,16 @@ void ConverterTests::segvTests()
 void ConverterTests::throwingTests()
 {
     scanner_test_.throwingTests();
+}
+
+void ConverterTests::booleanTests()
+{
+
+}
+
+void ConverterTests::valueTests()
+{
+
 }
 
 

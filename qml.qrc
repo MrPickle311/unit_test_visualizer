@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
+        <file>script/main.qml</file>
+        <file>script/main_window/MainWindow.qml</file>
     </qresource>
 </RCC>

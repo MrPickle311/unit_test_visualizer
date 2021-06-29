@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.15.1, 2021-06-27T23:15:35. -->
+<!-- Written by QtCreator 4.15.1, 2021-06-28T22:28:31. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -69,8 +69,8 @@
    </valuemap>
    <valuemap type="QVariantMap" key="AutoTest.CheckStates">
     <value type="Qt::CheckState" key="1@C:/Users/Damian/Desktop/Projects/C++ Projects/Qt/uart_unit_test_visualizer/tests/backend_tests/tst_test1.cpp:ConverterTests">Checked</value>
-    <value type="Qt::CheckState" key="1@C:/Users/Damian/Desktop/Projects/C++ Projects/Qt/uart_unit_test_visualizer/tests/backend_tests/tst_test1.cpp:ScannerSEGVTests">Checked</value>
-    <value type="Qt::CheckState" key="1@C:/Users/Damian/Desktop/Projects/C++ Projects/Qt/uart_unit_test_visualizer/tests/backend_tests/tst_test1.cpp:test_case2">Checked</value>
+    <value type="Qt::CheckState" key="1@C:/Users/Damian/Desktop/Projects/C++ Projects/Qt/uart_unit_test_visualizer/tests/backend_tests/tst_test1.cpp:segvTests">Checked</value>
+    <value type="Qt::CheckState" key="1@C:/Users/Damian/Desktop/Projects/C++ Projects/Qt/uart_unit_test_visualizer/tests/backend_tests/tst_test1.cpp:throwingTests">Checked</value>
    </valuemap>
    <value type="int" key="AutoTest.RunAfterBuild">0</value>
    <value type="bool" key="AutoTest.UseGlobal">true</value>

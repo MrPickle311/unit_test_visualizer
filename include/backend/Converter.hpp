@@ -22,15 +22,7 @@ public:
     QList<int>             getProductIndetifiers() const;
     QList<QString>         getPortNames() const;
     QList<QString>         getPortDescriptions() const;
-};
-
-class PortOperator : public QObject
-{
-    Q_OBJECT;
-private:
-    QSerialPort current_port_;
-    QSharedPointer<const QSerialPortInfo> current_port_info_;//dependency
-public:
+    void                   rescan();
 };
 
 class DataHandler : public QObject
@@ -39,7 +31,36 @@ class DataHandler : public QObject
 private:
     QByteArray received_bytes_;
 public:
+    void receiveBytes(QByteArray array);
 };
+
+
+class PortOperator : public QObject
+{
+    Q_OBJECT;
+private:
+    QSerialPort current_port_;
+    QSharedPointer<const QSerialPortInfo> current_port_info_;//dependency
+    QSharedPointer<DataHandler>           current_data_handler_;
+    //reopen another port
+public:
+    PortOperator(const PortOperator& other);
+    void openPort();
+    void changePort(const QSerialPortInfo*);
+    void setDataHandler(QSharedPointer<DataHandler> handler);
+    void sendDataFromPortToHandler();
+    void enableReceivingData();
+    void disableReceivingData();
+};
+
+class PortOperatorCreator
+{
+private:
+    QSerialPort::BaudRate baud_rate_;
+
+};
+
+
 
 template<typename DataType>
 struct DataPackage

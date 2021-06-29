@@ -28,12 +28,15 @@ public:
 
 class DataHandler : public QObject
 {
+    friend class PortOperator;
     Q_OBJECT;
 private:
     QByteArray received_bytes_;
-public:
+private:
     void       receiveBytes(QByteArray array);
-    QByteArray getReceivedBytes();
+public:
+    QByteArray getAllReceivedBytes();
+    QByteArray getReceivedBytes(size_t count);
 };
 
 class PortFlowSettings
@@ -56,7 +59,8 @@ public:
 
 enum class StandardSetting : size_t
 {
-    StandardSetting9600,
+    StandardSetting9600  ,
+    StandardSetting57600 ,
     StandardSetting115200
 };
 
@@ -69,6 +73,11 @@ public:
     {
         standard_settings_[StandardSetting::StandardSetting9600] =
         {QSerialPort::Baud9600 , QSerialPort::Data8 ,
+         QSerialPort::NoFlowControl , QSerialPort::NoParity ,
+         QSerialPort::OneStop};
+
+        standard_settings_[StandardSetting::StandardSetting57600] =
+        {QSerialPort::Baud57600 , QSerialPort::Data8 ,
          QSerialPort::NoFlowControl , QSerialPort::NoParity ,
          QSerialPort::OneStop};
 
@@ -87,28 +96,45 @@ class PortOperator : public QObject
 private:
     QSerialPort current_port_;
     QSharedPointer<const QSerialPortInfo> current_port_info_;//dependency
-    QSharedPointer<DataHandler>           current_data_handler_;
+
     //reopen another port
 public:
     PortOperator(const PortOperator& other);
     void openPort();
     void changePort(const QSerialPortInfo*);
-    void setDataHandler(QSharedPointer<DataHandler> handler);
-    void sendDataFromPortToHandler();
+
+public slots:
+    void applySettings(PortFlowSettings settings);//only copy ,so nothing unexpected will happen
+};
+
+class PortOutputOperator : public PortOperator
+{
+
+};
+
+
+class PortInputOperator : public PortOperator
+{
+private:
+    QSharedPointer<DataHandler>           current_data_handler_;
+public:
     void enableReceivingData();
     void disableReceivingData();
+    void setDataHandler(QSharedPointer<DataHandler> handler);
 public slots:
-    void applySettings(PortFlowSettings settings);
+    void sendDataFromPortToHandler(); //invoked automaticly
 };
+
+//make error service as state machine
 
 class PortOperatorCreator
 {
 private:
-    QSerialPort::BaudRate baud_rate_;
+    PortFlowSettings flow_settings_;
 
 };
 
-
+////<-
 
 template<typename DataType>
 struct DataPackage

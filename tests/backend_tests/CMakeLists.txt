@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(test1 LANGUAGES CXX)
+project(TESTS LANGUAGES CXX)
 
 find_package(QT NAMES Qt5 COMPONENTS Test Core Quick SerialPort REQUIRED)
 find_package(Qt5 COMPONENTS Test Core Quick SerialPort REQUIRED)
@@ -24,12 +24,12 @@ set(INC ../../include/backend)
 
 include_directories(test1 PRIVATE ${INC})
 
-add_executable(test1 tst_test1.cpp ../../include/backend/Converter.hpp common.h ${SRC})
+add_executable(ConverterTests Converter_TESTS.cpp ../../include/backend/Converter.hpp common.h ConverterTESTS.hpp ${SRC})
 #add_executable(PortScanner_TEST PortScanner_TEST.cpp ${SRC})
 
-add_test(NAME test1 COMMAND test1)
+add_test(NAME ConverterTests COMMAND ConverterTests)
 #add_test(NAME PortScanner_TEST COMMAND PortScanner_TEST)
 
 
-target_link_libraries(test1 PRIVATE Qt5::Core Qt5::Quick Qt5::Test Qt5::SerialPort )
+target_link_libraries(ConverterTests PRIVATE Qt5::Core Qt5::Quick Qt5::Test Qt5::SerialPort )
 #target_link_libraries(PortScanner_TEST PRIVATE Qt5::Core Qt5::Quick Qt5::Test Qt5::SerialPort )

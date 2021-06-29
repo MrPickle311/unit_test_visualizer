@@ -102,22 +102,22 @@ public:
     PortOperator(const PortOperator& other);
     void openPort();
     void changePort(const QSerialPortInfo*);
-
 public slots:
     void applySettings(PortFlowSettings settings);//only copy ,so nothing unexpected will happen
 };
 
 class PortOutputOperator : public PortOperator
 {
-
+    //i will implement it later
 };
 
 
 class PortInputOperator : public PortOperator
 {
 private:
-    QSharedPointer<DataHandler>           current_data_handler_;
+    QSharedPointer<DataHandler> current_data_handler_;
 public:
+    PortInputOperator(const PortInputOperator& other);
     void enableReceivingData();
     void disableReceivingData();
     void setDataHandler(QSharedPointer<DataHandler> handler);

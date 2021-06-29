@@ -1,4 +1,5 @@
 #include "common.h"
+#include "ConverterTESTS.hpp"
 
 // add necessary includes here
 
@@ -49,7 +50,7 @@ public:
 class DataPackageTests
 {
 private :
-    DataPackage data_package_;
+    //DataPackage data_package_;
 public:
     void segvTests();
     void throwingTests();

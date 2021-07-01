@@ -2,66 +2,64 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import "main_window" as MainWindow
+import QtQuick.Layouts 1.15
 
-ApplicationWindow {
+Window {
     id: mainWindow
-    width: 640
-    height: 480
+    minimumWidth: 400
+    minimumHeight: 400
+    maximumHeight: 400
+    maximumWidth: 400
     visible: true
     color: "#ececec"
     title: "UartVisualizer"
 
-    menuBar: MenuBar{
-        id : menuBar
-        height: 20
-        contentHeight: 20
-        Menu{
-            id : mainMenu
-            title: "File"
-            //Rectangle.anchors.bottom: menuBar.bottom
-           // height: menuBar.height
-            //contentHeight: menuBar.height
-            MenuItem {
-                id : menuItem
-                text : "New"
-                height: menuBar.height
-                onTriggered: {
-                    console.log("got it xd")
-                }
-                Action{
-                    shortcut: "Ctrl+E"
-                    enabled: false
-                    onTriggered: menuItem.triggered()
-                }
-            }
-            MenuSeparator{}
-            MenuItem{
-                height: menuBar.height
-                text: "Back"
-            }
-            MenuSeparator{}
-            MenuItem{
-                height: menuBar.height
-                text: "Quit"
-            }
-        }
-/*
-        Menu{
-            id : menu2
-            title: "Edit"
-            height: parent.height
+    Grid {
+        verticalItemAlignment: Grid.AlignVCenter
+        horizontalItemAlignment: Grid.AlignHCenter
+        flow: Grid.LeftToRight
+        id: grid
+        anchors.fill: parent
+        columns: 2
+        rows: 2
+        spacing: 50
 
-            Action {
-                text : "Cut"
-            }
+        topPadding: mainWindow.height * 0.2
+        leftPadding: mainWindow.width * 0.2
 
-            MenuSeparator{}
+        Button {
+            id: button3
+            text: qsTr("Button")
         }
 
-*/
+        Button {
+            id: button
+            text: qsTr("Button")
+        }
+
+        Button {
+            id: button1
+            text: qsTr("Button")
+        }
+
+        Button {
+            id: button4
+            text: qsTr("Button")
+        }
+
+
+
+
     }
+
 
 
 }
 
 
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:0.6600000262260437}
+}
+##^##*/

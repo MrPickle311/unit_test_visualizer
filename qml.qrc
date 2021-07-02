@@ -2,8 +2,10 @@
     <qresource prefix="/">
         <file>script/main.qml</file>
         <file>script/main_window/MainWindowButton.qml</file>
-        <file>data/main_window/settings.png</file>
-        <file>data/main_window/settings2.png</file>
         <file>script/main_window/buttonLogic.js</file>
+        <file>data/main_window/terminal.png</file>
+        <file>data/main_window/settings.png</file>
+        <file>data/main_window/about.png</file>
+        <file>data/main_window/test.png</file>
     </qresource>
 </RCC>

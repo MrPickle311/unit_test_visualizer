@@ -14,57 +14,38 @@ Window {
     color: "white"
     title: "UartVisualizer"
 
+    flags: Qt.FramelessWindowHint
+
     Grid {
-        verticalItemAlignment: Grid.AlignVCenter
-        horizontalItemAlignment: Grid.AlignHCenter
+
+        id: mainMenuGrid
         flow: Grid.LeftToRight
-        id: grid
         anchors.fill: parent
         columns: 2
-        rows: 3
+        rows: 2
         spacing: 50
 
-        topPadding: mainWindow.height * 0.2
+        topPadding: mainWindow.height * 0.1
         leftPadding: mainWindow.width * 0.2
 
         MainWindow.MainWindowButton{
             id: settingsButton
-            iconDir: "qrc:/data/main_window/settings2.png"
+            iconDir: "qrc:/data/main_window/settings.png"
         }
 
-        Button {
-            id: button
-            text: qsTr("Button")
+        MainWindow.MainWindowButton{
+            id: terminalButton
+            iconDir: "qrc:/data/main_window/terminal.png"
         }
 
-        Button {
-            id: button1
-            text: qsTr("Button")
+        MainWindow.MainWindowButton{
+            id : testButton
+            iconDir: "qrc:/data/main_window/test.png"
         }
 
-        Button {
-
-
-
-
-            id: button4
-            text: qsTr("Button")
+        MainWindow.MainWindowButton{
+            id : aboutButton
+            iconDir: "qrc:/data/main_window/about.png"
         }
-
-
-
-
-
     }
-
-
-
 }
-
-
-
-/*##^##
-Designer {
-    D{i:0;formeditorZoom:0.6600000262260437}
-}
-##^##*/

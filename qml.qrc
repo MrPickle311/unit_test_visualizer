@@ -7,5 +7,7 @@
         <file>data/main_window/settings.png</file>
         <file>data/main_window/about.png</file>
         <file>data/main_window/test.png</file>
+        <file>script/MainWindowLogic.js</file>
+        <file>data/main_window/close.png</file>
     </qresource>
 </RCC>

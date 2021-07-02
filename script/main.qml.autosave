@@ -17,10 +17,17 @@ Window {
     flags: Qt.FramelessWindowHint
 
     Grid {
-
+        
         id: mainMenuGrid
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: closeButton.bottom
+        anchors.bottom: parent.bottom
+        anchors.rightMargin: 209
+        anchors.leftMargin: 0
+        anchors.bottomMargin: 0
+        anchors.topMargin: 0
         flow: Grid.LeftToRight
-        anchors.fill: parent
         columns: 2
         rows: 2
         spacing: 50
@@ -53,17 +60,6 @@ Window {
     }
 
 
-    MainWindow.MainWindowButton{
-        id : closeButton
-        iconDir: "qrc:/data/main_window/close.png"
-        width: 32
-        height: 32
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.topMargin: 5
-        anchors.rightMargin: 5
-        onClicked: Qt.quit()
-    }
 
 
     //TODO: frameless window
@@ -76,6 +72,17 @@ Window {
         onPressed:  MainWindowLogic.getClickPos(mainMenuMouseArea)
 
         onPositionChanged: MainWindowLogic.updateWindowPos(mainMenuMouseArea, mainWindow)
+    }
+    MainWindow.MainWindowButton{
+        id : closeButton
+        iconDir: "qrc:/data/main_window/close.png"
+        width: 32
+        height: 32
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.topMargin: 5
+        anchors.rightMargin: 5
+        onClicked: Qt.quit()
     }
 }
 

@@ -1,54 +1,53 @@
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick 2.15
+import "buttonLogic.js" as ButtonLogic
 
-//Implementation of the Button control.
   Item {
-      id: button
+
+      id: menuButton
       width: 128
       height: 128
       property color color: "white"
       property color hoverColor: "#aaaaaa"
       property color pressColor: "slategray"
-      //property int borderWidth: 1
-      //property int borderRadius: 2
-      scale: state === "Pressed" ? 0.96 : 1.0
+      property int borderWidth: 3
+      property string iconDir: ""
+      scale:  ButtonLogic.fitScaleToState(menuButton)
       onEnabledChanged: state = ""
+
       signal clicked
 
-      //define a scale animation
       Behavior on scale {
           NumberAnimation {
               duration: 100
-              easing.type: Easing.InOutQuad
+              easing.type: Easing.OutQuart
           }
       }
 
-      //Rectangle to draw the button
       Rectangle {
           id: rectangleButton
           anchors.fill: parent
-          //radius: borderRadius
-          color: button.enabled ? button.color : "grey"
-          //border.width: borderWidth
-         // border.color: "black"
+          color: menuButton.enabled ? menuButton.color : "gray"
+          border.color: "white"
+          border.width: borderWidth
 
           Image{
               id : image
               anchors.fill: parent
-              source: "qrc:/data/main_window/settings2.png"
+              source: iconDir
               fillMode: Image.PreserveAspectFit
           }
 
       }
 
-      //change the color of the button in differen button states
       states: [
           State {
               name: "Hovering"
               PropertyChanges {
                   target: rectangleButton
                   color: hoverColor
+                  border.color: "black"
               }
           },
           State {
@@ -56,36 +55,25 @@ import QtQuick 2.15
               PropertyChanges {
                   target: rectangleButton
                   color: pressColor
+                  border.color: "black"
               }
           }
       ]
 
-      //define transmission for the states
       transitions: [
           Transition {
               from: ""; to: "Hovering"
-              ColorAnimation { duration: 200 }
-          },
-          Transition {
-              from: "*"; to: "Pressed"
-              ColorAnimation { duration: 10 }
+              ColorAnimation { duration: 300 ; easing.type : Easing.Linear }
           }
       ]
 
-      //Mouse area to react on click events
       MouseArea {
-          hoverEnabled: true
-          anchors.fill: button
-          onEntered: { button.state='Hovering'}
-          onExited: { button.state=''}
-          onClicked: { button.clicked();}
-          onPressed: { button.state="Pressed" }
-
-          onReleased: {
-              if (containsMouse)
-                button.state="Hovering";
-              else
-                button.state="";
-          }
+          hoverEnabled: true//to grab every mouse event
+          anchors.fill: menuButton
+          onEntered: { menuButton.state = "Hovering"}
+          onExited:  { menuButton.state = ""}
+          onClicked: { menuButton.clicked() }
+          onPressed: { menuButton.state = "Pressed" }
+          onReleased: ButtonLogic.switchState(this , menuButton)
       }
   }

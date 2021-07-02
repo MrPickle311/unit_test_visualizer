@@ -4,5 +4,6 @@
         <file>script/main_window/MainWindowButton.qml</file>
         <file>data/main_window/settings.png</file>
         <file>data/main_window/settings2.png</file>
+        <file>script/main_window/buttonLogic.js</file>
     </qresource>
 </RCC>

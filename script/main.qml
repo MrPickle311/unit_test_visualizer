@@ -28,7 +28,8 @@ Window {
         leftPadding: mainWindow.width * 0.2
 
         MainWindow.MainWindowButton{
-            id: btn
+            id: settingsButton
+            iconDir: "qrc:/data/main_window/settings2.png"
         }
 
         Button {

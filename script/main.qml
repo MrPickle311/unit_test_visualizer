@@ -19,6 +19,7 @@ Window {
     Grid {
 
         id: mainMenuGrid
+        property int buttonSize: 64
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: closeButton.bottom
@@ -30,7 +31,7 @@ Window {
         flow: Grid.LeftToRight
         columns: 2
         rows: 2
-        spacing: 64
+        spacing: buttonSize
         z: 2
         topPadding: ( mainMenuGrid.height - 2 * settingsButton.height - spacing ) / 2
         leftPadding: ( mainMenuGrid.width - 2 * settingsButton.width - spacing ) / 2
@@ -58,7 +59,6 @@ Window {
 
     }
 
-    //TODO: frameless window
     MouseArea{
         id : mainMenuMouseArea
         anchors.fill: parent

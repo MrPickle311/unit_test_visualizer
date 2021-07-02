@@ -3,13 +3,13 @@ import QtQuick.Controls 2.15
 import QtQuick 2.15
 import "buttonLogic.js" as ButtonLogic
 
-  Item {
+Item {
 
       id: menuButton
       width: 128
       height: 128
       property color color: "white"
-      property color hoverColor: "#aaaaaa"
+      property color hoverColor: "lightsteelblue"
       property color pressColor: "slategray"
       property int borderWidth: 3
       property string iconDir: ""
@@ -76,4 +76,4 @@ import "buttonLogic.js" as ButtonLogic
           onPressed: { menuButton.state = "Pressed" }
           onReleased: ButtonLogic.switchState(this , menuButton)
       }
-  }
+}

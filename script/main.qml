@@ -11,7 +11,7 @@ Window {
     maximumHeight: 400
     maximumWidth: 400
     visible: true
-    color: "#ececec"
+    color: "white"
     title: "UartVisualizer"
 
     Grid {
@@ -21,15 +21,14 @@ Window {
         id: grid
         anchors.fill: parent
         columns: 2
-        rows: 2
+        rows: 3
         spacing: 50
 
         topPadding: mainWindow.height * 0.2
         leftPadding: mainWindow.width * 0.2
 
-        Button {
-            id: button3
-            text: qsTr("Button")
+        MainWindow.MainWindowButton{
+            id: btn
         }
 
         Button {
@@ -43,9 +42,14 @@ Window {
         }
 
         Button {
+
+
+
+
             id: button4
             text: qsTr("Button")
         }
+
 
 
 

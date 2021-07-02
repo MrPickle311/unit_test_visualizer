@@ -3,9 +3,10 @@ import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
 import "main_window" as MainWindow
 import "MainWindowLogic.js" as MainWindowLogic
-
+import "settings_window/settingsWindow.js" as SettingsWindowLogic
 
 Window {
+
     id: mainWindow
     minimumWidth: 400
     minimumHeight: 400
@@ -39,7 +40,9 @@ Window {
         MainWindow.MainWindowButton{
             id: settingsButton
             iconDir: "qrc:/data/main_window/settings.png"
+            onClicked: SettingsWindowLogic.createSettignsWindow()
         }
+
 
         MainWindow.MainWindowButton{
             id: terminalButton
@@ -54,8 +57,8 @@ Window {
         MainWindow.MainWindowButton{
             id : aboutButton
             iconDir: "qrc:/data/main_window/about.png"
-        }
 
+        }
 
     }
 

@@ -9,5 +9,7 @@
         <file>data/main_window/test.png</file>
         <file>script/MainWindowLogic.js</file>
         <file>data/main_window/close.png</file>
+        <file>script/settings_window/SettingsWindow.qml</file>
+        <file>script/settings_window/settingsWindow.js</file>
     </qresource>
 </RCC>

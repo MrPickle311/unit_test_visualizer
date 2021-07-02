@@ -19,14 +19,21 @@ Window {
     Grid {
 
         id: mainMenuGrid
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: closeButton.bottom
+        anchors.bottom: parent.bottom
+        anchors.rightMargin: 0
+        anchors.leftMargin: 0
+        anchors.bottomMargin: 0
+        anchors.topMargin: 0
         flow: Grid.LeftToRight
-        anchors.fill: parent
         columns: 2
         rows: 2
-        spacing: 50
-
-        topPadding: mainWindow.height * 0.1
-        leftPadding: mainWindow.width * 0.2
+        spacing: 64
+        z: 2
+        topPadding: ( mainMenuGrid.height - 2 * settingsButton.height - spacing ) / 2
+        leftPadding: ( mainMenuGrid.width - 2 * settingsButton.width - spacing ) / 2
 
         MainWindow.MainWindowButton{
             id: settingsButton
@@ -46,10 +53,19 @@ Window {
         MainWindow.MainWindowButton{
             id : aboutButton
             iconDir: "qrc:/data/main_window/about.png"
-            z: 1
         }
 
 
+    }
+
+    //TODO: frameless window
+    MouseArea{
+        id : mainMenuMouseArea
+        anchors.fill: parent
+        z: 1
+        property variant clickPos: "1,1"
+        onPressed:  MainWindowLogic.getClickPos(mainMenuMouseArea)
+        onPositionChanged: MainWindowLogic.updateWindowPos(mainMenuMouseArea, mainWindow)
     }
 
 
@@ -58,30 +74,11 @@ Window {
         iconDir: "qrc:/data/main_window/close.png"
         width: 32
         height: 32
+        z: 2
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.topMargin: 5
         anchors.rightMargin: 5
         onClicked: Qt.quit()
     }
-
-
-    //TODO: frameless window
-    MouseArea{
-        id : mainMenuMouseArea
-        anchors.fill: parent
-
-        property variant clickPos: "1,1"
-
-        onPressed:  MainWindowLogic.getClickPos(mainMenuMouseArea)
-
-        onPositionChanged: MainWindowLogic.updateWindowPos(mainMenuMouseArea, mainWindow)
-    }
 }
-
-
-/*##^##
-Designer {
-    D{i:0;autoSize:true;formeditorZoom:0.8999999761581421;height:480;width:640}
-}
-##^##*/

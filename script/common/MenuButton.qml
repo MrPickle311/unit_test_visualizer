@@ -6,8 +6,9 @@ import "buttonLogic.js" as ButtonLogic
 Item {
 
       id: menuButton
-      width: 128
-      height: 128
+      property int size: 128
+      width: size
+      height: size
       property color color: "white"
       property color hoverColor: "lightsteelblue"
       property color pressColor: "slategray"

@@ -1,7 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Window 2.15
-import "main_window" as MainWindow
+import "common" as Common
 import "MainWindowLogic.js" as MainWindowLogic
 import "settings_window/settingsWindow.js" as SettingsWindowLogic
 
@@ -37,24 +37,24 @@ Window {
         topPadding: ( mainMenuGrid.height - 2 * settingsButton.height - spacing ) / 2
         leftPadding: ( mainMenuGrid.width - 2 * settingsButton.width - spacing ) / 2
 
-        MainWindow.MainWindowButton{
+        Common.MenuButton{
             id: settingsButton
             iconDir: "qrc:/data/main_window/settings.png"
             onClicked: SettingsWindowLogic.createSettignsWindow()
         }
 
 
-        MainWindow.MainWindowButton{
+        Common.MenuButton{
             id: terminalButton
             iconDir: "qrc:/data/main_window/terminal.png"
         }
 
-        MainWindow.MainWindowButton{
+        Common.MenuButton{
             id : testButton
             iconDir: "qrc:/data/main_window/test.png"
         }
 
-        MainWindow.MainWindowButton{
+        Common.MenuButton{
             id : aboutButton
             iconDir: "qrc:/data/main_window/about.png"
 
@@ -72,16 +72,8 @@ Window {
     }
 
 
-    MainWindow.MainWindowButton{
+    Common.ExitButton{
         id : closeButton
-        iconDir: "qrc:/data/main_window/close.png"
-        width: 32
-        height: 32
-        z: 2
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.topMargin: 5
-        anchors.rightMargin: 5
         onClicked: Qt.quit()
     }
 }

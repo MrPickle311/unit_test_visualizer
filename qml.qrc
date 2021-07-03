@@ -1,15 +1,17 @@
 <RCC>
     <qresource prefix="/">
         <file>script/main.qml</file>
-        <file>script/main_window/MainWindowButton.qml</file>
-        <file>script/main_window/buttonLogic.js</file>
         <file>data/main_window/terminal.png</file>
         <file>data/main_window/settings.png</file>
         <file>data/main_window/about.png</file>
         <file>data/main_window/test.png</file>
         <file>script/MainWindowLogic.js</file>
-        <file>data/main_window/close.png</file>
         <file>script/settings_window/SettingsWindow.qml</file>
         <file>script/settings_window/settingsWindow.js</file>
+        <file>script/common/buttonLogic.js</file>
+        <file>script/common/MenuButton.qml</file>
+        <file>data/common/close.png</file>
+        <file>data/common/downarrow.png</file>
+        <file>script/common/ExitButton.qml</file>
     </qresource>
 </RCC>

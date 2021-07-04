@@ -9,6 +9,7 @@ Item {
       property int size: 128
       width: size
       height: size
+      property bool isRotationEnabled: false
       property color color: "white"
       property color hoverColor: "lightsteelblue"
       property color pressColor: "slategray"
@@ -26,6 +27,8 @@ Item {
           }
       }
 
+
+
       Rectangle {
           id: rectangleButton
           anchors.fill: parent
@@ -40,6 +43,12 @@ Item {
               fillMode: Image.PreserveAspectFit
           }
 
+          Behavior on rotation {
+              NumberAnimation {
+                  duration: 50
+                  easing.type: Easing.Linear
+              }
+          }
       }
 
       states: [
@@ -58,6 +67,13 @@ Item {
                   color: pressColor
                   border.color: "black"
               }
+          },
+          State {
+              name: "Clicked"
+              PropertyChanges {
+                  target: rectangleButton
+                  rotation: isRotationEnabled ? 90 : 0
+              }
           }
       ]
 
@@ -72,8 +88,14 @@ Item {
           hoverEnabled: true//to grab every mouse event
           anchors.fill: menuButton
           onEntered: { menuButton.state = "Hovering"}
-          onExited:  { menuButton.state = ""}
-          onClicked: { menuButton.clicked() }
+          onExited:  {
+                menuButton.state = ""
+                rectangleButton.rotation = 0
+          }
+          onClicked: {
+              rectangleButton.rotation =  isRotationEnabled ? 90 : 0
+              menuButton.clicked()
+          }
           onPressed: { menuButton.state = "Pressed" }
           onReleased: ButtonLogic.switchState(this , menuButton)
       }

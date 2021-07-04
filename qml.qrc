@@ -15,5 +15,6 @@
         <file>script/common/ExitButton.qml</file>
         <file>script/common/FramelessWindow.qml</file>
         <file>script/common/framelessWindowLogic.js</file>
+        <file>script/common/ChoiceButton.qml</file>
     </qresource>
 </RCC>

@@ -5,4 +5,14 @@ import "../common" as Common
 
 Common.FramelessWindow{
     id: settingsWindow
+
+    Common.ChoiceButton{
+        id : choiceButton
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.topMargin: 5
+        anchors.leftMargin: 5
+
+        //onClicked:
+    }
 }

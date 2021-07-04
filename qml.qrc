@@ -13,5 +13,7 @@
         <file>data/common/close.png</file>
         <file>data/common/downarrow.png</file>
         <file>script/common/ExitButton.qml</file>
+        <file>script/common/FramelessWindow.qml</file>
+        <file>script/common/framelessWindowLogic.js</file>
     </qresource>
 </RCC>

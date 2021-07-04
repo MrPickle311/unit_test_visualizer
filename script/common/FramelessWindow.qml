@@ -4,6 +4,7 @@ import "framelessWindowLogic.js" as FramelessWindowLogic
 
 Window {
 
+    id: framelessWindow
     property bool isSizeConst: false//if its true maxmimum == minimum
 
     minimumWidth: 400
@@ -17,19 +18,19 @@ Window {
     flags: Qt.Window | Qt.CustomizeWindowHint
 
     MouseArea{
-        id : mainMenuMouseArea
+        id : framelessWindowMouseArea
         anchors.fill: parent
         z: 1
         property variant clickPos: "1,1"
-        onPressed:  FramelessWindowLogic.getClickPos(mainMenuMouseArea)
-        onPositionChanged: FramelessWindowLogic.updateWindowPos(mainMenuMouseArea, mainWindow)
+        onPressed:  FramelessWindowLogic.getClickPos(framelessWindowMouseArea)
+        onPositionChanged: FramelessWindowLogic.updateWindowPos(framelessWindowMouseArea, framelessWindow)
     }
 
     property variant closeButton: closeButton//to put closeButton outside
 
     ExitButton{
         id : closeButton
-        onClicked: Qt.quit()
+        onClicked: framelessWindow.close()
     }
 
 }

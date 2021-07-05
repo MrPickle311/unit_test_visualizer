@@ -21,5 +21,7 @@
         <file>script/settings_window/TestsSettings.qml</file>
         <file>script/common/RefreshButton.qml</file>
         <file>data/common/refresh.png</file>
+        <file>script/settings_window/BaudSlider.qml</file>
+        <file>script/settings_window/baudSliderLogic.js</file>
     </qresource>
 </RCC>

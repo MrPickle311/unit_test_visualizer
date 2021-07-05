@@ -95,6 +95,15 @@ Rectangle {
        elements: ["Ascii","uint8","int8","Hexadecimal","Binary"]
    }
 
+   Text {
+       id: text1
+       x: 310
+       y: 395
+       text: qsTr("FONT HERE!!!")
+       font.pixelSize: 12
+   }
+
+
 
 
 }

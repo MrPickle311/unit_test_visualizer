@@ -13,6 +13,22 @@ Common.FramelessWindow{
         anchors.topMargin: 5
         anchors.leftMargin: 5
 
-        //onClicked:
+        onClicked: contextMenu.popup(choiceButton.x , choiceButton.y + choiceButton.height)
     }
+
+    Menu {
+            id: contextMenu
+            x: 5
+
+
+            MenuItem { text: "Cut" }
+            MenuItem { text: "Copy" }
+            MenuItem { text: "Paste" }
+
+            onOpened: choiceButton.blockRotation()
+            onClosed: {
+                choiceButton.unblockRotation()
+                choiceButton.rotation = 0
+            }
+        }
 }

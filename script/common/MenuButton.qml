@@ -27,7 +27,14 @@ Item {
           }
       }
 
+      function blockRotation(){
+          isRotationEnabled = false
+      }
 
+      function unblockRotation(){
+          isRotationEnabled = true
+          rectangleButton.rotation = 0
+      }
 
       Rectangle {
           id: rectangleButton
@@ -67,13 +74,6 @@ Item {
                   color: pressColor
                   border.color: "black"
               }
-          },
-          State {
-              name: "Clicked"
-              PropertyChanges {
-                  target: rectangleButton
-                  rotation: isRotationEnabled ? 90 : 0
-              }
           }
       ]
 
@@ -90,7 +90,8 @@ Item {
           onEntered: { menuButton.state = "Hovering"}
           onExited:  {
                 menuButton.state = ""
-                rectangleButton.rotation = 0
+                if(isRotationEnabled)
+                    rectangleButton.rotation = 0
           }
           onClicked: {
               rectangleButton.rotation =  isRotationEnabled ? 90 : 0

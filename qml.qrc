@@ -16,5 +16,6 @@
         <file>script/common/FramelessWindow.qml</file>
         <file>script/common/framelessWindowLogic.js</file>
         <file>script/common/ChoiceButton.qml</file>
+        <file>script/common/RotatingMenuButton.qml</file>
     </qresource>
 </RCC>

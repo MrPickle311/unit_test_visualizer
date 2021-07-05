@@ -26,5 +26,8 @@
         <file>script/common/MenuComboBox.qml</file>
         <file>script/common/ApplyButton.qml</file>
         <file>data/common/apply.png</file>
+        <file>script/terminal/TerminalWindow.qml</file>
+        <file>script/common/globalFunctions.js</file>
+        <file>script/terminal/terminalWindow.js</file>
     </qresource>
 </RCC>

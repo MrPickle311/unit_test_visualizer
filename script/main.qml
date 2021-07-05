@@ -4,6 +4,7 @@ import QtQuick.Window 2.15
 import "common" as Common
 import "MainWindowLogic.js" as MainWindowLogic
 import "settings_window/settingsWindow.js" as SettingsWindowLogic
+import "terminal/terminalWindow.js" as TerminalWindowLogic
 
 Common.FramelessWindow {
 
@@ -41,6 +42,7 @@ Common.FramelessWindow {
         Common.MenuButton{
             id: terminalButton
             iconDir: "qrc:/data/main_window/terminal.png"
+            onClicked: TerminalWindowLogic.createTerminalWindow()
         }
 
         Common.MenuButton{

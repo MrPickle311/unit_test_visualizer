@@ -29,5 +29,6 @@
         <file>script/terminal/TerminalWindow.qml</file>
         <file>script/common/globalFunctions.js</file>
         <file>script/terminal/terminalWindow.js</file>
+        <file>script/terminal/TextStreamField.qml</file>
     </qresource>
 </RCC>

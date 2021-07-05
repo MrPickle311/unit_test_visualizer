@@ -22,12 +22,12 @@ Common.FramelessWindow{
             width: 100
             MenuItem {
                 text: "Terminal settings"
-                onTriggered: swipeView.currentIndex = 0
+                onTriggered: swipeView.setCurrentIndex(0)
             }
             MenuSeparator { }
             MenuItem {
                 text: "Tests settings"
-                onTriggered: swipeView.currentIndex = 1
+                onTriggered: swipeView.setCurrentIndex(1)
 
             }
 
@@ -36,12 +36,13 @@ Common.FramelessWindow{
                 choiceButton.unblockRotation()
                 choiceButton.rotation = 0
             }
-        }
+    }
 
 
     SwipeView{
         id: swipeView
         interactive: false
+        currentIndex: 0
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: choiceButton.bottom
@@ -51,14 +52,25 @@ Common.FramelessWindow{
         anchors.bottomMargin: 0
         anchors.topMargin: 0
 
-        Rectangle{
-            id: rec1
-            color: "blue"
+        Rectangle {
+            color: "white"
+
+            Common.RefreshButton{
+                x: 113
+                y: 83
+                onClicked: console.log("xd")
+            }
+
+            Button{
+                text: "ok"
+                onClicked: console.log("xd")
+            }
         }
 
-        Rectangle{
-            id: rec2
-            color: "red"
+        TestsSettings{
+
         }
+
+
     }
 }

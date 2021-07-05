@@ -17,5 +17,9 @@
         <file>script/common/framelessWindowLogic.js</file>
         <file>script/common/ChoiceButton.qml</file>
         <file>script/common/RotatingMenuButton.qml</file>
+        <file>script/settings_window/TerminalSettings.qml</file>
+        <file>script/settings_window/TestsSettings.qml</file>
+        <file>script/common/RefreshButton.qml</file>
+        <file>data/common/refresh.png</file>
     </qresource>
 </RCC>

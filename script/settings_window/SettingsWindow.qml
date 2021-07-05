@@ -5,7 +5,7 @@ import "../common" as Common
 
 Common.FramelessWindow{
     id: settingsWindow
-
+    visible: true
     Common.ChoiceButton{
         id : choiceButton
         anchors.left: parent.left
@@ -51,20 +51,9 @@ Common.FramelessWindow{
         anchors.leftMargin: 0
         anchors.bottomMargin: 0
         anchors.topMargin: 0
+        z: 2
+        TerminalSettings{
 
-        Rectangle {
-            color: "white"
-
-            Common.RefreshButton{
-                x: 113
-                y: 83
-                onClicked: console.log("xd")
-            }
-
-            Button{
-                text: "ok"
-                onClicked: console.log("xd")
-            }
         }
 
         TestsSettings{

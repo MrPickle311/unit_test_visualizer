@@ -23,5 +23,6 @@
         <file>data/common/refresh.png</file>
         <file>script/settings_window/BaudSlider.qml</file>
         <file>script/settings_window/baudSliderLogic.js</file>
+        <file>script/common/MenuComboBox.qml</file>
     </qresource>
 </RCC>

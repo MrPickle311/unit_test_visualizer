@@ -4,8 +4,10 @@ import QtQuick.Window 2.15
 import "../common" as Common
 
 Common.FramelessWindow{
+
     id: settingsWindow
     visible: true
+
     Common.ChoiceButton{
         id : choiceButton
         anchors.left: parent.left
@@ -52,14 +54,14 @@ Common.FramelessWindow{
         anchors.bottomMargin: 0
         anchors.topMargin: 0
         z: 2
-        TerminalSettings{
 
+        TerminalSettings{
+            id: terminalSettings
         }
 
         TestsSettings{
-
+            id: testsSettings
         }
-
 
     }
 }

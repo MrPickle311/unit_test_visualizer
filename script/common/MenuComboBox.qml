@@ -8,11 +8,11 @@ Item {
     property var elements: []
 
     Text{
-        id: txt
+        id: prefix
         text: prefixText
         anchors.verticalCenter: comboBox.verticalCenter
-        anchors.right: comboBox.left
-        anchors.rightMargin: txt.paintedWidth
+        anchors.left: parent.left
+        anchors.leftMargin: -1*prefix.paintedWidth - 5
     }
 
     ListModel{
@@ -21,8 +21,6 @@ Item {
 
     ComboBox{
         id: comboBox
-        x: 278
-        y: 90
         model: listModel
     }
 

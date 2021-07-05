@@ -7,6 +7,9 @@ Common.FramelessWindow{
 
     id: settingsWindow
     visible: true
+    maximumWidth: 400
+    minimumWidth: 400
+
 
     Common.ChoiceButton{
         id : choiceButton

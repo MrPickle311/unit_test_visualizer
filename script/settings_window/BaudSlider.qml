@@ -22,4 +22,12 @@ Item{
         anchors.verticalCenter: slider.verticalCenter
     }
 
+    Text {
+        id: prefix
+        text: "Baud rate"
+        anchors.verticalCenter: slider.verticalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: -1*prefix.paintedWidth - 5
+    }
+
 }

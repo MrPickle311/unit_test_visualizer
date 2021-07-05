@@ -6,21 +6,28 @@ Rectangle {
     id: rectangle
     color: "white"
     property int comNumber: 0
-    width: 400
+
+    Common.ApplyButton{
+        id: applyButton
+        anchors.verticalCenter: refreshButton.verticalCenter
+        anchors.right: refreshButton.left
+        anchors.rightMargin: 20
+    }
 
     Common.RefreshButton{
+        id: refreshButton
         x: 154
         y: 54
-        anchors.verticalCenter: comboBox.verticalCenter
-        anchors.right: comboBox.left
+        anchors.verticalCenter: comPortComboBox.verticalCenter
+        anchors.right: comPortComboBox.left
         anchors.rightMargin: 20
     }
 
     ComboBox {
-        id: comboBox
+        id: comPortComboBox
         x: 215
         anchors.top: parent.top
-        anchors.horizontalCenterOffset: 25
+        anchors.horizontalCenterOffset: 60
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: 10
 

@@ -8,10 +8,10 @@ Item{
     Slider{
         id: slider
         from: 0
-        to: 10
+        to: 7
         stepSize: 1
         snapMode: Slider.SnapAlways
-        onPositionChanged: baudRateText.text = BaudSliderLogic.getBaudRateText(slider.position * 10)
+        onPositionChanged: baudRateText.text = BaudSliderLogic.getBaudRateText(slider.value)
     }
 
     Text {

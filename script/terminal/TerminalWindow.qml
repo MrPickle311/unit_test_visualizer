@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.12
 import "../common" as Common
 
 Common.FramelessWindow{
-
+    id: terminalWindow
     maximumHeight: 600
     maximumWidth: 800
     minimumHeight: 600
@@ -13,42 +13,52 @@ Common.FramelessWindow{
     TabBar {
         z: 2
         id: bar
-        width: parent.width
+        width: parent.width - terminalWindow.closeButton.width - 5
+        anchors.verticalCenter: terminalWindow.closeButton.verticalCenter
 
         TerminalTabButton {
-            text: qsTr("Home")
+            text: qsTr("COM1")
         }
         TerminalTabButton {
-            text: qsTr("Discover")
+            text: qsTr("COM2")
+            onClicked: console.log("x")
         }
         TerminalTabButton {
-            text: qsTr("Activity")
+            text: qsTr("COM3")
         }
     }
 
-    TerminalTabButton {
-        id: clone
-        text: qsTr("Clone")
-    }
     /*
       TODO: extract a one SINGLE TabButton to .qml file ,
             ,,--"         TextArea to .qml file
 
      */
-    StackLayout {
-        width: parent.width
+
+    property list<Rectangle> pages: [
+            Rectangle{color: "red"; visible: true},
+            Rectangle{color: "blue"; visible: true},
+            Rectangle{color: "green"; visible: true}
+    ]
+
+    SwipeView {
+        id: swipeView
+        interactive: false
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: terminalWindow.closeButton.bottom
+        anchors.bottom: parent.bottom
+        anchors.rightMargin: 0
+        anchors.leftMargin: 0
+        anchors.bottomMargin: 0
+        anchors.topMargin: 0
+        z: 2
+
         currentIndex: bar.currentIndex
-        Item {//make a page from this
-            id: homeTab
-        }
-        Item {
-            id: discoverTab
-        }
-        Item {
-            id: activityTab
-        }
     }
 
-    Component.onCompleted: bar.addItem( clone )
+    Component.onCompleted: {
+        for(var i = 0 ; i < pages.length; i++)
+            swipeView.addItem(pages[i])
+    }
 
 }

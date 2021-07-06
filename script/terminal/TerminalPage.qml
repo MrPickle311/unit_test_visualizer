@@ -8,26 +8,36 @@ Rectangle {
 
     TerminalTextArea{
         id: outputTextArea
-        x: 23
-        y: 24
-        width: 301
-        height: 292
+        width: ( parent.width - anchors.leftMargin.valueOf() * 3 ) / 2//every margin has 20 ,so i just taken only one and multiplied by 3
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.bottom: clearOutputButton.top
+        anchors.bottomMargin: 10
+        anchors.leftMargin: 20
+        anchors.topMargin: 20
     }
 
     TerminalTextArea{
         id: inputTextArea
-        x: 348
-        y: 24
-        width: 276
-        height: 292
+        width: outputTextArea.width
+        height: outputTextArea.height
+        anchors.left: outputTextArea.right
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.rightMargin: 20
+        anchors.leftMargin: 20
+        anchors.topMargin: 20
     }
 
     TextStreamField{
         id : textStreamField
-        x: 23
         y: 375
         width: 164
         height: 27
+        anchors.left: parent.left
+        anchors.bottom: sendModeComboBox.top
+        anchors.bottomMargin: 20
+        anchors.leftMargin: 20
     }
 
     SendButton{
@@ -42,10 +52,11 @@ Rectangle {
 
     Common.MenuComboBox{
         id: sendModeComboBox
+        y: 50
+        anchors.verticalCenter: checkBoxLF.verticalCenter
         anchors.left: parent.left
-        anchors.top: textStreamField.bottom
+        anchors.verticalCenterOffset: -25
         anchors.leftMargin: 100
-        anchors.topMargin: 20
         prefixText: "Sending mode"
         elements: ["Send Ascii", "Send Number"]
     }
@@ -55,45 +66,71 @@ Rectangle {
         x: 245
         y: 373
         text: qsTr("Apend +CR")
+        anchors.bottom: checkBoxLF.top
+        anchors.horizontalCenter: checkBoxLF.horizontalCenter
+        anchors.bottomMargin: 20
     }
 
     CheckBox {
         id: checkBoxLF
-        x: 348
+        y: 401
         width: 102
         text: qsTr("Apend +LF")
-        anchors.top: checkBoxCR.bottom
-        anchors.horizontalCenter: checkBoxCR.horizontalCenter
-        anchors.topMargin: 10
+        anchors.left: sendModeComboBox.right
+        anchors.bottom: parent.bottom
+        anchors.leftMargin: 150
+        anchors.bottomMargin: 20
     }
 
     Common.MenuTextButton{
+        id: clearOutputButton
         x: 258
         y: 322
+        height: 32
+        anchors.right: outputTextArea.right
+        anchors.bottom: checkBoxCR.top
+        anchors.bottomMargin: 30
+        anchors.rightMargin: 0
         buttonText: "Clear output"
     }
 
     Common.MenuTextButton{
+        id: freezeOutputButton
         x: 179
         y: 322
+        anchors.verticalCenter: clearOutputButton.verticalCenter
+        anchors.right: clearOutputButton.left
+        anchors.rightMargin: 10
         buttonText: "Freeze output"
     }
 
     Common.MenuTextButton{
-        x: 565
+        id: clearInputButton
         y: 322
+        anchors.verticalCenter: clearOutputButton.verticalCenter
+        anchors.right: inputTextArea.right
+        anchors.rightMargin: 0
         buttonText: "Clear input"
     }
 
     Common.MenuTextButton{
+        id: chooseFileButton
         x: 544
         y: 393
+        anchors.right: parent.right
+        anchors.bottom: sendFileButton.bottom
+        anchors.bottomMargin: 35
+        anchors.rightMargin: 40
         buttonText: "Choose file..."
     }
 
     Common.MenuTextButton{
-        x: 367
+        id: sendFileButton
         y: 428
+        anchors.left: fileTextField.left
+        anchors.bottom: parent.bottom
+        anchors.leftMargin: 0
+        anchors.bottomMargin: 40
         buttonText: "Send file"
     }
 
@@ -103,6 +140,9 @@ Rectangle {
         y: 395
         width: 164
         height: 27
+        anchors.verticalCenter: chooseFileButton.verticalCenter
+        anchors.right: chooseFileButton.left
+        anchors.rightMargin: 20
 
     }
 }

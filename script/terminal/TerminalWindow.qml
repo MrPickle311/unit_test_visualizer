@@ -5,15 +5,15 @@ import "../common" as Common
 
 Common.FramelessWindow{
     id: terminalWindow
-    maximumHeight: 600
+    maximumHeight: 800
     maximumWidth: 800
-    minimumHeight: 600
+    minimumHeight: 400
     minimumWidth: 800
 
     TabBar {
         z: 2
         id: bar
-        width: parent.width - terminalWindow.closeButton.width - 5
+        width: TerminalTabButton.width * bar.count
         anchors.verticalCenter: terminalWindow.closeButton.verticalCenter
 
         TerminalTabButton {
@@ -27,16 +27,9 @@ Common.FramelessWindow{
         }
     }
 
-    /*
-      TODO: extract a one SINGLE TabButton to .qml file ,
-            ,,--"         TextArea to .qml file
-
-     */
-
     property list<TerminalPage> pages: [
             TerminalPage{ },
             TerminalPage{}
-            //erminalPage{color: "green"; visible: true}
     ]
 
     SwipeView {

@@ -39,5 +39,8 @@
         <file>script/tests/TestWindow.qml</file>
         <file>script/tests/testWindowLogic.js</file>
         <file>script/common/FrameRectangle.qml</file>
+        <file>script/tests/TestResultsArea.qml</file>
+        <file>data/common/save.png</file>
+        <file>script/common/SaveButton.qml</file>
     </qresource>
 </RCC>

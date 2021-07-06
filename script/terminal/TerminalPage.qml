@@ -28,7 +28,6 @@ Rectangle {
         y: 375
         width: 164
         height: 27
-
     }
 
     SendButton{
@@ -68,4 +67,42 @@ Rectangle {
         anchors.topMargin: 10
     }
 
+    Common.MenuTextButton{
+        x: 258
+        y: 322
+        buttonText: "Clear output"
+    }
+
+    Common.MenuTextButton{
+        x: 179
+        y: 322
+        buttonText: "Freeze output"
+    }
+
+    Common.MenuTextButton{
+        x: 565
+        y: 322
+        buttonText: "Clear input"
+    }
+
+    Common.MenuTextButton{
+        x: 544
+        y: 393
+        buttonText: "Choose file..."
+    }
+
+    Common.MenuTextButton{
+        x: 367
+        y: 428
+        buttonText: "Send file"
+    }
+
+    TerminalTextArea{
+        id : fileTextField
+        x: 367
+        y: 395
+        width: 164
+        height: 27
+
+    }
 }

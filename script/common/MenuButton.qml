@@ -15,6 +15,7 @@ Item {
       property color pressColor: "slategray"
       property int borderWidth: 3
       property string iconDir: ""
+      property bool usesImage: true
       scale:  ButtonLogic.fitScaleToState(menuButton)
       onEnabledChanged: state = ""
 
@@ -40,14 +41,15 @@ Item {
           id: rectangleButton
           anchors.fill: parent
           color: menuButton.enabled ? menuButton.color : "gray"
-          border.color: "white"
+          border.color: usesImage ? "white" : "black"
           border.width: borderWidth
 
           Image{
               id : image
-              anchors.fill: parent
+              anchors.fill:parent
               source: iconDir
               fillMode: Image.PreserveAspectFit
+              visible: usesImage
           }
 
           Behavior on rotation {

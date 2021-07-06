@@ -36,5 +36,6 @@
         <file>data/terminal/send.png</file>
         <file>script/terminal/TextRectangle.qml</file>
         <file>script/terminal/SendButton.qml</file>
+        <file>script/common/MenuTextButton.qml</file>
     </qresource>
 </RCC>

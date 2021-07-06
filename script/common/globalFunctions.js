@@ -1,5 +1,13 @@
+.import QtQuick 2.15 as QtQuick
+
 function createWindow(directory)
 {
-    var settings_window = Qt.createComponent(directory)
-    settings_window.createObject(mainWindow)
+    var window = Qt.createComponent(directory)
+    if( window.status !== QtQuick.Component.Ready )
+    {
+        if( window.status === QtQuick.Component.Error )
+            console.debug("Error:"+ window.errorString() );
+        return;
+    }
+    window.createObject(mainWindow)//parent of each window is mainWindow
 }

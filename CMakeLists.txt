@@ -62,7 +62,7 @@ set_target_properties(uart_unit_test_visualizer PROPERTIES
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
 )
 
-add_subdirectory(src)
+add_subdirectory(modules)
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_import_qml_plugins(uart_unit_test_visualizer)

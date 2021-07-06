@@ -1,4 +1,4 @@
-#include "../../include/backend/Converter.hpp"
+#include "../Converter.hpp"
 
 PortScanner::PortScanner():
     avalaible_ports_{QSerialPortInfo::availablePorts()}
@@ -15,14 +15,12 @@ QList<DataType> PortScanner::getSerialInfoStringList(SerialPortInfoMethod<DataTy
     return data_list;
 }
 
-const QSerialPortInfo* PortScanner::getSelectedPort(uint port_nmbr) const
+QSerialPortInfo PortScanner::getSelectedPort(uint port_nmbr) const
 {
     if(port_nmbr >= static_cast<uint>(avalaible_ports_.size()))
         throw std::logic_error{"port_nmbr >= avalaible ports number!\n"};
 
-    QSharedDataPointer<const QSerialPortInfo> ptr {&avalaible_ports_.at(port_nmbr)};
-
-    return &avalaible_ports_.at(port_nmbr);
+    return avalaible_ports_[port_nmbr];
 }
 
 QList<int> PortScanner::getProductIndetifiers() const
@@ -32,7 +30,7 @@ QList<int> PortScanner::getProductIndetifiers() const
 
 QList<QString> PortScanner::getPortNames() const
 {
-    return getSerialInfoStringList<QString>(&QSerialPortInfo::portName);
+   return getSerialInfoStringList<QString>(&QSerialPortInfo::portName);
 }
 
 QList<QString> PortScanner::getPortDescriptions() const

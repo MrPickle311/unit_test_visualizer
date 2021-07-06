@@ -1,6 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include "include/backend/Converter.hpp"
+#include "modules/backend/Converter.hpp"
 
 
 #ifdef MAIN_PROGRAM
@@ -21,6 +21,15 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     engine.load(url);
+
+    PortScanner scanner;
+
+    auto list {scanner.getPortNames()};
+
+    qDebug() << list.size();
+
+    for(auto&& element : list)
+        qDebug() << element;
 
     return app.exec();
 }

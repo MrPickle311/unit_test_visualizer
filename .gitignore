@@ -1,2 +1,3 @@
-tests/build-backend_tests-Desktop_Qt_5_15_2_MinGW_64_bit-Debug/
+/tests/build-backend_tests-Desktop_Qt_5_15_2_MinGW_64_bit-Debug
 .CMakeLists.txt.user
+/build

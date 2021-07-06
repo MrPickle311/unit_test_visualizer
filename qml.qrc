@@ -30,5 +30,8 @@
         <file>script/common/globalFunctions.js</file>
         <file>script/terminal/terminalWindow.js</file>
         <file>script/terminal/TextStreamField.qml</file>
+        <file>script/terminal/TerminalTabButton.qml</file>
+        <file>script/terminal/TerminalTextArea.qml</file>
+        <file>script/terminal/TerminalPage.qml</file>
     </qresource>
 </RCC>

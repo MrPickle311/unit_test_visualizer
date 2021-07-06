@@ -14,30 +14,31 @@ Common.FramelessWindow{
         z: 2
         id: bar
         width: parent.width
-        TabButton {
+
+        TerminalTabButton {
             text: qsTr("Home")
         }
-        TabButton {
+        TerminalTabButton {
             text: qsTr("Discover")
         }
-        TabButton {
+        TerminalTabButton {
             text: qsTr("Activity")
         }
     }
 
-    TabButton {
+    TerminalTabButton {
         id: clone
         text: qsTr("Clone")
     }
     /*
-      TODO: extract a one TabButton to .qml file ,
+      TODO: extract a one SINGLE TabButton to .qml file ,
             ,,--"         TextArea to .qml file
 
      */
     StackLayout {
         width: parent.width
         currentIndex: bar.currentIndex
-        Item {
+        Item {//make a page from this
             id: homeTab
         }
         Item {

@@ -5,6 +5,7 @@ import "common" as Common
 import "MainWindowLogic.js" as MainWindowLogic
 import "settings_window/settingsWindow.js" as SettingsWindowLogic
 import "terminal/terminalWindow.js" as TerminalWindowLogic
+import "tests/testWindowLogic.js" as TestWindowLogic
 
 Common.FramelessWindow {
 
@@ -48,6 +49,7 @@ Common.FramelessWindow {
         Common.MenuButton{
             id : testButton
             iconDir: "qrc:/data/main_window/test.png"
+            onClicked: TestWindowLogic.createTestsWindow()
         }
 
         Common.MenuButton{

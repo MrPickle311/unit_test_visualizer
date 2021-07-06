@@ -33,5 +33,8 @@
         <file>script/terminal/TerminalTabButton.qml</file>
         <file>script/terminal/TerminalTextArea.qml</file>
         <file>script/terminal/TerminalPage.qml</file>
+        <file>data/terminal/send.png</file>
+        <file>script/terminal/TextRectangle.qml</file>
+        <file>script/terminal/SendButton.qml</file>
     </qresource>
 </RCC>

@@ -1,8 +1,10 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.12
 
-TextArea{
-    text: "txt"
-    property color backgroundColor : "white"
-
+TextRectangle{
+    id: textInputRectangle
+    TextInput{
+        anchors.fill: parent
+        readOnly: false
+    }
 }

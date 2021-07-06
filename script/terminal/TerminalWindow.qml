@@ -21,7 +21,6 @@ Common.FramelessWindow{
         }
         TerminalTabButton {
             text: qsTr("COM2")
-            onClicked: console.log("x")
         }
         TerminalTabButton {
             text: qsTr("COM3")
@@ -34,10 +33,10 @@ Common.FramelessWindow{
 
      */
 
-    property list<Rectangle> pages: [
-            Rectangle{color: "red"; visible: true},
-            Rectangle{color: "blue"; visible: true},
-            Rectangle{color: "green"; visible: true}
+    property list<TerminalPage> pages: [
+            TerminalPage{ },
+            TerminalPage{}
+            //erminalPage{color: "green"; visible: true}
     ]
 
     SwipeView {
@@ -50,7 +49,7 @@ Common.FramelessWindow{
         anchors.rightMargin: 0
         anchors.leftMargin: 0
         anchors.bottomMargin: 0
-        anchors.topMargin: 0
+        anchors.topMargin: 5
         z: 2
 
         currentIndex: bar.currentIndex

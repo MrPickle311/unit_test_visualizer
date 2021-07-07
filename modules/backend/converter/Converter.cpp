@@ -96,3 +96,44 @@ size_t DataHandler::size() const
     return received_bytes_.size();
 }
 
+//port flow settings
+
+PortFlowSettings::PortFlowSettings(const QSerialPort::BaudRate& baud_rate,
+                                   const QSerialPort::DataBits& data_bits,
+                                   const QSerialPort::FlowControl& flow_control,
+                                   const QSerialPort::Parity& parity,
+                                   const QSerialPort::StopBits& stop_bits) :
+    baud_rate_(baud_rate),
+    data_bits_(data_bits),
+    flow_control_(flow_control),
+    parity_(parity),
+    stop_bits_(stop_bits)
+{}
+
+PortFlowSettings PortFlowSettings::cloneSettings() const
+{
+    return *this;
+}
+
+StandardSettings::StandardSettings()
+{
+    standard_settings_[StandardSetting::StandardSetting9600] =
+    {QSerialPort::Baud9600 , QSerialPort::Data8 ,
+     QSerialPort::NoFlowControl , QSerialPort::NoParity ,
+     QSerialPort::OneStop};
+
+    standard_settings_[StandardSetting::StandardSetting57600] =
+    {QSerialPort::Baud57600 , QSerialPort::Data8 ,
+     QSerialPort::NoFlowControl , QSerialPort::NoParity ,
+     QSerialPort::OneStop};
+
+    standard_settings_[StandardSetting::StandardSetting115200] =
+    {QSerialPort::Baud115200 , QSerialPort::Data8 ,
+     QSerialPort::NoFlowControl , QSerialPort::NoParity ,
+     QSerialPort::OneStop};
+}
+
+PortFlowSettings StandardSettings::getStandardSettings(StandardSetting setting) const
+{
+    return standard_settings_[setting];
+}

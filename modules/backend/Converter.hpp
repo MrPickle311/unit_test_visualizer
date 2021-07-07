@@ -48,57 +48,41 @@ signals:
    void bytesExtracted(size_t count);
 };
 
-//class PortFlowSettings
-//{
-//    friend class PortOperator;
-//private:
-//    QSerialPort::BaudRate    baud_rate_;
-//    QSerialPort::DataBits    data_bits_;
-//    QSerialPort::FlowControl flow_control_;
-//    QSerialPort::Parity      parity_;
-//    QSerialPort::StopBits    stop_bits_;
-//public:
-//    PortFlowSettings(QSerialPort::BaudRate    baud_rate    ,
-//                     QSerialPort::DataBits    data_bits    ,
-//                     QSerialPort::FlowControl flow_control ,
-//                     QSerialPort::Parity      parity       ,
-//                     QSerialPort::StopBits    stop_bits  );
-//    PortFlowSettings(const PortFlowSettings& other);
-//    PortFlowSettings cloneSettings() const;
-//};
-//
-//enum class StandardSetting : size_t
-//{
-//    StandardSetting9600  ,
-//    StandardSetting57600 ,
-//    StandardSetting115200
-//};
-//
-//class StandardSettings
-//{
-//private:
-//    QMap<StandardSetting,PortFlowSettings> standard_settings_;
-//public:
-//    StandardSettings()
-//    {
-//        standard_settings_[StandardSetting::StandardSetting9600] =
-//        {QSerialPort::Baud9600 , QSerialPort::Data8 ,
-//         QSerialPort::NoFlowControl , QSerialPort::NoParity ,
-//         QSerialPort::OneStop};
-//
-//        standard_settings_[StandardSetting::StandardSetting57600] =
-//        {QSerialPort::Baud57600 , QSerialPort::Data8 ,
-//         QSerialPort::NoFlowControl , QSerialPort::NoParity ,
-//         QSerialPort::OneStop};
-//
-//        standard_settings_[StandardSetting::StandardSetting115200] =
-//        {QSerialPort::Baud115200 , QSerialPort::Data8 ,
-//         QSerialPort::NoFlowControl , QSerialPort::NoParity ,
-//         QSerialPort::OneStop};
-//    }
-//
-//    PortFlowSettings getStandardSettings(StandardSetting setting) const;
-//};
+class PortFlowSettings
+{
+    friend class PortOperator;
+private:
+    QSerialPort::BaudRate    baud_rate_;
+    QSerialPort::DataBits    data_bits_;
+    QSerialPort::FlowControl flow_control_;
+    QSerialPort::Parity      parity_;
+    QSerialPort::StopBits    stop_bits_;
+public:
+    PortFlowSettings(const QSerialPort::BaudRate& baud_rate,
+                     const QSerialPort::DataBits& data_bits,
+                     const QSerialPort::FlowControl& flow_control,
+                     const QSerialPort::Parity& parity,
+                     const QSerialPort::StopBits& stop_bits);
+    PortFlowSettings(const PortFlowSettings& other) = default;
+    PortFlowSettings() = default;
+    PortFlowSettings cloneSettings() const;
+};
+
+enum class StandardSetting : size_t
+{
+    StandardSetting9600  ,
+    StandardSetting57600 ,
+    StandardSetting115200
+};
+
+class StandardSettings
+{
+private:
+    QMap<StandardSetting,PortFlowSettings> standard_settings_;
+public:
+    StandardSettings();
+    PortFlowSettings getStandardSettings(StandardSetting setting) const;
+};
 
 //class PortOperator : public QObject
 //{

@@ -1,5 +1,6 @@
 #include "DataHandler_TESTS.hpp"
 #include <gtest/gtest.h>
+#include <QObject>
 
 DataHandlerTEST::DataHandlerTEST()
     : handler_{}
@@ -35,20 +36,13 @@ QByteArray DataHandlerTEST::getSeveralBytes(size_t count)
     return handler_.getReceivedBytes(count);
 }
 
-
-TEST_F(DataHandlerTEST, MovingTest)
-{
-
-
-
-}
-
 #define FIVE_BYTES 5
 #define ONE_BYTE   1
 #define NO_BYTES   0
 
 TEST_F(DataHandlerTEST, ThrowingTest)
 {
+    qDebug() << "Throw Test";
     EXPECT_NO_THROW ( appendChars("abcdef")) ;
 
     EXPECT_NO_THROW( emptyHandler());
@@ -86,9 +80,20 @@ TEST_F(DataHandlerTEST, LogicTest)
     EXPECT_EQ(currentBytesCount() , NO_BYTES );
 }
 
+void expectBytes(size_t count)
+{
+    EXPECT_NE(count, NO_BYTES);
+}
+
+void expectEmptyHandler(size_t count)
+{
+    EXPECT_EQ(count , NO_BYTES );
+}
+
 TEST_F(DataHandlerTEST, SignalTest)
 {
-
+   // QObject::connect(&handler_ , SIGNAL(DataHandler::bytesArrived) , this ,
+    //                 [=](size_t count){EXPECT_NE(count, NO_BYTES);} );
 }
 
 

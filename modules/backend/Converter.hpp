@@ -38,7 +38,7 @@ private:
     QByteArray divideByteArray(size_t position);
 public:
     DataHandler(QObject *parent = nullptr);
-    void       appendReceivedBytes(QByteArray&& array);
+    void       appendReceivedBytes(const QByteArray& array);
     QByteArray getAllReceivedBytes() noexcept;
     QByteArray getReceivedBytes(size_t count);
     bool       isEmpty() const;

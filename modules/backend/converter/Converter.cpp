@@ -1,5 +1,6 @@
 #include "../Converter.hpp"
 #include <QMutexLocker>
+#include <QDebug>
 
 PortScanner::PortScanner():
     avalaible_ports_{QSerialPortInfo::availablePorts()}
@@ -47,10 +48,10 @@ void PortScanner::rescan()
 
 //data handler
 
-void DataHandler::appendReceivedBytes(QByteArray&& array)
+void DataHandler::appendReceivedBytes(const QByteArray& array)
 {
     QMutexLocker lock{&data_mutex_};
-    received_bytes_.append(std::move(array));
+    received_bytes_.append(array);
     emit bytesArrived(array.size());
 }
 

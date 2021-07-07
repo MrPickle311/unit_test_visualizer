@@ -3,23 +3,25 @@
 
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
-#include <QList>
 #include "../Converter.hpp"
 #include <QDebug>
+#include <string>
 
 using namespace testing;
 
-TEST(TEst, test1)
+class DataHandlerTEST:
+        public ::testing::Test
 {
-    QList<int> list;
-    list.append(5);
-
-    PortScanner scanner;
-    qDebug() << "PORT: " << scanner.getPortNames();
-
-    EXPECT_EQ(1, 1);
-    EXPECT_EQ(list.at(0),7);
-    ASSERT_THAT(0, Eq(0));
-}
+protected:
+    DataHandler handler_;
+public:
+    DataHandlerTEST();
+    void        appendChars(std::string bytes);
+    void        showCurrentData() const;
+    QByteArray  emptyHandler();
+    bool        isHandlerEmpty() const;
+    size_t      currentBytesCount() const;
+    QByteArray  getSeveralBytes(size_t count);
+};
 
 #endif // TST_TEST1_H

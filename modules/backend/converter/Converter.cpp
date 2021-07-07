@@ -49,21 +49,22 @@ void PortScanner::rescan()
 
 void DataHandler::appendReceivedBytes(QByteArray&& array)
 {
+    QMutexLocker lock{&data_mutex_};
     received_bytes_.append(std::move(array));
     emit bytesArrived(array.size());
 }
 
-QByteArray DataHandler::divideByteArray(size_t position)
+QByteArray DataHandler::divideByteArray(size_t count)
 {
     QMutexLocker lock{&data_mutex_};
 
-    if(position + 1 > received_bytes_.size())
+    if(count > received_bytes_.size())
         throw std::logic_error{"requested count of bytes > received_bytes_.size()!\n"};
 
-    QByteArray temp {std::move(received_bytes_.left(position))};
-    received_bytes_ = std::move(received_bytes_.right(position));
+    QByteArray temp {std::move(received_bytes_.left(count))};
+    received_bytes_ = std::move(received_bytes_.right( received_bytes_.size() - count ));
 
-    emit bytesExtracted(position + 1);
+    emit bytesExtracted(count );
     return temp;
 }
 
@@ -72,13 +73,25 @@ DataHandler::DataHandler(QObject *parent) :
     received_bytes_{}
 {}
 
-QByteArray DataHandler::getAllReceivedBytes()
+QByteArray DataHandler::getAllReceivedBytes() noexcept
 {
+    if(this->isEmpty())
+        return QByteArray{};
     return getReceivedBytes(received_bytes_.size());
 }
 
 QByteArray DataHandler::getReceivedBytes(size_t count)
 {
-    return divideByteArray(count - 1);
+    return divideByteArray(count);
+}
+
+bool DataHandler::isEmpty() const
+{
+    return received_bytes_.isEmpty();
+}
+
+size_t DataHandler::size() const
+{
+    return received_bytes_.size();
 }
 

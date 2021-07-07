@@ -6,6 +6,7 @@
 #include <QSharedPointer>
 #include <QMap>
 #include <QSerialPortInfo>
+#include <QMutex>
 
 class PortScanner : public QObject
 {
@@ -26,19 +27,25 @@ public:
     void             rescan();
 };
 
-//class DataHandler : public QObject
-//{
-//    friend class PortOperator;
-//    Q_OBJECT;
-//private:
-//    QByteArray received_bytes_;
-//private:
-//    void       receiveBytes(QByteArray array);
-//public:
-//    QByteArray getAllReceivedBytes();
-//    QByteArray getReceivedBytes(size_t count);
-//};
-//
+class DataHandler : public QObject
+{
+    friend class PortOperator;
+    Q_OBJECT;
+private:
+    QByteArray received_bytes_;
+    QMutex     data_mutex_;
+private:
+    void       appendReceivedBytes(QByteArray&& array);
+    QByteArray divideByteArray(size_t position);
+public:
+    DataHandler(QObject *parent = nullptr);
+    QByteArray getAllReceivedBytes();
+    QByteArray getReceivedBytes(size_t count);
+signals:
+   void bytesArrived(size_t count);
+   void bytesExtracted(size_t count);
+};
+
 //class PortFlowSettings
 //{
 //    friend class PortOperator;
@@ -54,6 +61,7 @@ public:
 //                     QSerialPort::FlowControl flow_control ,
 //                     QSerialPort::Parity      parity       ,
 //                     QSerialPort::StopBits    stop_bits  );
+//    PortFlowSettings(const PortFlowSettings& other);
 //    PortFlowSettings cloneSettings() const;
 //};
 //
@@ -89,7 +97,7 @@ public:
 //
 //    PortFlowSettings getStandardSettings(StandardSetting setting) const;
 //};
-//
+
 //class PortOperator : public QObject
 //{
 //    Q_OBJECT;

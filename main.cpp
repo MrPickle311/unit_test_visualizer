@@ -22,14 +22,10 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
     engine.load(url);
 
-    PortScanner scanner;
-
-    auto list {scanner.getPortNames()};
-
-    qDebug() << list.size();
-
-    for(auto&& element : list)
-        qDebug() << element;
+    QByteArray array{"abcdefgh"};
+    QByteArray ar2 {array.leftJustified(3,' ',true)};
+    qDebug() << array;
+    qDebug() << ar2;
 
     return app.exec();
 }

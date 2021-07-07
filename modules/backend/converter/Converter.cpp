@@ -1,4 +1,5 @@
 #include "../Converter.hpp"
+#include <QMutexLocker>
 
 PortScanner::PortScanner():
     avalaible_ports_{QSerialPortInfo::availablePorts()}
@@ -43,3 +44,41 @@ void PortScanner::rescan()
     avalaible_ports_.clear();
     avalaible_ports_ = QSerialPortInfo::availablePorts();
 }
+
+//data handler
+
+void DataHandler::appendReceivedBytes(QByteArray&& array)
+{
+    received_bytes_.append(std::move(array));
+    emit bytesArrived(array.size());
+}
+
+QByteArray DataHandler::divideByteArray(size_t position)
+{
+    QMutexLocker lock{&data_mutex_};
+
+    if(position + 1 > received_bytes_.size())
+        throw std::logic_error{"requested count of bytes > received_bytes_.size()!\n"};
+
+    QByteArray temp {std::move(received_bytes_.left(position))};
+    received_bytes_ = std::move(received_bytes_.right(position));
+
+    emit bytesExtracted(position + 1);
+    return temp;
+}
+
+DataHandler::DataHandler(QObject *parent) :
+    QObject{parent},
+    received_bytes_{}
+{}
+
+QByteArray DataHandler::getAllReceivedBytes()
+{
+    return getReceivedBytes(received_bytes_.size());
+}
+
+QByteArray DataHandler::getReceivedBytes(size_t count)
+{
+    return divideByteArray(count - 1);
+}
+

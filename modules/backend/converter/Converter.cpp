@@ -2,8 +2,10 @@
 #include <QMutexLocker>
 #include <QDebug>
 
-PortScanner::PortScanner():
+PortScanner::PortScanner(QObject* parent):
+    QObject(parent),
     avalaible_ports_{QSerialPortInfo::availablePorts()}
+
 {}
 
 template<typename DataType>
@@ -98,6 +100,31 @@ size_t DataHandler::size() const
 
 //port flow settings
 
+const QSerialPort::BaudRate& PortFlowSettings::baudRate() const
+{
+    return baud_rate_;
+}
+
+const QSerialPort::DataBits& PortFlowSettings::dataBits() const
+{
+    return data_bits_;
+}
+
+const QSerialPort::FlowControl& PortFlowSettings::flowControl() const
+{
+    return flow_control_;
+}
+
+const QSerialPort::Parity& PortFlowSettings::parity() const
+{
+    return parity_;
+}
+
+const QSerialPort::StopBits& PortFlowSettings::stopBits() const
+{
+    return stop_bits_;
+}
+
 PortFlowSettings::PortFlowSettings(const QSerialPort::BaudRate& baud_rate,
                                    const QSerialPort::DataBits& data_bits,
                                    const QSerialPort::FlowControl& flow_control,
@@ -136,4 +163,27 @@ StandardSettings::StandardSettings()
 PortFlowSettings StandardSettings::getStandardSettings(StandardSetting setting) const
 {
     return standard_settings_[setting];
+}
+
+//port operator
+
+void PortOperator::changePort(QSerialPortInfo port)
+{
+    current_port_info_ = port;
+    current_port_.setPort(current_port_info_);
+}
+
+void PortOperator::changeSettings(PortFlowSettings settings)
+{
+    current_port_.setBaudRate(settings.baudRate());
+    current_port_.setDataBits(settings.dataBits());
+    current_port_.setParity(settings.parity());
+    current_port_.setFlowControl(settings.flowControl());
+    current_port_.setStopBits(settings.stopBits());
+}
+
+void PortOperator::closePort()
+{
+    if(current_port_.isOpen())
+        current_port_.close();
 }

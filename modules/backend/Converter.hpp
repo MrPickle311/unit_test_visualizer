@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <QSerialPort>
 #include <QList>
@@ -19,7 +19,7 @@ private:
     template<typename DataType>
     QList<DataType> getSerialInfoStringList(SerialPortInfoMethod<DataType> method_to_call) const;
 public:
-    PortScanner();
+    PortScanner(QObject* parent = nullptr);
     QSerialPortInfo  getSelectedPort(uint port_nmbr) const;
     QList<int>       getProductIndetifiers() const;
     QList<QString>   getPortNames() const;
@@ -50,7 +50,6 @@ signals:
 
 class PortFlowSettings
 {
-    friend class PortOperator;
 private:
     QSerialPort::BaudRate    baud_rate_;
     QSerialPort::DataBits    data_bits_;
@@ -66,6 +65,12 @@ public:
     PortFlowSettings(const PortFlowSettings& other) = default;
     PortFlowSettings() = default;
     PortFlowSettings cloneSettings() const;
+    //getters
+    const QSerialPort::BaudRate& baudRate() const;
+    const QSerialPort::DataBits& dataBits() const;
+    const QSerialPort::FlowControl& flowControl() const;
+    const QSerialPort::Parity& parity() const;
+    const QSerialPort::StopBits& stopBits() const;
 };
 
 enum class StandardSetting : size_t
@@ -84,22 +89,22 @@ public:
     PortFlowSettings getStandardSettings(StandardSetting setting) const;
 };
 
-//class PortOperator : public QObject
-//{
-//    Q_OBJECT;
-//private:
-//    QSerialPort current_port_;
-//    QSharedPointer<const QSerialPortInfo> current_port_info_;//dependency
-//
-//    //reopen another port
-//public:
-//    PortOperator(const PortOperator& other);
-//    void openPort();
-//    void changePort(const QSerialPortInfo*);
-//public slots:
-//    void applySettings(PortFlowSettings settings);//only copy ,so nothing unexpected will happen
-//};
-//
+//one operator per one port
+class PortOperator : public QObject//it only opens a port , nothing else
+{
+    Q_OBJECT;
+private:
+    QSerialPort      current_port_;
+    QSerialPortInfo  current_port_info_;
+public:
+    PortOperator(const PortOperator& other,QObject* parent = nullptr);
+public slots:
+    void changePort(QSerialPortInfo port);
+    void changeSettings(PortFlowSettings settings);//only copy ,so nothing unexpected will happen
+    void closePort();
+    virtual void openPort() = 0;
+};
+
 //class PortOutputOperator : public PortOperator
 //{
 //    Q_OBJECT;

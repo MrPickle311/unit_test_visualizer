@@ -66,7 +66,10 @@ add_subdirectory("../converter" build)
 
 ##qt service stage 2
 
-add_executable(DataHandlerTests DataHandler_TESTS.cpp DataHandler_TESTS.hpp ../Converter.hpp
+add_executable(DataHandlerTests
+    DataHandler_TESTS.cpp
+    DataHandler_TESTS.hpp
+    ../Converter.hpp
                ${GTestFiles})
 
 target_include_directories(DataHandlerTests PRIVATE ../)

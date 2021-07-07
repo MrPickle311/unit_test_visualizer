@@ -11,11 +11,6 @@ void DataHandlerTEST::appendChars(std::string bytes)
     handler_.appendReceivedBytes(QByteArray{bytes.c_str()});
 }
 
-void DataHandlerTEST::showCurrentData() const
-{
-
-}
-
 QByteArray DataHandlerTEST::emptyHandler()
 {
     return handler_.getAllReceivedBytes();
@@ -42,7 +37,6 @@ QByteArray DataHandlerTEST::getSeveralBytes(size_t count)
 
 TEST_F(DataHandlerTEST, ThrowingTest)
 {
-    qDebug() << "Throw Test";
     EXPECT_NO_THROW ( appendChars("abcdef")) ;
 
     EXPECT_NO_THROW( emptyHandler());
@@ -80,20 +74,30 @@ TEST_F(DataHandlerTEST, LogicTest)
     EXPECT_EQ(currentBytesCount() , NO_BYTES );
 }
 
-void expectBytes(size_t count)
+void DataHandler_SignalTester::expectBytes(size_t count)
 {
-    EXPECT_NE(count, NO_BYTES);
+    EXPECT_EQ(count, FIVE_BYTES);
 }
 
-void expectEmptyHandler(size_t count)
+void DataHandler_SignalTester::expectEmptyHandler(size_t count)
 {
-    EXPECT_EQ(count , NO_BYTES );
+    EXPECT_EQ(count , FIVE_BYTES );
 }
+
+DataHandler_SignalTester::~DataHandler_SignalTester(){}
 
 TEST_F(DataHandlerTEST, SignalTest)
 {
-   // QObject::connect(&handler_ , SIGNAL(DataHandler::bytesArrived) , this ,
-    //                 [=](size_t count){EXPECT_NE(count, NO_BYTES);} );
+   DataHandler_SignalTester tester;
+
+   QObject::connect(&handler_ , &DataHandler::bytesArrived , &tester ,
+                     &DataHandler_SignalTester::expectBytes);
+   QObject::connect(&handler_ , &DataHandler::bytesExtracted , &tester ,
+                     &DataHandler_SignalTester::expectEmptyHandler);
+
+   appendChars("abcde");
+   emptyHandler();
+   EXPECT_TRUE(isHandlerEmpty());
 }
 
 

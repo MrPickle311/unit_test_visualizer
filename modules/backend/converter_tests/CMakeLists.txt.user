@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.15.1, 2021-07-07T09:19:58. -->
+<!-- Written by QtCreator 4.15.1, 2021-07-07T12:31:56. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -70,7 +70,7 @@
    <valuemap type="QVariantMap" key="AutoTest.CheckStates">
     <value type="Qt::CheckState" key="1@/home/damiano/Projects/unit_test_visualizer/modules/backend/converter_tests/DataHandler_TESTS.cpp:DataHandlerTEST">Checked</value>
     <value type="Qt::CheckState" key="1@/home/damiano/Projects/unit_test_visualizer/modules/backend/converter_tests/DataHandler_TESTS.cpp:LogicTest">Checked</value>
-    <value type="Qt::CheckState" key="1@/home/damiano/Projects/unit_test_visualizer/modules/backend/converter_tests/DataHandler_TESTS.cpp:MovingTest">Checked</value>
+    <value type="Qt::CheckState" key="1@/home/damiano/Projects/unit_test_visualizer/modules/backend/converter_tests/DataHandler_TESTS.cpp:SignalTest">Checked</value>
     <value type="Qt::CheckState" key="1@/home/damiano/Projects/unit_test_visualizer/modules/backend/converter_tests/DataHandler_TESTS.cpp:ThrowingTest">Checked</value>
    </valuemap>
    <value type="int" key="AutoTest.RunAfterBuild">0</value>

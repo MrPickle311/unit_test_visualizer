@@ -1,6 +1,7 @@
 #include "DataHandler_TESTS.hpp"
 #include <gtest/gtest.h>
 #include <QObject>
+#include <QBuffer>
 
 DataHandlerTEST::DataHandlerTEST()
     : handler_{}
@@ -31,9 +32,11 @@ QByteArray DataHandlerTEST::getSeveralBytes(size_t count)
     return handler_.getReceivedBytes(count);
 }
 
-#define FIVE_BYTES 5
-#define ONE_BYTE   1
-#define NO_BYTES   0
+#define NO_BYTES     0
+#define ONE_BYTE     1
+#define TWO_BYTES    2
+#define THREE_BYTES  3
+#define FIVE_BYTES   5
 
 TEST_F(DataHandlerTEST, ThrowingTest)
 {
@@ -72,6 +75,17 @@ TEST_F(DataHandlerTEST, LogicTest)
 
     appendChars("");
     EXPECT_EQ(currentBytesCount() , NO_BYTES );
+
+    appendChars("abcde");
+    bytes = getSeveralBytes(TWO_BYTES);
+
+    EXPECT_STREQ(bytes.data(),"ab");
+    EXPECT_EQ(handler_.size(),THREE_BYTES);
+
+    bytes = getSeveralBytes(ONE_BYTE);
+
+    EXPECT_STREQ(bytes.data(),"c");
+    EXPECT_EQ(handler_.size(),TWO_BYTES);
 }
 
 void DataHandler_SignalTester::expectBytes(size_t count)
@@ -99,7 +113,6 @@ TEST_F(DataHandlerTEST, SignalTest)
    emptyHandler();
    EXPECT_TRUE(isHandlerEmpty());
 }
-
 
 int main(int argc, char *argv[])
 {

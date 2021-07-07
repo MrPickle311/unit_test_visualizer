@@ -167,6 +167,18 @@ PortFlowSettings StandardSettings::getStandardSettings(StandardSetting setting) 
 
 //port operator
 
+void PortOperator::setOpenMode(QIODevice::OpenMode open_mode)
+{
+    open_mode_ = open_mode;
+}
+
+PortOperator::PortOperator(QObject* parent):
+    QObject{parent},
+    current_port_{this},
+    current_port_info_{},
+    open_mode_{QSerialPort::NotOpen}
+{}
+
 void PortOperator::changePort(QSerialPortInfo port)
 {
     current_port_info_ = port;
@@ -186,4 +198,40 @@ void PortOperator::closePort()
 {
     if(current_port_.isOpen())
         current_port_.close();
+    closeHook();
+}
+
+void PortOperator::openPort()
+{
+    if(current_port_.isOpen())
+        throw std::logic_error{std::string{"This port(" } +
+                               current_port_.portName().toStdString() +
+                                       std::string{" ) is arleady open!"}};
+    openHook();
+    current_port_.open(this->open_mode_);
+}
+
+PortInputOperator::PortInputOperator(PortFlowSettings settings ,
+                                     QSerialPortInfo  port     ,
+                                     DataHandler*     data_handler ,
+                                     QObject*         parent):
+    PortOperator{parent},
+    current_data_handler_{data_handler}
+{
+    changePort(port);
+    changeSettings(settings);
+    setOpenMode(QSerialPort::ReadOnly);
+
+    connect(&current_port_ , &QSerialPort::readyRead ,
+            this , &PortInputOperator::sendDataFromPortToHandler );
+}
+
+void PortInputOperator::setDataHandler(DataHandler* handler)
+{
+    current_data_handler_ = handler;
+}
+
+void PortInputOperator::sendDataFromPortToHandler()
+{
+    current_data_handler_->appendReceivedBytes(std::move(current_port_.readAll()));
 }

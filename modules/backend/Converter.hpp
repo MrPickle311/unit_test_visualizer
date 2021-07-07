@@ -93,16 +93,21 @@ public:
 class PortOperator : public QObject//it only opens a port , nothing else
 {
     Q_OBJECT;
-private:
-    QSerialPort      current_port_;
-    QSerialPortInfo  current_port_info_;
+protected:
+    QSerialPort           current_port_;
+    QSerialPortInfo       current_port_info_;
+    QSerialPort::OpenMode open_mode_;
+protected:
+    virtual void openHook(){};
+    virtual void closeHook(){};
+    void         setOpenMode(QSerialPort::OpenMode open_mode);
 public:
-    PortOperator(const PortOperator& other,QObject* parent = nullptr);
+    PortOperator(QObject* parent);
 public slots:
     void changePort(QSerialPortInfo port);
     void changeSettings(PortFlowSettings settings);//only copy ,so nothing unexpected will happen
     void closePort();
-    virtual void openPort() = 0;
+    void openPort();
 };
 
 //class PortOutputOperator : public PortOperator
@@ -110,32 +115,26 @@ public slots:
 //    Q_OBJECT;
 //    //i will implement it later
 //};
-//
-//
-//class PortInputOperator : public PortOperator
-//{
-//    Q_OBJECT;
-//private:
-//    QSharedPointer<DataHandler> current_data_handler_;
-//public:
-//    PortInputOperator(const PortInputOperator& other);
-//    void enableReceivingData();
-//    void disableReceivingData();
-//    void setDataHandler(QSharedPointer<DataHandler> handler);
-//public slots:
-//    void sendDataFromPortToHandler(); //invoked automaticly
-//};
-//
-////make error service as state machine
-//
-//class PortOperatorCreator
-//{
-//private:
-//    PortFlowSettings flow_settings_;
-//
-//};
-//
-//////<-
+
+class PortInputOperator : public PortOperator
+{
+    Q_OBJECT;
+private:
+    DataHandler* current_data_handler_;
+public:
+    PortInputOperator(PortFlowSettings settings ,
+                      QSerialPortInfo  port     ,
+                      DataHandler* data_handler ,
+                      QObject* parent = nullptr);
+public:
+    void setDataHandler(DataHandler* handler);
+public slots:
+    void sendDataFromPortToHandler(); //invoked automatically
+};
+
+
+
+/// BELOW CODE IS GOING TO ANOTHER FILE
 //
 //template<typename DataType>
 //struct DataPackage

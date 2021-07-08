@@ -11,7 +11,7 @@ Receiver::Receiver():
 
     if(!port_list_.empty())
     {
-        device_->setPort(port_list_.first());
+        device_->setPort(port_list_.at(1));
         if(device_->open(QSerialPort::ReadWrite))
         {
             qDebug() << "port name found!";

@@ -1,20 +1,31 @@
-#ifndef TST_TEST1_H
-#define TST_TEST1_H
+#pragma once
 
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
-#include "../Converter.hpp"
-#include <QDebug>
+#include "../PortOperator.hpp"
+#include "../PortSettings.hpp"
 #include <QObject>
 #include <string>
+#include "common.hpp"
 
 using namespace testing;
+
+class ScannerTests :
+        public DebugLogger,
+        public ::testing::Test
+{
+private :
+    port::PortScanner scanner_;
+public:
+    void segvTests();
+    void throwingTests();
+};
 
 class DataHandlerTEST:
         public ::testing::Test
 {
 protected:
-    DataHandler handler_;
+    port::DataHandler handler_;
 public:
     DataHandlerTEST();
     void        appendChars(std::string bytes);
@@ -35,4 +46,17 @@ public:
     ~DataHandler_SignalTester();
 };
 
-#endif // TST_TEST1_H
+class PortInputOperatorTEST:
+        public DataHandlerTEST
+{
+protected:
+    port::PortScanner         scanner_;
+    port::PortInputOperator   operator_;
+public:
+    PortInputOperatorTEST();
+    void selectPort(uint port_nmbr);
+    void showPorts() const;
+    void waitAndShowArrivingData();
+    void openPort();
+};
+

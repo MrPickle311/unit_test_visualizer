@@ -1,7 +1,23 @@
-#include "DataHandler_TESTS.hpp"
+#include "Port_UnitTests.hpp"
 #include <gtest/gtest.h>
-#include <QObject>
-#include <QBuffer>
+#include <thread>
+#include <chrono>
+#include <QtDebug>
+#include <QCoreApplication>
+
+
+void ScannerTests::segvTests()
+{
+    sendListDataToDebug(scanner_.getPortNames());
+    sendListDataToDebug(scanner_.getPortDescriptions());
+    sendListDataToDebug(scanner_.getProductIndetifiers());
+}
+
+void ScannerTests::throwingTests()
+{
+    EXPECT_THROW(scanner_.getSelectedPort(50), std::logic_error );
+}
+
 
 DataHandlerTEST::DataHandlerTEST()
     : handler_{}
@@ -32,11 +48,7 @@ QByteArray DataHandlerTEST::getSeveralBytes(size_t count)
     return handler_.getReceivedBytes(count);
 }
 
-#define NO_BYTES     0
-#define ONE_BYTE     1
-#define TWO_BYTES    2
-#define THREE_BYTES  3
-#define FIVE_BYTES   5
+
 
 TEST_F(DataHandlerTEST, ThrowingTest)
 {
@@ -55,6 +67,7 @@ TEST_F(DataHandlerTEST, ThrowingTest)
     EXPECT_NO_THROW(getSeveralBytes(NO_BYTES));
 }
 
+//TO REFACTOR
 TEST_F(DataHandlerTEST, LogicTest)
 {
     QByteArray bytes;
@@ -104,9 +117,9 @@ TEST_F(DataHandlerTEST, SignalTest)
 {
    DataHandler_SignalTester tester;
 
-   QObject::connect(&handler_ , &DataHandler::bytesArrived , &tester ,
+   QObject::connect(&handler_ , &port::DataHandler::bytesArrived , &tester ,
                      &DataHandler_SignalTester::expectBytes);
-   QObject::connect(&handler_ , &DataHandler::bytesExtracted , &tester ,
+   QObject::connect(&handler_ , &port::DataHandler::bytesExtracted , &tester ,
                      &DataHandler_SignalTester::expectEmptyHandler);
 
    appendChars("abcde");
@@ -114,10 +127,34 @@ TEST_F(DataHandlerTEST, SignalTest)
    EXPECT_TRUE(isHandlerEmpty());
 }
 
+
+
+
+
 int main(int argc, char *argv[])
 {
+    QCoreApplication app(argc, argv);
+
+    //UNIT TESTS
     ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    RUN_ALL_TESTS();
+
+    PortInputOperatorTEST operation_integration_test;
+
+    //INTEGRATION TESTS
+
+    //PortScanner scanner;
+    //DataHandler handler;
+    //PortInputOperator operator_;
+    //
+    //operator_.changePort(scanner.getSelectedPort(1));
+    //operator_.setDataHandler(&handler);
+    //operator_.changeSettings(StandardSettings::getStandardSettings(StandardSetting::StandardSetting9600));
+    //qDebug() << operator_.openPort();
+
+    return app.exec();
+   // return RUN_ALL_TESTS();
 }
+
 
 

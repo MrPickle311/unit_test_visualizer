@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(ConverterTests LANGUAGES CXX)
+project(PortTests LANGUAGES CXX)
 
 ##qt service stage 1
 
@@ -22,17 +22,13 @@ find_package(Qt5 COMPONENTS Core Quick SerialPort REQUIRED)
 ##generated stuff
 
 add_definitions(-DGTEST_LANGUAGE_CXX11)
+set(GTEST_COLOR=1)
+
 
 find_package(Threads REQUIRED)
 
-if ($ENV{GOOGLETEST_DIR})
-    set(GOOGLETEST_DIR $ENV{GOOGLETEST_DIR})
-else ()
-    if (NOT "/home/damiano/Projects/unit_test_visualizer/extern/googletest" STREQUAL "")
-        message(WARNING "Using googletest src dir specified at Qt Creator wizard")
-    endif ()
-    set(GOOGLETEST_DIR "/home/damiano/Projects/unit_test_visualizer/extern/googletest")
-endif ()
+set(GOOGLETEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../extern/googletest")
+
 if (EXISTS ${GOOGLETEST_DIR})
     set(GTestSrc ${GOOGLETEST_DIR}/googletest)
     set(GMockSrc ${GOOGLETEST_DIR}/googlemock)
@@ -44,6 +40,7 @@ elseif (UNIX AND EXISTS /usr/src/gtest)
     endif ()
 else ()
     message( FATAL_ERROR "No googletest src dir found - set GOOGLETEST_DIR to enable!")
+
 endif ()
 
 set(GTestFiles ${GTestSrc}/src/gtest-all.cc)
@@ -59,26 +56,34 @@ include_directories(${GTestIncludes})
 
 ##tested .cpp files
 
-add_subdirectory("../converter" build)
+add_subdirectory("../port" build)
 
 ##tested .cpp files END
 
-
 ##qt service stage 2
 
-add_executable(DataHandlerTests
-    DataHandler_TESTS.cpp
-    DataHandler_TESTS.hpp
-    ../Converter.hpp
-               ${GTestFiles})
+set(PORT_LIBS
+    Port)
 
-target_include_directories(DataHandlerTests PRIVATE ../)
+function(add_test_exec test_name test_files test_libs)
+    add_executable(${test_name} ${test_files} common.hpp ${GTestFiles})
+    target_include_directories(${test_name} PRIVATE ../)
+    target_compile_definitions(${test_name}
+       PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
+   add_test(NAME ${test_name} COMMAND ${test_name})
+   target_link_libraries(${test_name} PRIVATE Threads::Threads Qt5::Core Qt5::Quick Qt5::SerialPort ${test_libs})
+endfunction()
 
-target_compile_definitions(DataHandlerTests
-   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
+set(PortTests_files
+    main.cpp
+    Port_UnitTests.cpp
+    Port_UnitTests.hpp
+    Port_IntegrationTests.cpp
+    Port_IntegrationTests.hpp
+    ../PortOperator.hpp
+    ../PortSettings.hpp)
 
-add_test(NAME DataHandlerTests COMMAND DataHandlerTests)
-target_link_libraries(DataHandlerTests PRIVATE Threads::Threads Qt5::Core Qt5::Quick Qt5::SerialPort Converter)
+add_test_exec(Port_Tests "${PortTests_files}" "${PORT_LIBS}")
 
 ##qt service stage 2 END
 

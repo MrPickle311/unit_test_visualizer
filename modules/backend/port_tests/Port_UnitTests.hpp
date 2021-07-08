@@ -8,8 +8,6 @@
 #include <string>
 #include "common.hpp"
 
-using namespace testing;
-
 class ScannerTests :
         public DebugLogger,
         public ::testing::Test
@@ -21,18 +19,23 @@ public:
     void throwingTests();
 };
 
-class DataHandlerTEST:
+class DataHandlerTEST_body:
         public ::testing::Test
 {
 protected:
     port::DataHandler handler_;
 public:
-    DataHandlerTEST();
+    DataHandlerTEST_body();
     void        appendChars(std::string bytes);
     QByteArray  emptyHandler();
     bool        isHandlerEmpty() const;
     size_t      currentBytesCount() const;
     QByteArray  getSeveralBytes(size_t count);
+};
+
+class XD: public DataHandlerTEST_body
+{
+
 };
 
 class DataHandler_SignalTester:
@@ -46,17 +49,5 @@ public:
     ~DataHandler_SignalTester();
 };
 
-class PortInputOperatorTEST:
-        public DataHandlerTEST
-{
-protected:
-    port::PortScanner         scanner_;
-    port::PortInputOperator   operator_;
-public:
-    PortInputOperatorTEST();
-    void selectPort(uint port_nmbr);
-    void showPorts() const;
-    void waitAndShowArrivingData();
-    void openPort();
-};
+
 

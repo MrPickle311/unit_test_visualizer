@@ -11,8 +11,7 @@ int main(int argc, char *argv[])
     RUN_ALL_TESTS();
 
     PortInputOperatorTEST operation_integration_test;
-
-
+    operation_integration_test.runIntegrationTest();
 
     //INTEGRATION TESTS
 

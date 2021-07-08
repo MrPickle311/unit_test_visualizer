@@ -1,4 +1,5 @@
 #include "Port_IntegrationTests.hpp"
+#include <QThread>
 
 PortInputOperatorTEST::PortInputOperatorTEST():
     scanner_{},
@@ -16,14 +17,20 @@ void PortInputOperatorTEST::selectPort(uint port_nmbr)
 void PortInputOperatorTEST::showPorts() const
 {
     sendListDataToDebug(scanner_.getCompletePortData());
-    //for(auto&& port: scanner_.getCompletePortData())
-    //    qDebug() << port;
 }
 
 void PortInputOperatorTEST::waitAndShowArrivingData()
 {
-    QByteArray array {handler_.getAllReceivedBytes()};
-    EXPECT_NE(array.size(), NO_BYTES);
+   QByteArray array {handler_.getAllReceivedBytes()};
+   while(true)
+   {
+       if(!handler_.isEmpty())
+       {
+            array = handler_.getAllReceivedBytes();
+            qDebug() << array;
+       }
+       QThread::yieldCurrentThread();
+   }
 }
 
 void PortInputOperatorTEST::openPort()
@@ -36,5 +43,5 @@ void PortInputOperatorTEST::runIntegrationTest()
     EXPECT_NO_THROW(showPorts());
     EXPECT_NO_FATAL_FAILURE(selectPort(1));
     EXPECT_NO_THROW(operator_.openPort());
-    EXPECT_NO_THROW(waitAndShowArrivingData());
+    //EXPECT_NO_THROW(waitAndShowArrivingData());
 }

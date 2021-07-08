@@ -3,10 +3,10 @@
 #include "Port_UnitTests.hpp"
 
 class PortInputOperatorTEST:
-        public DataHandlerTEST,
         public DebugLogger
 {
 protected:
+    port::DataHandler         handler_;
     port::PortScanner         scanner_;
     port::PortInputOperator   operator_;
 public:

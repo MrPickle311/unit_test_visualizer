@@ -24,9 +24,17 @@ QStringList PortScanner::joinStringListElements(Args... args) const
 {
     QStringList result;
 
+    bool isBegin{true};
+
     auto appender = [&](QStringList list){
         for(int i{0} ; i < list.size() ; ++i)
+        {
+            if(isBegin)//its first invocation of appender(args) , allocate the memory for nodes
+                result.push_back({});
             result[i] += " " + list[i];
+        }
+
+        isBegin = false;
     };
 
     (appender(args), ...);
@@ -184,6 +192,11 @@ void StandardSettings::initSettings()
 StandardSettings::StandardSettings()
 {}
 
+QMutex StandardSettings::mutex_{};
+QMap<StandardSetting,PortFlowSettings> StandardSettings::standard_settings_;
+bool StandardSettings::settings_initialized_{false};
+
+
 PortFlowSettings StandardSettings::getStandardSettings(StandardSetting setting)
 {
     QMutexLocker lock{&mutex_};
@@ -223,14 +236,14 @@ void PortOperator::closePort()
     closeHook();
 }
 
-void PortOperator::openPort()
+bool PortOperator::openPort()
 {
     if(current_port_.isOpen())
         throw std::logic_error{std::string{"This port(" } +
                                current_port_.portName().toStdString() +
                                        std::string{" ) is arleady open!"}};
     openHook();
-    current_port_.open(this->open_mode_);
+    return current_port_.open(this->open_mode_);
 }
 
 void PortInputOperator::makeConnections()
@@ -266,6 +279,7 @@ void PortInputOperator::setDataHandler(DataHandler* handler)
 void PortInputOperator::sendDataFromPortToHandler()
 {
     //TODO: logic error if handler_ == nullptr!!!
+    qDebug() << "Arrived!";
     current_data_handler_->appendReceivedBytes(std::move(current_port_.readAll()));
 }
 

@@ -98,10 +98,6 @@ public:
     static PortFlowSettings getStandardSettings(StandardSetting setting);
 };
 
-QMutex StandardSettings::mutex_{};
-QMap<StandardSetting,PortFlowSettings> StandardSettings::standard_settings_;
-bool StandardSettings::settings_initialized_{false};
-
 //one operator per one port
 class PortOperator : public QObject//it only opens a port , nothing else
 {
@@ -119,7 +115,7 @@ public slots:
     void changePort(QSerialPortInfo port);
     void changeSettings(PortFlowSettings settings);//only copy ,so nothing unexpected will happen
     void closePort();
-    void openPort();
+    bool openPort();
 };
 
 //class PortOutputOperator : public PortOperator

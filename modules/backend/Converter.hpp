@@ -83,11 +83,20 @@ enum class StandardSetting : size_t
 class StandardSettings
 {
 private:
-    QMap<StandardSetting,PortFlowSettings> standard_settings_;
-public:
+    static QMutex mutex_;
+    static QMap<StandardSetting,PortFlowSettings> standard_settings_;
+    static bool settings_initialized_;
+private:
+    static void initSettings();
+protected:
     StandardSettings();
-    PortFlowSettings getStandardSettings(StandardSetting setting) const;
+public:
+    static PortFlowSettings getStandardSettings(StandardSetting setting);
 };
+
+QMutex StandardSettings::mutex_{};
+QMap<StandardSetting,PortFlowSettings> StandardSettings::standard_settings_;
+bool StandardSettings::settings_initialized_{false};
 
 //one operator per one port
 class PortOperator : public QObject//it only opens a port , nothing else
@@ -102,7 +111,7 @@ protected:
     virtual void closeHook(){};
     void         setOpenMode(QSerialPort::OpenMode open_mode);
 public:
-    PortOperator(QObject* parent);
+    PortOperator(QSerialPort::OpenMode open_mode, QObject* parent);
 public slots:
     void changePort(QSerialPortInfo port);
     void changeSettings(PortFlowSettings settings);//only copy ,so nothing unexpected will happen
@@ -121,7 +130,10 @@ class PortInputOperator : public PortOperator
     Q_OBJECT;
 private:
     DataHandler* current_data_handler_;
+private:
+    void makeConnections();
 public:
+    PortInputOperator(QObject* parent = nullptr);
     PortInputOperator(PortFlowSettings settings ,
                       QSerialPortInfo  port     ,
                       DataHandler* data_handler ,

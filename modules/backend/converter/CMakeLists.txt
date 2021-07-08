@@ -2,13 +2,10 @@ cmake_minimum_required(VERSION 3.12)
 
 set(converter_cpp_files Converter.cpp)
 
-set(converter_public_hpp_files ../Converter.hpp)
-
 set(converter_private_hpp_files )
 
 add_library( Converter
              ${converter_cpp_files}
-             ${converter_public_hpp_files}
              ${converter_private_hpp_files}
             )
 

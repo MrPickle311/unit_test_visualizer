@@ -61,11 +61,11 @@ QByteArray DataHandler::divideByteArray(size_t count)
 {
     QMutexLocker lock{&data_mutex_};
 
-    if(count > received_bytes_.size())
+    if(static_cast<int>(count) > received_bytes_.size())
         throw std::logic_error{"requested count of bytes > received_bytes_.size()!\n"};
 
-    QByteArray temp {std::move(received_bytes_.left(count))};
-    received_bytes_ = std::move(received_bytes_.right( received_bytes_.size() - count ));
+    QByteArray temp {received_bytes_.left(count)};
+    received_bytes_ = received_bytes_.right( received_bytes_.size() - count );
 
     emit bytesExtracted(count );
     return temp;
@@ -142,7 +142,7 @@ PortFlowSettings PortFlowSettings::cloneSettings() const
     return *this;
 }
 
-StandardSettings::StandardSettings()
+void StandardSettings::initSettings()
 {
     standard_settings_[StandardSetting::StandardSetting9600] =
     {QSerialPort::Baud9600 , QSerialPort::Data8 ,
@@ -160,23 +160,24 @@ StandardSettings::StandardSettings()
      QSerialPort::OneStop};
 }
 
-PortFlowSettings StandardSettings::getStandardSettings(StandardSetting setting) const
+StandardSettings::StandardSettings()
+{}
+
+PortFlowSettings StandardSettings::getStandardSettings(StandardSetting setting)
 {
+    QMutexLocker lock{&mutex_};
+    if(!settings_initialized_)
+        initSettings();
     return standard_settings_[setting];
 }
 
 //port operator
 
-void PortOperator::setOpenMode(QIODevice::OpenMode open_mode)
-{
-    open_mode_ = open_mode;
-}
-
-PortOperator::PortOperator(QObject* parent):
+PortOperator::PortOperator(QSerialPort::OpenMode open_mode , QObject* parent):
     QObject{parent},
     current_port_{this},
     current_port_info_{},
-    open_mode_{QSerialPort::NotOpen}
+    open_mode_{open_mode}
 {}
 
 void PortOperator::changePort(QSerialPortInfo port)
@@ -211,19 +212,29 @@ void PortOperator::openPort()
     current_port_.open(this->open_mode_);
 }
 
+void PortInputOperator::makeConnections()
+{
+    connect(&current_port_ , &QSerialPort::readyRead ,
+            this , &PortInputOperator::sendDataFromPortToHandler );
+}
+
+PortInputOperator::PortInputOperator(QObject* parent):
+    PortOperator{QSerialPort::ReadOnly , parent},
+    current_data_handler_{nullptr}
+{
+    makeConnections();
+}
+
 PortInputOperator::PortInputOperator(PortFlowSettings settings ,
                                      QSerialPortInfo  port     ,
                                      DataHandler*     data_handler ,
                                      QObject*         parent):
-    PortOperator{parent},
+    PortOperator{QSerialPort::ReadOnly , parent},
     current_data_handler_{data_handler}
 {
     changePort(port);
     changeSettings(settings);
-    setOpenMode(QSerialPort::ReadOnly);
-
-    connect(&current_port_ , &QSerialPort::readyRead ,
-            this , &PortInputOperator::sendDataFromPortToHandler );
+    makeConnections();
 }
 
 void PortInputOperator::setDataHandler(DataHandler* handler)
@@ -233,5 +244,6 @@ void PortInputOperator::setDataHandler(DataHandler* handler)
 
 void PortInputOperator::sendDataFromPortToHandler()
 {
+    //TODO: logic error if handler_ == nullptr!!!
     current_data_handler_->appendReceivedBytes(std::move(current_port_.readAll()));
 }

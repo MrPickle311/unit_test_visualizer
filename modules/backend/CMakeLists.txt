@@ -17,15 +17,17 @@
 ##endforeach()
 ##adding subdirectories automatically END
 
-add_subdirectory(converter)
+add_subdirectory(port)
 
-set(backend_public_headers Converter.hpp)
+set(backend_public_headers
+    PortOperator.hpp
+    PortSettings.hpp)
 
 add_library(BACKEND_LIBRARIES STATIC
     ${backend_public_headers})
 
 #target_include_directories(BACKEND_LIBRARIES PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(BACKEND_LIBRARIES Converter)
+target_link_libraries(BACKEND_LIBRARIES Port)
 target_link_libraries(BACKEND_LIBRARIES Qt5::Core Qt5::Quick Qt5::SerialPort)
 set_target_properties(BACKEND_LIBRARIES PROPERTIES LINKER_LANGUAGE CXX)

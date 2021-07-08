@@ -1,6 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include "modules/backend/Converter.hpp"
+#include "modules/backend/PortOperator.hpp"
 
 
 #ifdef MAIN_PROGRAM
@@ -22,10 +22,8 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
     engine.load(url);
 
-    QByteArray array{"abcdefgh"};
-    QByteArray ar2 {array.leftJustified(3,' ',true)};
-    qDebug() << array;
-    qDebug() << ar2;
+    port::PortScanner scanner;
+    qDebug() << scanner.getPortNames();
 
     return app.exec();
 }

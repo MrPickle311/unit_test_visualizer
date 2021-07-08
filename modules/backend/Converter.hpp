@@ -17,14 +17,18 @@ private:
     template<typename DataType>
     using SerialPortInfoMethod = std::function<DataType(const QSerialPortInfo& )>;
     template<typename DataType>
-    QList<DataType> getSerialInfoStringList(SerialPortInfoMethod<DataType> method_to_call) const;
+    QList<DataType> getSerialInfoList(SerialPortInfoMethod<DataType> method_to_call) const;
+private:
+    template<typename... Args>
+    QStringList     joinStringListElements(Args... args) const;
 public:
     PortScanner(QObject* parent = nullptr);
-    QSerialPortInfo  getSelectedPort(uint port_nmbr) const;
-    QList<int>       getProductIndetifiers() const;
-    QList<QString>   getPortNames() const;
-    QList<QString>   getPortDescriptions() const;
-    void             rescan();
+    QSerialPortInfo getSelectedPort(uint port_nmbr) const;
+    QList<int>      getProductIndetifiers() const;
+    QStringList     getPortNames() const;
+    QStringList     getPortDescriptions() const;
+    QStringList     getCompletePortData() const;
+    void            rescan();
 };
 
 class DataHandler : public QObject
@@ -109,7 +113,6 @@ protected:
 protected:
     virtual void openHook(){};
     virtual void closeHook(){};
-    void         setOpenMode(QSerialPort::OpenMode open_mode);
 public:
     PortOperator(QSerialPort::OpenMode open_mode, QObject* parent);
 public slots:

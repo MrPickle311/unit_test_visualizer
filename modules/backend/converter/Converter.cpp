@@ -9,7 +9,7 @@ PortScanner::PortScanner(QObject* parent):
 {}
 
 template<typename DataType>
-QList<DataType> PortScanner::getSerialInfoStringList(SerialPortInfoMethod<DataType> method_to_call) const
+QList<DataType> PortScanner::getSerialInfoList(SerialPortInfoMethod<DataType> method_to_call) const
 {
     QList<DataType> data_list;
 
@@ -18,6 +18,22 @@ QList<DataType> PortScanner::getSerialInfoStringList(SerialPortInfoMethod<DataTy
 
     return data_list;
 }
+
+template<typename... Args>
+QStringList PortScanner::joinStringListElements(Args... args) const
+{
+    QStringList result;
+
+    auto appender = [&](QStringList list){
+        for(int i{0} ; i < list.size() ; ++i)
+            result[i] += " " + list[i];
+    };
+
+    (appender(args), ...);
+
+    return result;
+}
+
 
 QSerialPortInfo PortScanner::getSelectedPort(uint port_nmbr) const
 {
@@ -29,17 +45,22 @@ QSerialPortInfo PortScanner::getSelectedPort(uint port_nmbr) const
 
 QList<int> PortScanner::getProductIndetifiers() const
 {
-    return getSerialInfoStringList<int>(&QSerialPortInfo::productIdentifier);
+    return getSerialInfoList<int>(&QSerialPortInfo::productIdentifier);
 }
 
-QList<QString> PortScanner::getPortNames() const
+QStringList PortScanner::getPortNames() const
 {
-   return getSerialInfoStringList<QString>(&QSerialPortInfo::portName);
+   return getSerialInfoList<QString>(&QSerialPortInfo::portName);
 }
 
-QList<QString> PortScanner::getPortDescriptions() const
+QStringList PortScanner::getPortDescriptions() const
 {
-    return getSerialInfoStringList<QString>(&QSerialPortInfo::description);
+    return getSerialInfoList<QString>(&QSerialPortInfo::description);
+}
+
+QStringList PortScanner::getCompletePortData() const
+{
+    return joinStringListElements(getPortNames() , getPortDescriptions() );
 }
 
 void PortScanner::rescan()
@@ -247,3 +268,4 @@ void PortInputOperator::sendDataFromPortToHandler()
     //TODO: logic error if handler_ == nullptr!!!
     current_data_handler_->appendReceivedBytes(std::move(current_port_.readAll()));
 }
+

@@ -22,8 +22,8 @@ void PortInputOperatorTEST::showPorts() const
 
 void PortInputOperatorTEST::waitAndShowArrivingData()
 {
-    SignalChecker<port::PortInputOperator> checker_{};
-    QObject::connect(&operator_ ,&port::PortInputOperator::dataArrived,
+    SignalChecker<port::PortFlowOperator> checker_{};
+    QObject::connect(&operator_ ,&port::PortFlowOperator::dataArrived,
                      checker_.getLoopPtr() , &QEventLoop::quit);
     checker_.waitAndProcessObjectEvent();
 

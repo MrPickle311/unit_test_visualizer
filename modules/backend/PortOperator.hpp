@@ -1,7 +1,6 @@
 #pragma once
 
 #include "PortSettings.hpp"
-#include "../global/ProgramObject.hpp"
 
 namespace port
 {
@@ -29,20 +28,19 @@ signals:
 };
 
 //one operator per one port
-class PortOperator :
+class PortStateOperator :
         public QObject,//it only opens a port , nothing else
         public ProgramObject
 {
     Q_OBJECT;
 protected:
-    QSerialPort           current_port_;
-    QSerialPortInfo       current_port_info_;
-    QSerialPort::OpenMode open_mode_;
-protected:
-    virtual void openHook(){};
-    virtual void closeHook(){};
+    QSerialPort     current_port_;
+    QSerialPortInfo current_port_info_;
 public:
-    PortOperator(QSerialPort::OpenMode open_mode, QObject* parent);
+    PortStateOperator(QObject* parent = nullptr);
+    PortStateOperator(QSerialPortInfo port ,
+                      PortFlowSettings settings,
+                      QObject* parent = nullptr);
 public slots:
     void changePort(QSerialPortInfo port);
     void changeSettings(PortFlowSettings settings);//only copy ,so nothing unexpected will happen
@@ -50,59 +48,45 @@ public slots:
     bool openPort();
 };
 
-class BufferedPortOperator:
-        public PortOperator
+class PortFlowOperator:
+        public PortStateOperator
 {
     Q_OBJECT;
 protected:
-    ByteBuffer* current_byte_buffer_;
+    virtual void makeConnections();
 public:
-    void setByteBuffer(ByteBuffer* handler);
-    BufferedPortOperator(QSerialPort::OpenMode  open_mode ,
-                         QObject* parent = nullptr);
-    BufferedPortOperator(PortFlowSettings      settings  ,
-                         QSerialPortInfo       port      ,
-                         QSerialPort::OpenMode open_mode ,
-                         ByteBuffer* byte_buffer         ,
-                         QObject* parent = nullptr);
-};
-
-class PortInputOperator :
-        public BufferedPortOperator
-{
-    Q_OBJECT;
-private:
-    void makeConnections();
-public:
-    PortInputOperator(QObject* parent = nullptr);
-    PortInputOperator(PortFlowSettings settings ,
+    PortFlowOperator( QObject* parent = nullptr);
+    PortFlowOperator( PortFlowSettings settings ,
                       QSerialPortInfo  port     ,
-                      ByteBuffer* byte_buffer ,
                       QObject* parent = nullptr);
-public slots:
-    void sendDataFromPortToBuffer(); //invoked automatically
+public:
+    void sendBytesToPort(const QByteArray& array);
+    QByteArray getAllBytesFromPort();
 signals:
     void dataArrived();//external signal ,for user , data <- serial
-};
-
-
-class PortOutputOperator:
-        public BufferedPortOperator
-{
-    Q_OBJECT;
-private:
-    void makeConnections();
-public:
-    PortOutputOperator(QObject* parent = nullptr);
-    PortOutputOperator(PortFlowSettings settings ,
-                       QSerialPortInfo  port     ,
-                       ByteBuffer* byte_buffer ,
-                       QObject* parent = nullptr);
-public:
-    void sendDataFromBufferToPort();
-signals:
     void dataSent();//external signal ,for user data -> serial
 };
 
+class BufferedPortFlowOperator:
+        public PortFlowOperator
+{
+    Q_OBJECT;
+protected:
+    ByteBuffer* input_byte_buffer_;
+    ByteBuffer* output_byte_buffer_;
+protected:
+    virtual void makeConnections();
+public:
+    BufferedPortFlowOperator(QObject* parent = nullptr);
+    PortFlowOperator( PortFlowSettings settings ,
+                      QSerialPortInfo  port     ,
+                      QObject* parent = nullptr);
+protected slots:
+    void sendDataFromPortToBuffer(); //invoked automatically
+    void sendDataFromBufferToPort(); //invoked automatically
+public:
+    void setInputByteBuffer(ByteBuffer* byte_buffer);
+    void setOutputByteBuffer(ByteBuffer* byte_buffer);
+};
 
 }

@@ -54,20 +54,29 @@ size_t ByteBuffer::size() const
     return received_bytes_.size();
 }
 
-PortOperator::PortOperator(QSerialPort::OpenMode open_mode , QObject* parent):
+PortStateOperator::PortStateOperator(QObject* parent):
     QObject{parent},
     current_port_{this},
-    current_port_info_{},
-    open_mode_{open_mode}
+    current_port_info_{}
 {}
 
-void PortOperator::changePort(QSerialPortInfo port)
+PortStateOperator::PortStateOperator(QSerialPortInfo port ,
+                                     PortFlowSettings settings,
+                                     QObject* parent):
+    QObject{parent},
+    current_port_{this},
+    current_port_info_{port}
+{
+    changeSettings(settings);
+}
+
+void PortStateOperator::changePort(QSerialPortInfo port)
 {
     current_port_info_ = port;
     current_port_.setPort(current_port_info_);
 }
 
-void PortOperator::changeSettings(PortFlowSettings settings)
+void PortStateOperator::changeSettings(PortFlowSettings settings)
 {
     current_port_.setBaudRate(settings.baudRate());
     current_port_.setDataBits(settings.dataBits());
@@ -76,62 +85,76 @@ void PortOperator::changeSettings(PortFlowSettings settings)
     current_port_.setStopBits(settings.stopBits());
 }
 
-void PortOperator::closePort()
+void PortStateOperator::closePort()
 {
     if(current_port_.isOpen())
         current_port_.close();
-    closeHook();
 }
 
-bool PortOperator::openPort()
+bool PortStateOperator::openPort()
 {
     throwIf(current_port_.isOpen(), {"This port("  +
             current_port_.portName().toStdString() + " ) is arleady open!"});
 
-    openHook();
-    return current_port_.open(this->open_mode_);
+    return current_port_.open(QSerialPort::ReadWrite);
 }
 
-BufferedPortOperator::BufferedPortOperator(QIODevice::OpenMode open_mode,
-                                           QObject* parent):
-    PortOperator{open_mode, parent},
-    current_byte_buffer_{nullptr}
-{}
-
-BufferedPortOperator::BufferedPortOperator(PortFlowSettings       settings     ,
-                                           QSerialPortInfo        port         ,
-                                           QSerialPort::OpenMode  open_mode    ,
-                                           ByteBuffer*            data_handler ,
-                                           QObject*               parent):
-    PortOperator{open_mode , parent},
-    current_byte_buffer_{data_handler}
-{
-    changePort(port);
-    changeSettings(settings);
-}
-
-void BufferedPortOperator::setByteBuffer(ByteBuffer* handler)
-{
-    current_byte_buffer_ = handler;
-}
-
-void PortInputOperator::makeConnections()
+void PortFlowOperator::makeConnections()
 {
     connect(&current_port_ , &QSerialPort::readyRead ,
-            this , &PortInputOperator::sendDataFromPortToBuffer );
+            this , &PortFlowOperator::dataArrived );
+
+    connect(&current_port_ , &QSerialPort::bytesWritten ,
+            this , &PortFlowOperator::dataSent );
 }
 
-PortInputOperator::PortInputOperator(QObject* parent):
-    BufferedPortOperator{QSerialPort::ReadOnly , parent}
+
+
+/*
+
+BufferedPortFlowOperator::BufferedPortFlowOperator(QObject* parent):
+    current_byte_buffer_{nullptr}
+{
+     current_byte_buffer_->setParent(parent);
+}
+
+BufferedPortFlowOperator::BufferedPortFlowOperator(ByteBuffer* data_handler ,
+                                           QObject*    parent):
+    current_byte_buffer_{data_handler}
+{
+    current_byte_buffer_->setParent(parent);
+}
+*/
+
+void BufferedPortFlowOperator::setOutputByteBuffer(ByteBuffer* byte_buffer)
+{
+    output_byte_buffer_ = byte_buffer;
+}
+
+/*
+PortFlowOperator::PortFlowOperator(QObject* parent):
+    BufferedPortFlowOperator{QSerialPort::ReadOnly , parent}
 {
     makeConnections();
 }
+*/
 
-PortInputOperator::PortInputOperator(PortFlowSettings settings ,
+void PortFlowOperator::sendBytesToPort(const QByteArray& array)
+{
+    current_port_.write(array);
+}
+
+QByteArray PortFlowOperator::getAllBytesFromPort()
+{
+    return current_port_.readAll();
+}
+
+/*
+PortFlowOperator::PortFlowOperator(PortFlowSettings settings ,
                                      QSerialPortInfo  port     ,
                                      ByteBuffer* byte_buffer   ,
                                      QObject* parent ):
-    BufferedPortOperator{settings,
+    BufferedPortFlowOperator{settings,
                          port ,
                          QSerialPort::ReadOnly ,
                          byte_buffer ,
@@ -140,45 +163,28 @@ PortInputOperator::PortInputOperator(PortFlowSettings settings ,
     makeConnections();
 }
 
-void PortInputOperator::sendDataFromPortToBuffer()
-{
-    throwIf(current_byte_buffer_ == nullptr , "Byte buffer not initialized!");
+*/
 
-    current_byte_buffer_->appendBytes(std::move(current_port_.readAll()));
+void BufferedPortFlowOperator::sendDataFromPortToBuffer()
+{
+    throwIf(input_byte_buffer_ == nullptr , "Byte buffer not initialized!");
+
+    input_byte_buffer_->appendBytes(std::move(current_port_.readAll()));
     emit dataArrived();
 }
 
-void PortOutputOperator::makeConnections()
+void BufferedPortFlowOperator::makeConnections()
 {
-    connect(current_byte_buffer_ , &ByteBuffer::bytesArrived ,
-            this , &PortOutputOperator::sendDataFromBufferToPort );
+    connect(input_byte_buffer_ , &ByteBuffer::bytesArrived ,
+            this , &BufferedPortFlowOperator::sendDataFromBufferToPort );
 }
 
-PortOutputOperator::PortOutputOperator(QObject* parent):
-    BufferedPortOperator{QSerialPort::WriteOnly , parent}
+void BufferedPortFlowOperator::sendDataFromBufferToPort()
 {
-    makeConnections();
-}
-
-PortOutputOperator::PortOutputOperator(PortFlowSettings settings ,
-                                       QSerialPortInfo  port     ,
-                                       ByteBuffer* byte_buffer   ,
-                                       QObject* parent ):
-      BufferedPortOperator{settings,
-                           port ,
-                           QSerialPort::WriteOnly ,
-                           byte_buffer ,
-                           parent }
-{
-    makeConnections();
-}
-
-void PortOutputOperator::sendDataFromBufferToPort()
-{
-    throwIf(current_byte_buffer_ == nullptr , "Byte buffer not initialized!");
+    throwIf(output_byte_buffer_ == nullptr , "Byte buffer not initialized!");
 
     if(current_port_.isWritable())
-        current_port_.write(current_byte_buffer_->getAllBytes());
+        current_port_.write(output_byte_buffer_->getAllBytes());
 }
 
 

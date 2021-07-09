@@ -8,7 +8,7 @@ class PortInputOperatorTEST:
 protected:
     port::ByteBuffer         handler_;
     port::PortScanner         scanner_;
-    port::PortInputOperator   operator_;
+    port::PortFlowOperator   operator_;
 public:
     PortInputOperatorTEST();
     void selectPort(uint port_nmbr);

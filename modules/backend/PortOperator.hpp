@@ -82,18 +82,24 @@ signals:
     void dataArrived();//external signal ,for user , data <- serial
 };
 
-/*
+
 class PortOutputOperator:
-        public PortOperator
+        public BufferedPortOperator
 {
     Q_OBJECT;
 private:
-    ByteBuffer* current_data_handler_;
+    void makeConnections();
+public:
+    PortOutputOperator(QObject* parent = nullptr);
+    PortOutputOperator(PortFlowSettings settings ,
+                      QSerialPortInfo  port     ,
+                      ByteBuffer* byte_buffer ,
+                      QObject* parent = nullptr);
 public:
     void sendDataFromBufferToPort();
 signals:
     void dataSent();//external signal ,for user data -> serial
 };
-*/
+
 
 }

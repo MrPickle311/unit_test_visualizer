@@ -148,5 +148,36 @@ void PortInputOperator::sendDataFromPortToBuffer()
     emit dataArrived();
 }
 
+void PortOutputOperator::makeConnections()
+{
+    connect(current_byte_buffer_ , &ByteBuffer::bytesArrived ,
+            this , &PortOutputOperator::sendDataFromBufferToPort );
+}
+
+PortOutputOperator::PortOutputOperator(QObject* parent):
+    BufferedPortOperator{QSerialPort::WriteOnly , parent}
+{
+    makeConnections();
+}
+
+PortOutputOperator::PortOutputOperator(PortFlowSettings settings ,
+                                       QSerialPortInfo  port     ,
+                                       ByteBuffer* byte_buffer   ,
+                                       QObject* parent ):
+      BufferedPortOperator{settings,
+                           port ,
+                           QSerialPort::WriteOnly ,
+                           byte_buffer ,
+                           parent }
+{
+    makeConnections();
+}
+
+void PortOutputOperator::sendDataFromBufferToPort()
+{
+    if(current_port_.isWritable())
+        current_port_.write(current_byte_buffer_->getAllBytes());
+}
+
 
 }

@@ -4,6 +4,56 @@
 namespace port
 {
 
+//data handler
+
+void ByteBuffer::appendBytes(const QByteArray& array)
+{
+    QMutexLocker lock{&data_mutex_};
+    received_bytes_.append(array);
+    emit bytesArrived(array.size());
+}
+
+QByteArray ByteBuffer::splitByteArray(size_t count)
+{
+    QMutexLocker lock{&data_mutex_};
+
+    if(static_cast<int>(count) > received_bytes_.size())
+        throw std::logic_error{"requested count of bytes > received_bytes_.size()!\n"};
+
+    QByteArray temp {received_bytes_.left(count)};
+    received_bytes_ = received_bytes_.right( received_bytes_.size() - count );
+
+    emit bytesExtracted(count );
+    return temp;
+}
+
+ByteBuffer::ByteBuffer(QObject *parent) :
+    QObject{parent},
+    received_bytes_{}
+{}
+
+QByteArray ByteBuffer::getAllBytes() noexcept
+{
+    if(this->isEmpty())
+        return QByteArray{};
+    return getBytes(received_bytes_.size());
+}
+
+QByteArray ByteBuffer::getBytes(size_t count)
+{
+    return splitByteArray(count);
+}
+
+bool ByteBuffer::isEmpty() const
+{
+    return received_bytes_.isEmpty();
+}
+
+size_t ByteBuffer::size() const
+{
+    return received_bytes_.size();
+}
+
 PortOperator::PortOperator(QSerialPort::OpenMode open_mode , QObject* parent):
     QObject{parent},
     current_port_{this},
@@ -58,7 +108,7 @@ PortInputOperator::PortInputOperator(QObject* parent):
 
 PortInputOperator::PortInputOperator(PortFlowSettings settings ,
                                      QSerialPortInfo  port     ,
-                                     DataHandler*     data_handler ,
+                                     ByteBuffer*     data_handler ,
                                      QObject*         parent):
     PortOperator{QSerialPort::ReadOnly , parent},
     current_data_handler_{data_handler}
@@ -68,7 +118,7 @@ PortInputOperator::PortInputOperator(PortFlowSettings settings ,
     makeConnections();
 }
 
-void PortInputOperator::setDataHandler(DataHandler* handler)
+void PortInputOperator::setDataHandler(ByteBuffer* handler)
 {
     current_data_handler_ = handler;
 }
@@ -76,7 +126,7 @@ void PortInputOperator::setDataHandler(DataHandler* handler)
 void PortInputOperator::sendDataFromPortToHandler()
 {
     //TODO: logic error if handler_ == nullptr!!!
-    current_data_handler_->appendReceivedBytes(std::move(current_port_.readAll()));
+    current_data_handler_->appendBytes(std::move(current_port_.readAll()));
     emit dataArrived();
 }
 

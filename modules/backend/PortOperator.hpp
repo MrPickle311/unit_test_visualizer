@@ -5,6 +5,26 @@
 namespace port
 {
 
+class ByteBuffer : public QObject
+{
+    Q_OBJECT;
+private:
+    QByteArray received_bytes_;
+    QMutex     data_mutex_;
+private:
+    QByteArray splitByteArray(size_t position);
+public:
+    ByteBuffer(QObject *parent = nullptr);
+    void       appendBytes(const QByteArray& array);
+    QByteArray getAllBytes() noexcept;
+    QByteArray getBytes(size_t count);
+    bool       isEmpty() const;
+    size_t     size()    const;
+signals:
+   void bytesArrived(size_t count);
+   void bytesExtracted(size_t count);
+};
+
 //one operator per one port
 class PortOperator : public QObject//it only opens a port , nothing else
 {
@@ -25,31 +45,31 @@ public slots:
     bool openPort();
 };
 
-//class PortOutputOperator : public PortOperator
-//{
-//    Q_OBJECT;
-//    //i will implement it later
-//};
-
 class PortInputOperator : public PortOperator
 {
     Q_OBJECT;
 private:
-    DataHandler* current_data_handler_;
+    ByteBuffer* current_data_handler_;
 private:
     void makeConnections();
 public:
     PortInputOperator(QObject* parent = nullptr);
     PortInputOperator(PortFlowSettings settings ,
                       QSerialPortInfo  port     ,
-                      DataHandler* data_handler ,
+                      ByteBuffer* data_handler ,
                       QObject* parent = nullptr);
 public:
-    void setDataHandler(DataHandler* handler);
+    void setDataHandler(ByteBuffer* handler);
 public slots:
     void sendDataFromPortToHandler(); //invoked automatically
 signals:
     void dataArrived();
+};
+
+class PortOutputOperator:
+        public PortOperator
+{
+
 };
 
 }

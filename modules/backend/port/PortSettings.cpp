@@ -79,55 +79,7 @@ void PortScanner::rescan()
     avalaible_ports_ = QSerialPortInfo::availablePorts();
 }
 
-//data handler
 
-void DataHandler::appendReceivedBytes(const QByteArray& array)
-{
-    QMutexLocker lock{&data_mutex_};
-    received_bytes_.append(array);
-    emit bytesArrived(array.size());
-}
-
-QByteArray DataHandler::divideByteArray(size_t count)
-{
-    QMutexLocker lock{&data_mutex_};
-
-    if(static_cast<int>(count) > received_bytes_.size())
-        throw std::logic_error{"requested count of bytes > received_bytes_.size()!\n"};
-
-    QByteArray temp {received_bytes_.left(count)};
-    received_bytes_ = received_bytes_.right( received_bytes_.size() - count );
-
-    emit bytesExtracted(count );
-    return temp;
-}
-
-DataHandler::DataHandler(QObject *parent) :
-    QObject{parent},
-    received_bytes_{}
-{}
-
-QByteArray DataHandler::getAllReceivedBytes() noexcept
-{
-    if(this->isEmpty())
-        return QByteArray{};
-    return getReceivedBytes(received_bytes_.size());
-}
-
-QByteArray DataHandler::getReceivedBytes(size_t count)
-{
-    return divideByteArray(count);
-}
-
-bool DataHandler::isEmpty() const
-{
-    return received_bytes_.isEmpty();
-}
-
-size_t DataHandler::size() const
-{
-    return received_bytes_.size();
-}
 
 //port flow settings
 

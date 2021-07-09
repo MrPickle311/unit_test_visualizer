@@ -34,27 +34,6 @@ public:
     void            rescan();
 };
 
-class DataHandler : public QObject
-{
-    friend class PortOperator;
-    Q_OBJECT;
-private:
-    QByteArray received_bytes_;
-    QMutex     data_mutex_;
-private:
-    QByteArray divideByteArray(size_t position);
-public:
-    DataHandler(QObject *parent = nullptr);
-    void       appendReceivedBytes(const QByteArray& array);
-    QByteArray getAllReceivedBytes() noexcept;
-    QByteArray getReceivedBytes(size_t count);
-    bool       isEmpty() const;
-    size_t     size()    const;
-signals:
-   void bytesArrived(size_t count);
-   void bytesExtracted(size_t count);
-};
-
 class PortFlowSettings
 {
 private:

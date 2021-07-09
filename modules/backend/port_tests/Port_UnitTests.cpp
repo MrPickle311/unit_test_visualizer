@@ -22,12 +22,12 @@ DataHandlerTEST_body::DataHandlerTEST_body()
 
 void DataHandlerTEST_body::appendChars(std::string bytes)
 {
-    handler_.appendReceivedBytes(QByteArray{bytes.c_str()});
+    handler_.appendBytes(QByteArray{bytes.c_str()});
 }
 
 QByteArray DataHandlerTEST_body::emptyHandler()
 {
-    return handler_.getAllReceivedBytes();
+    return handler_.getAllBytes();
 }
 
 bool DataHandlerTEST_body::isHandlerEmpty() const
@@ -42,7 +42,7 @@ size_t DataHandlerTEST_body::currentBytesCount() const
 
 QByteArray DataHandlerTEST_body::getSeveralBytes(size_t count)
 {
-    return handler_.getReceivedBytes(count);
+    return handler_.getBytes(count);
 }
 
 
@@ -114,9 +114,9 @@ TEST_F(DataHandlerTEST_body, SignalTest)
 {
    DataHandler_SignalTester tester;
 
-   QObject::connect(&handler_ , &port::DataHandler::bytesArrived , &tester ,
+   QObject::connect(&handler_ , &port::ByteBuffer::bytesArrived , &tester ,
                      &DataHandler_SignalTester::expectBytes);
-   QObject::connect(&handler_ , &port::DataHandler::bytesExtracted , &tester ,
+   QObject::connect(&handler_ , &port::ByteBuffer::bytesExtracted , &tester ,
                      &DataHandler_SignalTester::expectEmptyHandler);
 
    appendChars("abcde");

@@ -6,7 +6,7 @@ class PortInputOperatorTEST:
         public DebugLogger
 {
 protected:
-    port::DataHandler         handler_;
+    port::ByteBuffer         handler_;
     port::PortScanner         scanner_;
     port::PortInputOperator   operator_;
 public:

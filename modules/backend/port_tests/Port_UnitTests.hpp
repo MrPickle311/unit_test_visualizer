@@ -23,7 +23,7 @@ class DataHandlerTEST_body:
         public ::testing::Test
 {
 protected:
-    port::DataHandler handler_;
+    port::ByteBuffer handler_;
 public:
     DataHandlerTEST_body();
     void        appendChars(std::string bytes);

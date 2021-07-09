@@ -124,11 +124,6 @@ void PortFlowOperator::makeConnections()
             this , &PortFlowOperator::dataSent );
 }
 
-void BufferedPortFlowOperator::setOutputByteBuffer(ByteBuffer* byte_buffer)
-{
-    output_byte_buffer_ = byte_buffer;
-}
-
 void PortFlowOperator::sendBytesToPort(const QByteArray& array)
 {
     current_port_.write(array);
@@ -145,17 +140,13 @@ BufferedPortFlowOperator::BufferedPortFlowOperator(QObject* parent):
     PortFlowOperator{parent},
     input_byte_buffer_{nullptr},
     output_byte_buffer_{nullptr}
-{
-    makeConnections();
-}
+{}
 
 BufferedPortFlowOperator::BufferedPortFlowOperator(PortFlowSettings settings,
                                                    QSerialPortInfo port,
                                                    QObject* parent):
     PortFlowOperator{settings , port , parent}
-{
-    makeConnections();
-}
+{}
 
 void BufferedPortFlowOperator::sendDataFromPortToBuffer()
 {
@@ -171,6 +162,18 @@ void BufferedPortFlowOperator::sendDataFromBufferToPort()
 
     if(current_port_.isWritable())
         current_port_.write(output_byte_buffer_->getAllBytes());
+}
+
+void BufferedPortFlowOperator::setInputByteBuffer(ByteBuffer* byte_buffer)
+{
+    input_byte_buffer_ = byte_buffer;
+    makeConnections();
+}
+
+void BufferedPortFlowOperator::setOutputByteBuffer(ByteBuffer* byte_buffer)
+{
+    output_byte_buffer_ = byte_buffer;
+    makeConnections();
 }
 
 void BufferedPortFlowOperator::makeConnections()

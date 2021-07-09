@@ -6,7 +6,8 @@ PortInputOperatorTEST::PortInputOperatorTEST():
     scanner_{},
     operator_{}
 {
-    operator_.setByteBuffer(&handler_);
+    operator_.setInputByteBuffer(&input_buffer_);
+    operator_.setOutputByteBuffer(&output_buffer_);
     operator_.changeSettings(port::StandardSettings::getStandardSettings(port::StandardSetting::StandardSetting9600));
 }
 
@@ -27,8 +28,8 @@ void PortInputOperatorTEST::waitAndShowArrivingData()
                      checker_.getLoopPtr() , &QEventLoop::quit);
     checker_.waitAndProcessObjectEvent();
 
-    EXPECT_FALSE(handler_.isEmpty());
-    qDebug() << handler_.getAllBytes();
+    EXPECT_FALSE(input_buffer_.isEmpty());
+    qDebug() << input_buffer_.getAllBytes();
 }
 
 void PortInputOperatorTEST::openPort()

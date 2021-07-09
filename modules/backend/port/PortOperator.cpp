@@ -60,8 +60,8 @@ PortStateOperator::PortStateOperator(QObject* parent):
     current_port_info_{}
 {}
 
-PortStateOperator::PortStateOperator(QSerialPortInfo port ,
-                                     PortFlowSettings settings,
+PortStateOperator::PortStateOperator(PortFlowSettings settings,
+                                     QSerialPortInfo port ,
                                      QObject* parent):
     QObject{parent},
     current_port_{this},
@@ -99,6 +99,22 @@ bool PortStateOperator::openPort()
     return current_port_.open(QSerialPort::ReadWrite);
 }
 
+///
+
+PortFlowOperator::PortFlowOperator(QObject* parent):
+    PortStateOperator{parent}
+{
+    makeConnections();
+}
+
+PortFlowOperator::PortFlowOperator( PortFlowSettings settings,
+                                    QSerialPortInfo port,
+                                    QObject* parent):
+    PortStateOperator{settings , port , parent}
+{
+    makeConnections();
+}
+
 void PortFlowOperator::makeConnections()
 {
     connect(&current_port_ , &QSerialPort::readyRead ,
@@ -108,36 +124,10 @@ void PortFlowOperator::makeConnections()
             this , &PortFlowOperator::dataSent );
 }
 
-
-
-/*
-
-BufferedPortFlowOperator::BufferedPortFlowOperator(QObject* parent):
-    current_byte_buffer_{nullptr}
-{
-     current_byte_buffer_->setParent(parent);
-}
-
-BufferedPortFlowOperator::BufferedPortFlowOperator(ByteBuffer* data_handler ,
-                                           QObject*    parent):
-    current_byte_buffer_{data_handler}
-{
-    current_byte_buffer_->setParent(parent);
-}
-*/
-
 void BufferedPortFlowOperator::setOutputByteBuffer(ByteBuffer* byte_buffer)
 {
     output_byte_buffer_ = byte_buffer;
 }
-
-/*
-PortFlowOperator::PortFlowOperator(QObject* parent):
-    BufferedPortFlowOperator{QSerialPort::ReadOnly , parent}
-{
-    makeConnections();
-}
-*/
 
 void PortFlowOperator::sendBytesToPort(const QByteArray& array)
 {
@@ -149,21 +139,23 @@ QByteArray PortFlowOperator::getAllBytesFromPort()
     return current_port_.readAll();
 }
 
-/*
-PortFlowOperator::PortFlowOperator(PortFlowSettings settings ,
-                                     QSerialPortInfo  port     ,
-                                     ByteBuffer* byte_buffer   ,
-                                     QObject* parent ):
-    BufferedPortFlowOperator{settings,
-                         port ,
-                         QSerialPort::ReadOnly ,
-                         byte_buffer ,
-                         parent }
+///
+
+BufferedPortFlowOperator::BufferedPortFlowOperator(QObject* parent):
+    PortFlowOperator{parent},
+    input_byte_buffer_{nullptr},
+    output_byte_buffer_{nullptr}
 {
     makeConnections();
 }
 
-*/
+BufferedPortFlowOperator::BufferedPortFlowOperator(PortFlowSettings settings,
+                                                   QSerialPortInfo port,
+                                                   QObject* parent):
+    PortFlowOperator{settings , port , parent}
+{
+    makeConnections();
+}
 
 void BufferedPortFlowOperator::sendDataFromPortToBuffer()
 {
@@ -171,12 +163,6 @@ void BufferedPortFlowOperator::sendDataFromPortToBuffer()
 
     input_byte_buffer_->appendBytes(std::move(current_port_.readAll()));
     emit dataArrived();
-}
-
-void BufferedPortFlowOperator::makeConnections()
-{
-    connect(input_byte_buffer_ , &ByteBuffer::bytesArrived ,
-            this , &BufferedPortFlowOperator::sendDataFromBufferToPort );
 }
 
 void BufferedPortFlowOperator::sendDataFromBufferToPort()
@@ -187,5 +173,13 @@ void BufferedPortFlowOperator::sendDataFromBufferToPort()
         current_port_.write(output_byte_buffer_->getAllBytes());
 }
 
+void BufferedPortFlowOperator::makeConnections()
+{
+    connect(&current_port_ , &QSerialPort::readyRead ,
+            this , &BufferedPortFlowOperator::sendDataFromPortToBuffer );
+
+    connect(output_byte_buffer_ , &port::ByteBuffer::bytesArrived ,
+            this , &BufferedPortFlowOperator::sendDataFromBufferToPort );
+}
 
 }

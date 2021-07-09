@@ -38,8 +38,8 @@ protected:
     QSerialPortInfo current_port_info_;
 public:
     PortStateOperator(QObject* parent = nullptr);
-    PortStateOperator(QSerialPortInfo port ,
-                      PortFlowSettings settings,
+    PortStateOperator(PortFlowSettings settings,
+                      QSerialPortInfo port ,
                       QObject* parent = nullptr);
 public slots:
     void changePort(QSerialPortInfo port);
@@ -52,8 +52,8 @@ class PortFlowOperator:
         public PortStateOperator
 {
     Q_OBJECT;
-protected:
-    virtual void makeConnections();
+private:
+    void makeConnections();
 public:
     PortFlowOperator( QObject* parent = nullptr);
     PortFlowOperator( PortFlowSettings settings ,
@@ -74,13 +74,13 @@ class BufferedPortFlowOperator:
 protected:
     ByteBuffer* input_byte_buffer_;
     ByteBuffer* output_byte_buffer_;
-protected:
-    virtual void makeConnections();
+private:
+    void makeConnections();
 public:
     BufferedPortFlowOperator(QObject* parent = nullptr);
-    PortFlowOperator( PortFlowSettings settings ,
-                      QSerialPortInfo  port     ,
-                      QObject* parent = nullptr);
+    BufferedPortFlowOperator( PortFlowSettings settings ,
+                              QSerialPortInfo  port     ,
+                              QObject* parent = nullptr);
 protected slots:
     void sendDataFromPortToBuffer(); //invoked automatically
     void sendDataFromBufferToPort(); //invoked automatically

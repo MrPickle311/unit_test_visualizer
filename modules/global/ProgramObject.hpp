@@ -2,10 +2,12 @@
 
 #include <QString>
 
+
+
 class ThrowingObject
 {
 public:
-    void throwIf(bool when_throw , std::string msg);
+    void throwIf(bool when_throw , std::string msg) const noexcept(false);
 };
 
 class ProgramObject:
@@ -14,3 +16,5 @@ class ProgramObject:
 public:
 
 };
+
+

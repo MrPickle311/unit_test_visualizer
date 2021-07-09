@@ -24,9 +24,6 @@ private:
     using SerialPortInfoMethod = std::function<DataType(const QSerialPortInfo& )>;
     template<typename DataType>
     QList<DataType> getSerialInfoList(SerialPortInfoMethod<DataType> method_to_call) const;
-private:
-    template<typename... Args>
-    QStringList     joinStringListElements(Args... args) const;
 public:
     PortScanner(QObject* parent = nullptr);
     QSerialPortInfo getSelectedPort(uint port_nmbr) const;
@@ -53,13 +50,19 @@ public:
                      const QSerialPort::StopBits& stop_bits);
     PortFlowSettings(const PortFlowSettings& other) = default;
     PortFlowSettings() = default;
+public:
     PortFlowSettings cloneSettings() const;
-    //getters
+
     const QSerialPort::BaudRate& baudRate() const;
     const QSerialPort::DataBits& dataBits() const;
     const QSerialPort::FlowControl& flowControl() const;
     const QSerialPort::Parity& parity() const;
     const QSerialPort::StopBits& stopBits() const;
+    void setBaudRate(const QSerialPort::BaudRate& newBaud_rate);
+    void setDataBits(const QSerialPort::DataBits& newData_bits);
+    void setFlowControl(const QSerialPort::FlowControl& newFlow_control);
+    void setParity(const QSerialPort::Parity& newParity);
+    void setStopBits(const QSerialPort::StopBits& newStop_bits);
 };
 
 enum class StandardSetting : size_t

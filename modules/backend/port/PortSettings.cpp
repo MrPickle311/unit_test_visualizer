@@ -1,5 +1,6 @@
 #include "../PortSettings.hpp"
 #include <QMutexLocker>
+#include "../../global/GlobalFunctions.hpp"
 
 namespace port
 {
@@ -21,35 +22,10 @@ QList<DataType> PortScanner::getSerialInfoList(SerialPortInfoMethod<DataType> me
     return data_list;
 }
 
-template<typename... Args>
-QStringList PortScanner::joinStringListElements(Args... args) const
-{
-    QStringList result;
-
-    bool isBegin{true};
-
-    auto appender = [&](QStringList list){
-        for(int i{0} ; i < list.size() ; ++i)
-        {
-            if(isBegin)//its first invocation of appender(args) , allocate the memory for nodes
-                result.push_back({});
-            result[i] += " " + list[i];
-        }
-
-        isBegin = false;
-    };
-
-    (appender(args), ...);
-
-    return result;
-}
-
-
 QSerialPortInfo PortScanner::getSelectedPort(uint port_nmbr) const
 {
-    throwIf////!!!
-    if(port_nmbr >= static_cast<uint>(avalaible_ports_.size()))
-        throw std::logic_error{"port_nmbr >= avalaible ports number!\n"};
+    throwIf(port_nmbr >= static_cast<uint>(avalaible_ports_.size()),
+            "port_nmbr >= avalaible ports number!");
 
     return avalaible_ports_[port_nmbr];
 }
@@ -71,7 +47,7 @@ QStringList PortScanner::getPortDescriptions() const
 
 QStringList PortScanner::getCompletePortData() const
 {
-    return joinStringListElements(getPortNames() , getPortDescriptions() );
+    return joinStringListElements( getPortNames() , getPortDescriptions() );
 }
 
 void PortScanner::rescan()
@@ -107,6 +83,31 @@ const QSerialPort::Parity& PortFlowSettings::parity() const
 const QSerialPort::StopBits& PortFlowSettings::stopBits() const
 {
     return stop_bits_;
+}
+
+void PortFlowSettings::setBaudRate(const QSerialPort::BaudRate& newBaud_rate)
+{
+    baud_rate_ = newBaud_rate;
+}
+
+void PortFlowSettings::setDataBits(const QSerialPort::DataBits& newData_bits)
+{
+    data_bits_ = newData_bits;
+}
+
+void PortFlowSettings::setFlowControl(const QSerialPort::FlowControl& newFlow_control)
+{
+    flow_control_ = newFlow_control;
+}
+
+void PortFlowSettings::setParity(const QSerialPort::Parity& newParity)
+{
+    parity_ = newParity;
+}
+
+void PortFlowSettings::setStopBits(const QSerialPort::StopBits& newStop_bits)
+{
+    stop_bits_ = newStop_bits;
 }
 
 PortFlowSettings::PortFlowSettings(const QSerialPort::BaudRate& baud_rate,

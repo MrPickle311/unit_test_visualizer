@@ -76,8 +76,8 @@ void PortInputOperator::setDataHandler(DataHandler* handler)
 void PortInputOperator::sendDataFromPortToHandler()
 {
     //TODO: logic error if handler_ == nullptr!!!
-    qDebug() << "Data arrived! : " << current_port_.readAll();
     current_data_handler_->appendReceivedBytes(std::move(current_port_.readAll()));
+    emit dataArrived();
 }
 
 

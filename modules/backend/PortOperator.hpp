@@ -48,6 +48,8 @@ public:
     void setDataHandler(DataHandler* handler);
 public slots:
     void sendDataFromPortToHandler(); //invoked automatically
+signals:
+    void dataArrived();
 };
 
 }

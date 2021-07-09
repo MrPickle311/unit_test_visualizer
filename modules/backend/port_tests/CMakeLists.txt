@@ -66,7 +66,7 @@ set(PORT_LIBS
     Port)
 
 function(add_test_exec test_name test_files test_libs)
-    add_executable(${test_name} ${test_files} common.hpp ${GTestFiles})
+    add_executable(${test_name} ${test_files} ${GTestFiles})
     target_include_directories(${test_name} PRIVATE ../)
     target_compile_definitions(${test_name}
        PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
@@ -76,6 +76,8 @@ endfunction()
 
 set(PortTests_files
     main.cpp
+    common.cpp
+    common.hpp
     Port_UnitTests.cpp
     Port_UnitTests.hpp
     Port_IntegrationTests.cpp

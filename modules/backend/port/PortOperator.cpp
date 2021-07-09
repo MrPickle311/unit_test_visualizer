@@ -93,40 +93,58 @@ bool PortOperator::openPort()
     return current_port_.open(this->open_mode_);
 }
 
+BufferedPortOperator::BufferedPortOperator(QIODevice::OpenMode open_mode,
+                                           QObject* parent):
+    PortOperator{open_mode, parent},
+    current_byte_buffer_{nullptr}
+{}
+
+BufferedPortOperator::BufferedPortOperator(PortFlowSettings       settings     ,
+                                           QSerialPortInfo        port         ,
+                                           QSerialPort::OpenMode  open_mode    ,
+                                           ByteBuffer*            data_handler ,
+                                           QObject*               parent):
+    PortOperator{open_mode , parent},
+    current_byte_buffer_{data_handler}
+{
+    changePort(port);
+    changeSettings(settings);
+}
+
+void BufferedPortOperator::setByteBuffer(ByteBuffer* handler)
+{
+    current_byte_buffer_ = handler;
+}
+
 void PortInputOperator::makeConnections()
 {
     connect(&current_port_ , &QSerialPort::readyRead ,
-            this , &PortInputOperator::sendDataFromPortToHandler );
+            this , &PortInputOperator::sendDataFromPortToBuffer );
 }
 
 PortInputOperator::PortInputOperator(QObject* parent):
-    PortOperator{QSerialPort::ReadOnly , parent},
-    current_data_handler_{nullptr}
+    BufferedPortOperator{QSerialPort::ReadOnly , parent}
 {
     makeConnections();
 }
 
 PortInputOperator::PortInputOperator(PortFlowSettings settings ,
                                      QSerialPortInfo  port     ,
-                                     ByteBuffer*     data_handler ,
-                                     QObject*         parent):
-    PortOperator{QSerialPort::ReadOnly , parent},
-    current_data_handler_{data_handler}
+                                     ByteBuffer* byte_buffer   ,
+                                     QObject* parent ):
+    BufferedPortOperator{settings,
+                         port ,
+                         QSerialPort::ReadOnly ,
+                         byte_buffer ,
+                         parent }
 {
-    changePort(port);
-    changeSettings(settings);
     makeConnections();
 }
 
-void PortInputOperator::setDataHandler(ByteBuffer* handler)
-{
-    current_data_handler_ = handler;
-}
-
-void PortInputOperator::sendDataFromPortToHandler()
+void PortInputOperator::sendDataFromPortToBuffer()
 {
     //TODO: logic error if handler_ == nullptr!!!
-    current_data_handler_->appendBytes(std::move(current_port_.readAll()));
+    current_byte_buffer_->appendBytes(std::move(current_port_.readAll()));
     emit dataArrived();
 }
 

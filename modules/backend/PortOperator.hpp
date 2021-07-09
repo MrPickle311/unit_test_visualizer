@@ -5,7 +5,8 @@
 namespace port
 {
 
-class ByteBuffer : public QObject
+class ByteBuffer :
+        public QObject
 {
     Q_OBJECT;
 private:
@@ -26,7 +27,8 @@ signals:
 };
 
 //one operator per one port
-class PortOperator : public QObject//it only opens a port , nothing else
+class PortOperator :
+        public QObject//it only opens a port , nothing else
 {
     Q_OBJECT;
 protected:
@@ -45,31 +47,53 @@ public slots:
     bool openPort();
 };
 
-class PortInputOperator : public PortOperator
+class BufferedPortOperator:
+        public PortOperator
 {
     Q_OBJECT;
-private:
-    ByteBuffer* current_data_handler_;
+protected:
+    ByteBuffer* current_byte_buffer_;
+public:
+    void setByteBuffer(ByteBuffer* handler);
+    BufferedPortOperator(QSerialPort::OpenMode  open_mode ,
+                         QObject* parent = nullptr);
+    BufferedPortOperator(PortFlowSettings      settings  ,
+                         QSerialPortInfo       port      ,
+                         QSerialPort::OpenMode open_mode ,
+                         ByteBuffer* byte_buffer         ,
+                         QObject* parent = nullptr);
+};
+
+class PortInputOperator :
+        public BufferedPortOperator
+{
+    Q_OBJECT;
 private:
     void makeConnections();
 public:
     PortInputOperator(QObject* parent = nullptr);
     PortInputOperator(PortFlowSettings settings ,
                       QSerialPortInfo  port     ,
-                      ByteBuffer* data_handler ,
+                      ByteBuffer* byte_buffer ,
                       QObject* parent = nullptr);
-public:
-    void setDataHandler(ByteBuffer* handler);
 public slots:
-    void sendDataFromPortToHandler(); //invoked automatically
+    void sendDataFromPortToBuffer(); //invoked automatically
 signals:
-    void dataArrived();
+    void dataArrived();//external signal ,for user , data <- serial
 };
 
+/*
 class PortOutputOperator:
         public PortOperator
 {
-
+    Q_OBJECT;
+private:
+    ByteBuffer* current_data_handler_;
+public:
+    void sendDataFromBufferToPort();
+signals:
+    void dataSent();//external signal ,for user data -> serial
 };
+*/
 
 }

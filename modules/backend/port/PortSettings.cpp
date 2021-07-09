@@ -47,6 +47,7 @@ QStringList PortScanner::joinStringListElements(Args... args) const
 
 QSerialPortInfo PortScanner::getSelectedPort(uint port_nmbr) const
 {
+    throwIf////!!!
     if(port_nmbr >= static_cast<uint>(avalaible_ports_.size()))
         throw std::logic_error{"port_nmbr >= avalaible ports number!\n"};
 

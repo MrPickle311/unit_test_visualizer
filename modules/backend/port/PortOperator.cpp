@@ -17,8 +17,8 @@ QByteArray ByteBuffer::splitByteArray(size_t count)
 {
     QMutexLocker lock{&data_mutex_};
 
-    if(static_cast<int>(count) > received_bytes_.size())
-        throw std::logic_error{"requested count of bytes > received_bytes_.size()!\n"};
+    throwIf(static_cast<int>(count) > received_bytes_.size(),
+            "requested count of bytes > received_bytes_.size()!\n");
 
     QByteArray temp {received_bytes_.left(count)};
     received_bytes_ = received_bytes_.right( received_bytes_.size() - count );
@@ -85,10 +85,9 @@ void PortOperator::closePort()
 
 bool PortOperator::openPort()
 {
-    if(current_port_.isOpen())
-        throw std::logic_error{std::string{"This port(" } +
-                               current_port_.portName().toStdString() +
-                                       std::string{" ) is arleady open!"}};
+    throwIf(current_port_.isOpen(), {"This port("  +
+            current_port_.portName().toStdString() + " ) is arleady open!"});
+
     openHook();
     return current_port_.open(this->open_mode_);
 }
@@ -143,9 +142,8 @@ PortInputOperator::PortInputOperator(PortFlowSettings settings ,
 
 void PortInputOperator::sendDataFromPortToBuffer()
 {
-    //TODO: logic error if handler_ == nullptr!!!
-    ProgramObject obj;
-    obj.say();
+    throwIf(current_byte_buffer_ == nullptr , "Byte buffer not initialized!");
+
     current_byte_buffer_->appendBytes(std::move(current_port_.readAll()));
     emit dataArrived();
 }
@@ -177,6 +175,8 @@ PortOutputOperator::PortOutputOperator(PortFlowSettings settings ,
 
 void PortOutputOperator::sendDataFromBufferToPort()
 {
+    throwIf(current_byte_buffer_ == nullptr , "Byte buffer not initialized!");
+
     if(current_port_.isWritable())
         current_port_.write(current_byte_buffer_->getAllBytes());
 }

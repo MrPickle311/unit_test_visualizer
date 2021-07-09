@@ -7,11 +7,14 @@
 #include <QMap>
 #include <QSerialPortInfo>
 #include <QMutex>
+#include "../global/ProgramObject.hpp"
 
 namespace port
 {
 
-class PortScanner : public QObject
+class PortScanner :
+        public QObject,
+        public ProgramObject
 {
     Q_OBJECT;
 private:

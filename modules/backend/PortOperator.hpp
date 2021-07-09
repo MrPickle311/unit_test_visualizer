@@ -7,7 +7,8 @@ namespace port
 {
 
 class ByteBuffer :
-        public QObject
+        public QObject,
+        public ProgramObject
 {
     Q_OBJECT;
 private:
@@ -29,7 +30,8 @@ signals:
 
 //one operator per one port
 class PortOperator :
-        public QObject//it only opens a port , nothing else
+        public QObject,//it only opens a port , nothing else
+        public ProgramObject
 {
     Q_OBJECT;
 protected:

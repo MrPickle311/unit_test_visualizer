@@ -1,7 +1,9 @@
 #include "../ProgramObject.hpp"
 #include <QtDebug>
 
-void ProgramObject::say()
+
+void ThrowingObject::throwIf(bool when_throw, std::string msg)
 {
-    qDebug() << "XDXDXDXD";
+    if(when_throw)
+        throw std::logic_error {msg};
 }

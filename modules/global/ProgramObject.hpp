@@ -1,7 +1,16 @@
 #pragma once
 
-class ProgramObject
+#include <QString>
+
+class ThrowingObject
 {
 public:
-    void say();
+    void throwIf(bool when_throw , std::string msg);
+};
+
+class ProgramObject:
+        public ThrowingObject
+{
+public:
+
 };

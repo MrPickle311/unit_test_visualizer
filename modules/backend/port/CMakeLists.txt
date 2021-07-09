@@ -11,6 +11,6 @@ add_library( Port
              ${port_private_hpp_files}
             )
 
-target_link_libraries(Port Qt5::Core Qt5::Quick Qt5::SerialPort)
+target_link_libraries(Port Qt5::Core Qt5::Quick Qt5::SerialPort ProgramObject)
 
 set_target_properties(Port PROPERTIES LINKER_LANGUAGE CXX)

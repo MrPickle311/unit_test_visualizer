@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PortSettings.hpp"
+#include "../global/ProgramObject.hpp"
 
 namespace port
 {
@@ -92,9 +93,9 @@ private:
 public:
     PortOutputOperator(QObject* parent = nullptr);
     PortOutputOperator(PortFlowSettings settings ,
-                      QSerialPortInfo  port     ,
-                      ByteBuffer* byte_buffer ,
-                      QObject* parent = nullptr);
+                       QSerialPortInfo  port     ,
+                       ByteBuffer* byte_buffer ,
+                       QObject* parent = nullptr);
 public:
     void sendDataFromBufferToPort();
 signals:

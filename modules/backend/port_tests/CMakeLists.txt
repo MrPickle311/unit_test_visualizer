@@ -56,14 +56,15 @@ include_directories(${GTestIncludes})
 
 ##tested .cpp files
 
-add_subdirectory("../port" build)
+add_subdirectory("../../" build)
 
 ##tested .cpp files END
 
 ##qt service stage 2
 
 set(PORT_LIBS
-    Port)
+    Port
+    ProgramObject)
 
 function(add_test_exec test_name test_files test_libs)
     add_executable(${test_name} ${test_files} ${GTestFiles})

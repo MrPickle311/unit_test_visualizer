@@ -144,6 +144,8 @@ PortInputOperator::PortInputOperator(PortFlowSettings settings ,
 void PortInputOperator::sendDataFromPortToBuffer()
 {
     //TODO: logic error if handler_ == nullptr!!!
+    ProgramObject obj;
+    obj.say();
     current_byte_buffer_->appendBytes(std::move(current_port_.readAll()));
     emit dataArrived();
 }

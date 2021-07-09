@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.15.1, 2021-07-08T23:27:19. -->
+<!-- Written by QtCreator 4.15.1, 2021-07-09T12:57:23. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -68,11 +68,10 @@
     <value type="bool" key="AutoTest.Framework.QtTest">true</value>
    </valuemap>
    <valuemap type="QVariantMap" key="AutoTest.CheckStates">
-    <value type="Qt::CheckState" key="1@C:/Users/Damian/Desktop/Projects/C++ Projects/Qt/uart_unit_test_visualizer/modules/backend/port_tests/PortOperator_TESTS.cpp:DataHandlerTEST">Checked</value>
-    <value type="Qt::CheckState" key="1@C:/Users/Damian/Desktop/Projects/C++ Projects/Qt/uart_unit_test_visualizer/modules/backend/port_tests/PortOperator_TESTS.cpp:LogicTest">Checked</value>
-    <value type="Qt::CheckState" key="1@C:/Users/Damian/Desktop/Projects/C++ Projects/Qt/uart_unit_test_visualizer/modules/backend/port_tests/PortOperator_TESTS.cpp:PortInputOperatorTEST">Checked</value>
-    <value type="Qt::CheckState" key="1@C:/Users/Damian/Desktop/Projects/C++ Projects/Qt/uart_unit_test_visualizer/modules/backend/port_tests/PortOperator_TESTS.cpp:SignalTest">Checked</value>
-    <value type="Qt::CheckState" key="1@C:/Users/Damian/Desktop/Projects/C++ Projects/Qt/uart_unit_test_visualizer/modules/backend/port_tests/PortOperator_TESTS.cpp:ThrowingTest">Checked</value>
+    <value type="Qt::CheckState" key="1@C:/Users/Damian/Desktop/Projects/C++ Projects/Qt/uart_unit_test_visualizer/modules/backend/port_tests/Port_UnitTests.cpp:DataHandlerTEST_body">Checked</value>
+    <value type="Qt::CheckState" key="1@C:/Users/Damian/Desktop/Projects/C++ Projects/Qt/uart_unit_test_visualizer/modules/backend/port_tests/Port_UnitTests.cpp:LogicTest">Checked</value>
+    <value type="Qt::CheckState" key="1@C:/Users/Damian/Desktop/Projects/C++ Projects/Qt/uart_unit_test_visualizer/modules/backend/port_tests/Port_UnitTests.cpp:SignalTest">Checked</value>
+    <value type="Qt::CheckState" key="1@C:/Users/Damian/Desktop/Projects/C++ Projects/Qt/uart_unit_test_visualizer/modules/backend/port_tests/Port_UnitTests.cpp:ThrowingTest">Checked</value>
    </valuemap>
    <value type="int" key="AutoTest.RunAfterBuild">0</value>
    <value type="bool" key="AutoTest.UseGlobal">true</value>
@@ -115,7 +114,7 @@
 -DCMAKE_PREFIX_PATH:STRING=%{Qt:QT_INSTALL_PREFIX}
 -DCMAKE_C_COMPILER:STRING=%{Compiler:Executable:C}
 -DCMAKE_CXX_COMPILER:STRING=%{Compiler:Executable:Cxx}</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">C:\Users\Damian\Desktop\Projects\C++ Projects\Qt\uart_unit_test_visualizer\..\build-uart_unit_test_visualizer-Desktop_Qt_5_15_2_MinGW_64_bit-Debug</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">C:\Users\Damian\Desktop\Projects\C++ Projects\Qt\uart_unit_test_visualizer\build</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <valuelist type="QVariantList" key="CMakeProjectManager.MakeStep.BuildTargets">
@@ -367,7 +366,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseTerminal">true</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">C:/Users/Damian/Desktop/Projects/C++ Projects/Qt/build-uart_unit_test_visualizer-Desktop_Qt_5_15_2_MinGW_64_bit-Debug</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">C:/Users/Damian/Desktop/Projects/C++ Projects/Qt/uart_unit_test_visualizer/build</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.1">
     <value type="QString" key="Analyzer.Perf.CallgraphMode">dwarf</value>

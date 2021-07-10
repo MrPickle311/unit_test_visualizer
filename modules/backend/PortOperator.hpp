@@ -75,7 +75,9 @@ protected:
     ByteBuffer* input_byte_buffer_;
     ByteBuffer* output_byte_buffer_;
 private:
-    void makeConnections();
+    void makeInputBufferConnections();
+    void makeOutputBufferConnections();
+    void checkBuffer(ByteBuffer* buffer) noexcept(false);
 public:
     BufferedPortFlowOperator(QObject* parent = nullptr);
     BufferedPortFlowOperator( PortFlowSettings settings ,

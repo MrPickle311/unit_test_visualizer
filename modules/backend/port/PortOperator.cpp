@@ -150,7 +150,7 @@ BufferedPortFlowOperator::BufferedPortFlowOperator(PortFlowSettings settings,
 
 void BufferedPortFlowOperator::sendDataFromPortToBuffer()
 {
-    throwIf(input_byte_buffer_ == nullptr , "Byte buffer not initialized!");
+    checkBuffer(input_byte_buffer_);
 
     input_byte_buffer_->appendBytes(std::move(current_port_.readAll()));
     emit dataArrived();
@@ -158,7 +158,7 @@ void BufferedPortFlowOperator::sendDataFromPortToBuffer()
 
 void BufferedPortFlowOperator::sendDataFromBufferToPort()
 {
-    throwIf(output_byte_buffer_ == nullptr , "Byte buffer not initialized!");
+    checkBuffer(output_byte_buffer_);
 
     if(current_port_.isWritable())
         current_port_.write(output_byte_buffer_->getAllBytes());
@@ -166,23 +166,35 @@ void BufferedPortFlowOperator::sendDataFromBufferToPort()
 
 void BufferedPortFlowOperator::setInputByteBuffer(ByteBuffer* byte_buffer)
 {
+    checkBuffer(byte_buffer);
+
     input_byte_buffer_ = byte_buffer;
-    makeConnections();
+    makeInputBufferConnections();
 }
 
 void BufferedPortFlowOperator::setOutputByteBuffer(ByteBuffer* byte_buffer)
 {
+    checkBuffer(byte_buffer);
+
     output_byte_buffer_ = byte_buffer;
-    makeConnections();
+    makeOutputBufferConnections();
 }
 
-void BufferedPortFlowOperator::makeConnections()
+void BufferedPortFlowOperator::makeInputBufferConnections()
 {
     connect(&current_port_ , &QSerialPort::readyRead ,
             this , &BufferedPortFlowOperator::sendDataFromPortToBuffer );
+}
 
+void BufferedPortFlowOperator::makeOutputBufferConnections()
+{
     connect(output_byte_buffer_ , &port::ByteBuffer::bytesArrived ,
             this , &BufferedPortFlowOperator::sendDataFromBufferToPort );
+}
+
+void BufferedPortFlowOperator::checkBuffer(ByteBuffer* buffer) noexcept(false)
+{
+    throwIf(buffer == nullptr , "Byte buffer is nullptr!");
 }
 
 }

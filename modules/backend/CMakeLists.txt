@@ -18,6 +18,7 @@
 ##adding subdirectories automatically END
 
 add_subdirectory(port)
+add_subdirectory(parser)
 
 set(backend_public_headers
     PortOperator.hpp

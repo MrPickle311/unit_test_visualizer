@@ -17,4 +17,9 @@ public:
 
 };
 
+class ConnectedObject_interface
+{
+public:
+    virtual void makeConnections() = 0;
+};
 

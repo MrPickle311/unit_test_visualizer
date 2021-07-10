@@ -23,10 +23,14 @@ void PortInputOperatorTEST::showPorts() const
 
 void PortInputOperatorTEST::waitAndShowArrivingData()
 {
-    SignalChecker<port::PortFlowOperator> checker_{};
+    SignalChecker input_checker;
+
     QObject::connect(&operator_ ,&port::PortFlowOperator::dataArrived,
-                     checker_.getLoopPtr() , &QEventLoop::quit);
-    checker_.waitAndProcessObjectEvent();
+                     &input_checker , &SignalChecker::checkEvent);
+
+    output_buffer_.appendBytes(QByteArray{"gg"});
+
+    input_checker.waitAndProcessObjectEvent();
 
     EXPECT_FALSE(input_buffer_.isEmpty());
     qDebug() << input_buffer_.getAllBytes();
@@ -40,7 +44,7 @@ void PortInputOperatorTEST::openPort()
 void PortInputOperatorTEST::runIntegrationTest()
 {
     EXPECT_NO_THROW(showPorts());
-    EXPECT_NO_FATAL_FAILURE(selectPort(1));
+    EXPECT_NO_FATAL_FAILURE(selectPort(0));
     EXPECT_NO_THROW(operator_.openPort());
     EXPECT_NO_THROW(waitAndShowArrivingData());
 }

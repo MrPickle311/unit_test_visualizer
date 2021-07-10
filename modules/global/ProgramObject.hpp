@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QString>
-
+#include <QObject>
 
 
 class ThrowingObject
@@ -19,7 +19,7 @@ public:
 
 class ConnectedObject_interface
 {
-public:
+protected:
     virtual void makeConnections() = 0;
 };
 

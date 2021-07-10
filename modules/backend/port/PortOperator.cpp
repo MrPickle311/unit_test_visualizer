@@ -10,6 +10,8 @@ void ByteBuffer::appendBytes(const QByteArray& array)
 {
     QMutexLocker lock{&data_mutex_};
     received_bytes_.append(array);
+    lock.unlock();
+
     emit bytesArrived(array.size());
 }
 
@@ -22,6 +24,8 @@ QByteArray ByteBuffer::splitByteArray(size_t count)
 
     QByteArray temp {received_bytes_.left(count)};
     received_bytes_ = received_bytes_.right( received_bytes_.size() - count );
+
+    lock.unlock();
 
     emit bytesExtracted(count );
     return temp;
@@ -162,6 +166,8 @@ void BufferedPortFlowOperator::sendDataFromBufferToPort()
 
     if(current_port_.isWritable())
         current_port_.write(output_byte_buffer_->getAllBytes());
+
+    emit dataSent();
 }
 
 void BufferedPortFlowOperator::setInputByteBuffer(ByteBuffer* byte_buffer)

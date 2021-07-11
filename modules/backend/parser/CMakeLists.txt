@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 
 set(parser_cpp_files
-	)
+        Parser.cpp)
 
 set(parser_private_hpp_files )
 

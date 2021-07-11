@@ -1,29 +1,29 @@
 #include "Port_IntegrationTests.hpp"
 #include "Port_UnitTests.hpp"
 #include <QCoreApplication>
+#include <QEventLoop>
 
-int main(int argc, char *argv[])
+void runAllUnitTests(int argc, char *argv[])
+{
+    ::testing::InitGoogleTest(&argc, argv);
+    RUN_ALL_TESTS();
+}
+
+void PortIntegrationTests()
+{
+    PortInputOperatorTEST operation_integration_test;
+    operation_integration_test.runIntegrationTest();
+}
+
+int main(int argc, char* argv[])
 {
     QCoreApplication app(argc, argv);
 
-    //UNIT TESTS
-    ::testing::InitGoogleTest(&argc, argv);
-    RUN_ALL_TESTS();
+    runAllUnitTests(argc, argv);
 
-    PortInputOperatorTEST operation_integration_test;
-    operation_integration_test.runIntegrationTest();
+    PortIntegrationTests();
 
-    //INTEGRATION TESTS
-
-    //PortScanner scanner;
-    //DataHandler handler;
-    //PortInputOperator operator_;
-    //
-    //operator_.changePort(scanner.getSelectedPort(1));
-    //operator_.setDataHandler(&handler);
-    //operator_.changeSettings(StandardSettings::getStandardSettings(StandardSetting::StandardSetting9600));
-    //qDebug() << operator_.openPort();
+    qDebug() << "Test done , now you can exit...";
 
     return app.exec();
-   // return RUN_ALL_TESTS();
 }

@@ -16,46 +16,46 @@ void ScannerTests::throwingTests()
 }
 
 
-DataHandlerTEST_body::DataHandlerTEST_body()
-    : handler_{}
+ByteBufferTEST_body::ByteBufferTEST_body()
+    : buffer_{}
 {}
 
-void DataHandlerTEST_body::appendChars(std::string bytes)
+void ByteBufferTEST_body::appendCharsToBuffer(std::string bytes)
 {
-    handler_.appendBytes(QByteArray{bytes.c_str()});
+    buffer_.appendBytes(QByteArray{bytes.c_str()});
 }
 
-QByteArray DataHandlerTEST_body::emptyHandler()
+QByteArray ByteBufferTEST_body::emptyBuffer()
 {
-    return handler_.getAllBytes();
+    return buffer_.getAllBytes();
 }
 
-bool DataHandlerTEST_body::isHandlerEmpty() const
+bool ByteBufferTEST_body::isBufferEmpty() const
 {
-    return handler_.isEmpty();
+    return buffer_.isEmpty();
 }
 
-size_t DataHandlerTEST_body::currentBytesCount() const
+size_t ByteBufferTEST_body::currentBytesCount() const
 {
-    return handler_.size();
+    return buffer_.size();
 }
 
-QByteArray DataHandlerTEST_body::getSeveralBytes(size_t count)
+QByteArray ByteBufferTEST_body::getSeveralBytes(size_t count)
 {
-    return handler_.getBytes(count);
+    return buffer_.getBytes(count);
 }
 
 
 
-TEST_F(DataHandlerTEST_body, ThrowingTest)
+TEST_F(ByteBufferTEST_body, ThrowingTest)
 {
-    EXPECT_NO_THROW ( appendChars("abcdef")) ;
+    EXPECT_NO_THROW ( appendCharsToBuffer("abcdef")) ;
 
-    EXPECT_NO_THROW( emptyHandler());
-    EXPECT_NO_THROW(  emptyHandler());
+    EXPECT_NO_THROW( emptyBuffer());
+    EXPECT_NO_THROW(  emptyBuffer());
     EXPECT_THROW( getSeveralBytes(FIVE_BYTES), std::logic_error);
 
-    appendChars("abcde");
+    appendCharsToBuffer("abcde");
 
     EXPECT_NO_THROW(getSeveralBytes(FIVE_BYTES));
 
@@ -64,64 +64,78 @@ TEST_F(DataHandlerTEST_body, ThrowingTest)
     EXPECT_NO_THROW(getSeveralBytes(NO_BYTES));
 }
 
-//TO REFACTOR
-TEST_F(DataHandlerTEST_body, LogicTest)
+
+
+void ByteBufferTEST_body::expectCurrentBytesCountInBuffer(size_t bytes_count)
 {
-    QByteArray bytes;
-    appendChars("abcde");
-
-    EXPECT_FALSE(isHandlerEmpty());
-
-    bytes = emptyHandler();
-
-    EXPECT_STREQ(bytes.data(),"abcde");
-    EXPECT_TRUE(isHandlerEmpty());
-    EXPECT_EQ(currentBytesCount() , NO_BYTES );
-
-    appendChars("112kk");
-    EXPECT_EQ(currentBytesCount() , FIVE_BYTES );
-
-    emptyHandler();
-
-    appendChars("");
-    EXPECT_EQ(currentBytesCount() , NO_BYTES );
-
-    appendChars("abcde");
-    bytes = getSeveralBytes(TWO_BYTES);
-
-    EXPECT_STREQ(bytes.data(),"ab");
-    EXPECT_EQ(handler_.size(),THREE_BYTES);
-
-    bytes = getSeveralBytes(ONE_BYTE);
-
-    EXPECT_STREQ(bytes.data(),"c");
-    EXPECT_EQ(handler_.size(),TWO_BYTES);
+    EXPECT_EQ(currentBytesCount() , bytes_count );
 }
 
-void DataHandler_SignalTester::expectBytes(size_t count)
+void ByteBufferTEST_body::emptyTest(QByteArray& bytes , std::string expected_bytes)
+{
+    EXPECT_STREQ(bytes.data(),expected_bytes.c_str());
+    expectCurrentBytesCountInBuffer(NO_BYTES);
+}
+
+void ByteBufferTEST_body::popTest(QByteArray& bytes , std::string expected_bytes,
+                                  size_t expected_bytes_count_in_buffer)
+{
+    bytes = getSeveralBytes(expected_bytes.size());
+    EXPECT_STREQ(bytes.data(),expected_bytes.c_str());
+    expectCurrentBytesCountInBuffer(expected_bytes_count_in_buffer);
+}
+
+TEST_F(ByteBufferTEST_body, LogicTest)
+{
+    QByteArray bytes;
+    appendCharsToBuffer("abcde");
+
+    EXPECT_FALSE(isBufferEmpty());
+
+    bytes = emptyBuffer();
+    emptyTest(bytes,"abcde");
+
+    EXPECT_TRUE(isBufferEmpty());
+
+    appendCharsToBuffer("112kk");
+    expectCurrentBytesCountInBuffer(FIVE_BYTES);
+
+    emptyBuffer();
+
+    appendCharsToBuffer("");
+    expectCurrentBytesCountInBuffer(NO_BYTES);
+
+    appendCharsToBuffer("abcde");
+
+    popTest(bytes, "ab" , THREE_BYTES);
+
+    popTest(bytes, "c" , TWO_BYTES);
+}
+
+void ByteBuffer_SignalTester::expectBytes(size_t count)
 {
     EXPECT_EQ(count, FIVE_BYTES);
 }
 
-void DataHandler_SignalTester::expectEmptyHandler(size_t count)
+void ByteBuffer_SignalTester::expectEmptyHandler(size_t count)
 {
     EXPECT_EQ(count , FIVE_BYTES );
 }
 
-DataHandler_SignalTester::~DataHandler_SignalTester(){}
+ByteBuffer_SignalTester::~ByteBuffer_SignalTester(){}
 
-TEST_F(DataHandlerTEST_body, SignalTest)
+TEST_F(ByteBufferTEST_body, SignalTest)
 {
-   DataHandler_SignalTester tester;
+   ByteBuffer_SignalTester tester;
 
-   QObject::connect(&handler_ , &port::ByteBuffer::bytesArrived , &tester ,
-                     &DataHandler_SignalTester::expectBytes);
-   QObject::connect(&handler_ , &port::ByteBuffer::bytesExtracted , &tester ,
-                     &DataHandler_SignalTester::expectEmptyHandler);
+   QObject::connect(&buffer_ , &port::ByteBuffer::bytesArrived , &tester ,
+                     &ByteBuffer_SignalTester::expectBytes);
+   QObject::connect(&buffer_ , &port::ByteBuffer::bytesExtracted , &tester ,
+                     &ByteBuffer_SignalTester::expectEmptyHandler);
 
-   appendChars("abcde");
-   emptyHandler();
-   EXPECT_TRUE(isHandlerEmpty());
+   appendCharsToBuffer("abcde");
+   emptyBuffer();
+   EXPECT_TRUE(isBufferEmpty());
 }
 
 

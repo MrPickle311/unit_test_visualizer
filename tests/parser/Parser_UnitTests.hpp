@@ -1,6 +1,7 @@
 #pragma once
 
 #include <common.hpp>
+#include <Parser.hpp>
 
 class Parser_UnitTests:
         public ::testing::Test
@@ -11,3 +12,7 @@ public:
     Parser_UnitTests();
 };
 
+class StateMachineTest
+{
+
+};

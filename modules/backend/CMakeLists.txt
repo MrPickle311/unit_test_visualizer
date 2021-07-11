@@ -28,8 +28,6 @@ set(backend_public_headers
 add_library(BACKEND_LIBRARIES STATIC
     ${backend_public_headers})
 
-#target_include_directories(BACKEND_LIBRARIES PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-
 target_link_libraries(BACKEND_LIBRARIES Port)
 target_link_libraries(BACKEND_LIBRARIES Qt5::Core Qt5::Quick Qt5::SerialPort)
 set_target_properties(BACKEND_LIBRARIES PROPERTIES LINKER_LANGUAGE CXX)

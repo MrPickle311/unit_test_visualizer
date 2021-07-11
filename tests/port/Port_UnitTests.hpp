@@ -1,12 +1,8 @@
 #pragma once
 
-#include <gtest/gtest.h>
-#include <gmock/gmock-matchers.h>
-#include "../PortOperator.hpp"
-#include "../PortSettings.hpp"
-#include <QObject>
-#include <string>
-#include "common.hpp"
+#include <PortOperator.hpp>
+#include <PortSettings.hpp>
+#include <common.hpp>
 
 class ScannerTests :
         public DebugLogger,

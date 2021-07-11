@@ -4,7 +4,10 @@
 #include <QTimer>
 #include <QEventLoop>
 #include <QObject>
-#include "../global/ProgramObject.hpp"
+#include <ProgramObject.hpp>
+#include <string>
+#include <gtest/gtest.h>
+#include <gmock/gmock-matchers.h>
 
 #define NO_BYTES     0
 #define ONE_BYTE     1

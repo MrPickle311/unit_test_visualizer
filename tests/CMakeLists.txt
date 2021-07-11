@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(PortTests LANGUAGES CXX)
+project(Tests LANGUAGES CXX)
 
 ##qt service stage 1
 
@@ -27,7 +27,7 @@ set(GTEST_COLOR=1)
 
 find_package(Threads REQUIRED)
 
-set(GOOGLETEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../extern/googletest")
+set(GOOGLETEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../extern/googletest")
 
 if (EXISTS ${GOOGLETEST_DIR})
     set(GTestSrc ${GOOGLETEST_DIR}/googletest)
@@ -56,37 +56,59 @@ include_directories(${GTestIncludes})
 
 ##tested .cpp files
 
-add_subdirectory("../../" build)
+add_subdirectory("../modules" build)
 
 ##tested .cpp files END
 
 ##qt service stage 2
 
-set(PORT_LIBS
+set(LIBS
     Port
-    ProgramObject)
+    ProgramObject
+    Parser)
 
-function(add_test_exec test_name test_files test_libs)
-    add_executable(${test_name} ${test_files} ${GTestFiles})
-    target_include_directories(${test_name} PRIVATE ../)
-    target_compile_definitions(${test_name}
-       PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
-   add_test(NAME ${test_name} COMMAND ${test_name})
-   target_link_libraries(${test_name} PRIVATE Threads::Threads Qt5::Core Qt5::Quick Qt5::SerialPort ${test_libs})
-endfunction()
+set(TESTED_DIRECTORIES
+    ${CMAKE_CURRENT_SOURCE_DIR}/../modules/global
+    ${CMAKE_CURRENT_SOURCE_DIR}/../modules/backend)
 
-set(PortTests_files
+set(TESTED_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/../modules/global/ProgramObject.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../modules/global/GlobalFunctions.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../modules/backend/PortSettings.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../modules/backend/PortOperator.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../modules/backend/Parser.hpp)
+
+set(PortTest_files
+    port/Port_UnitTests.cpp
+    port/Port_UnitTests.hpp
+    port/Port_IntegrationTests.cpp
+    port/Port_IntegrationTests.hpp)
+
+set(ParserTest_files
+    parser/Parser_UnitTests.cpp
+    parser/Parser_UnitTests.hpp
+    )
+
+set(Tests_files
     main.cpp
     common.cpp
     common.hpp
-    Port_UnitTests.cpp
-    Port_UnitTests.hpp
-    Port_IntegrationTests.cpp
-    Port_IntegrationTests.hpp
-    ../PortOperator.hpp
-    ../PortSettings.hpp)
+    ${PortTest_files}
+    ${TESTED_HEADERS}
+    ${ParserTest_files}
+    )
 
-add_test_exec(Port_Tests "${PortTests_files}" "${PORT_LIBS}")
+function(add_test_exec test_name test_files test_libs)
+    add_executable(${test_name} ${test_files} ${GTestFiles})
+    target_include_directories(${test_name} PUBLIC ${TESTED_DIRECTORIES})
+    target_compile_definitions(${test_name}
+       PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
+   add_test(NAME ${test_name} COMMAND ${test_name})
+   target_link_libraries(${test_name} PRIVATE
+       Threads::Threads Qt5::Core Qt5::Quick Qt5::SerialPort ${test_libs})
+endfunction()
+
+add_test_exec(Tests "${Tests_files}" "${LIBS}")
 
 ##qt service stage 2 END
 

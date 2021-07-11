@@ -1,7 +1,7 @@
-#include "Port_IntegrationTests.hpp"
-#include "Port_UnitTests.hpp"
+#include <port/Port_IntegrationTests.hpp>
+#include <port/Port_UnitTests.hpp>
 #include <QCoreApplication>
-#include <QEventLoop>
+#include <parser/Parser_UnitTests.hpp>
 
 void runAllUnitTests(int argc, char *argv[])
 {

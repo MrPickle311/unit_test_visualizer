@@ -79,24 +79,10 @@ struct Command
     Code command_code_;
 };
 
+//replace with using DataPackage = QByteArrayList;
 struct DataPackage
 {
     QByteArrayList parsed_data_;
-};
-
-struct UnitTestPackage:
-        public DataPackage
-{
-    QByteArray unit_test_name_;
-    Code       type_descriptor_;
-};
-
-struct ProcessorDependencies
-{
-    ProcessorDependencies();
-    ProcessorDependencies(QSharedPointer<QByteArray>  result ,port::ByteBuffer* buffer);
-    QSharedPointer<QByteArray>  result_;
-    port::ByteBuffer*           buffer_;
 };
 
 class AbstractProcessor
@@ -125,6 +111,13 @@ public:
     virtual QByteArray process(port::ByteBuffer* buffer) override;
 };
 
+class ValueProcessor:
+        public Processor
+{
+public:
+    virtual QByteArray process(port::ByteBuffer* buffer) override;
+};
+
 class ExpectedValueProcessor:
         public Processor
 {
@@ -146,20 +139,39 @@ public:
     virtual QByteArray process(port::ByteBuffer* buffer) override;
 };
 
+//useful singletons
+
+class TypesSizes
+{
+private:
+    static QMutex mutex_;
+    static QMap<TypeDescriptor , int> sizes_;
+    static bool sizes_initialized_;
+private:
+    static void addSize(TypeDescriptor desc , int size);
+    static void initSizes();
+protected:
+    TypesSizes(){};
+public:
+    static int getSize(TypeDescriptor desc) ;
+};
+
 class Processors
 {
 private:
     static QMutex mutex_;
-    static QMap<UnitTestCommand,std::shared_ptr<Processor>> processors_;
+    static QMap<UnitTestCommand , std::shared_ptr<Processor>> processors_;
     static bool processors_initialized_;
+    static TypeDescriptor current_type_;
 private:
     template<typename T>
     static void addProcessor(UnitTestCommand code);
     static void initProcessors();
 protected:
-    Processors();
+    Processors(){};
 public:
     static Processor* getProcessor(UnitTestCommand cmd);
+    static void setCurrentType(TypeDescriptor newCurrent_type);
 };
 
 

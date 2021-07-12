@@ -113,6 +113,10 @@ QByteArray parser::NameProcessor::process(port::ByteBuffer* buffer)
     return result;
 }
 
+QByteArray ValueProcessor::process(port::ByteBuffer* buffer)
+{
+}
+
 QByteArray parser::TypeDescriptorProcessor::process(port::ByteBuffer* buffer)
 {
     QByteArray result;
@@ -151,6 +155,11 @@ QByteArray TestResultProcessor::process(port::ByteBuffer* buffer)
 }
 
 
+void Processors::setCurrentType(TypeDescriptor newCurrent_type)
+{
+    current_type_ = newCurrent_type;
+}
+
 void Processors::initProcessors()
 {
     addProcessor<NameProcessor>(UnitTestCommand::SENDING_NAME);
@@ -158,6 +167,8 @@ void Processors::initProcessors()
     addProcessor<CurrentValueProcessor>(UnitTestCommand::SENDING_CURRENT_VALUE);
     addProcessor<ExpectedValueProcessor>(UnitTestCommand::SENDING_EXPECTED_VALUE);
     addProcessor<TestResultProcessor>(UnitTestCommand::SENDING_TEST_RESULT);
+
+    processors_initialized_ = true;
 }
 
 Processor* Processors::getProcessor(UnitTestCommand cmd)
@@ -168,10 +179,11 @@ Processor* Processors::getProcessor(UnitTestCommand cmd)
     return processors_[cmd].get();
 }
 
+//Processor singleton initialization
 QMutex Processors::mutex_{};
 QMap<UnitTestCommand,std::shared_ptr<Processor>> Processors::processors_;
 bool Processors::processors_initialized_{false};
-
+TypeDescriptor Processors::current_type_{};
 
 template<typename T>
 void Processors::addProcessor(UnitTestCommand code)
@@ -179,8 +191,44 @@ void Processors::addProcessor(UnitTestCommand code)
     processors_[code] = std::make_shared<T>();
 }
 
+//Sizes singleton initialization
 
+QMutex TypesSizes::mutex_{};
+QMap<TypeDescriptor , int> TypesSizes::sizes_{};
+bool TypesSizes::sizes_initialized_{false};
+
+void TypesSizes::addSize(TypeDescriptor desc , int size)
+{
+    sizes_[desc] = size;
 }
 
+void TypesSizes::initSizes()
+{
+    addSize(TypeDescriptor::BIT, 1);
+    addSize(TypeDescriptor::BOOL, 1);
+    addSize(TypeDescriptor::CHAR, 1);
+    addSize(TypeDescriptor::PTR, 1);
+    addSize(TypeDescriptor::UINT8_T, 1);
+    addSize(TypeDescriptor::INT8_T, 1);
 
+    addSize(TypeDescriptor::INT16_T, 2);
+    addSize(TypeDescriptor::UINT16_T, 2);
 
+    addSize(TypeDescriptor::INT32_T, 4);
+    addSize(TypeDescriptor::UINT32_T, 4);
+
+    addSize(TypeDescriptor::INT64_T, 8);
+    addSize(TypeDescriptor::UINT64_T, 8);
+
+    sizes_initialized_ = true;
+}
+
+int TypesSizes::getSize(TypeDescriptor desc)
+{
+    QMutexLocker{&mutex_};
+    if(not sizes_initialized_)
+        initSizes();
+    return sizes_[desc];
+}
+
+}

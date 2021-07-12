@@ -23,15 +23,15 @@ TEST_F(LocalParser_UnitTests , DependencyTest)
 
 TEST_F(LocalParser_UnitTests , LogicTest)
 {
+    appendCode(TestCaseCommand::SENDING_TYPE_DESCRIPTOR);
+    appendCode(8);
+
     appendCode(TestCaseCommand::SENDING_NAME);
 
     appendCode(120);
     appendCode(100);
     appendCode(40);
     appendCode(41);
-
-    appendCode(TestCaseCommand::SENDING_TYPE_DESCRIPTOR);
-    appendCode(8);
 
     appendCode(TestCaseCommand::SENDING_EXPECTED_VALUE);
     appendCode(1);
@@ -45,8 +45,8 @@ TEST_F(LocalParser_UnitTests , LogicTest)
 
     EXPECT_TRUE(local_parser_.packageReady());
 
-    EXPECT_STREQ(package.unit_test_name_.data() , "xd()");
     EXPECT_EQ(package.type_descriptor_ , 8);
+    EXPECT_STREQ(package.unit_test_name_.data() , "xd()");
     EXPECT_EQ(package.parsed_data_[0][0] , 1);
     EXPECT_EQ(package.parsed_data_[1][0] , 1);
     EXPECT_EQ(package.parsed_data_[2][0] , 1);

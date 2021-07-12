@@ -2,6 +2,11 @@
 
 
 
+void LocalByteParser::parseCommand(Command* cmd)
+{
+
+}
+
 bool LocalByteParser::packageReady()
 {
 
@@ -28,6 +33,11 @@ port::ByteBuffer* LocalByteParser::getBuffer()
 }
 
 
+void UnitTestLocalByteParser::parseCommand(Command* cmd)
+{
+
+}
+
 bool UnitTestLocalByteParser::packageReady()
 {
 }
@@ -42,8 +52,24 @@ bool UnitTestLocalByteParser::atStart()
 
 void UnitTestLocalByteParser::setBuffer(port::ByteBuffer* buffer)
 {
+
 }
 
 port::ByteBuffer* UnitTestLocalByteParser::getBuffer()
 {
+}
+
+
+ParserProcessor* AbstractParserProcessor::setNextProcessor(ParserProcessor* next_processor)
+{
+    this->next_processor_ = next_processor;
+    return next_processor;
+}
+
+//default behaviour
+QByteArray AbstractParserProcessor::process(Code command)
+{
+    if(this->next_processor_)
+        return this->next_processor_->process(command);
+    return QByteArray{""};//append empty
 }

@@ -6,6 +6,29 @@
 #include <QSignalTransition>
 #include "PortOperator.hpp"
 
+//change commands on this
+/*
+ * class Colors
+{
+public:
+  static const int RED = 1;
+  static const int GREEN = 2;
+};
+
+class RGB : public Colors
+{
+  static const int BLUE = 10;
+};
+
+
+class FourColors : public Colors
+{
+public:
+  static const int ORANGE = 100;
+  static const int PURPLE = 101;
+};
+*/
+
 using Code = char;
 
 enum GlobalCommand{ START					 = 0 ,
@@ -14,8 +37,8 @@ enum GlobalCommand{ START					 = 0 ,
                     END_SENDING_TEST_CASE    = 3 ,
                     END_ENTIRE_TRANSACTION   = 4 };
 
-enum TestCaseCommand{ SENDING_NAME					= 0 ,
-                      SENDING_TYPE_DESCRIPTOR		= 1 ,
+enum TestCaseCommand{ SENDING_TYPE_DESCRIPTOR 		= 0 ,
+                      SENDING_NAME					= 1 ,
                       SENDING_CURRENT_VALUE			= 2 ,
                       SENDING_EXPECTED_VALUE		= 3 ,
                       SENDING_TEST_RESULT			= 4 ,
@@ -58,20 +81,64 @@ struct UnitTestPackage:
     Code       type_descriptor_;
 };
 
+struct ParserProcessorDependencies
+{
+    QSharedPointer<QByteArray>  result_;
+    port::ByteBuffer*           buffer_;
+};
+
+class ParserProcessor:
+        public QObject
+{
+    Q_OBJECT;
+public:
+    virtual ~ParserProcessor(){}
+    virtual ParserProcessor* setNextProcessor(ParserProcessor* next) = 0;
+    virtual QByteArray process(Code command) = 0;
+};
+
+class AbstractParserProcessor:
+        public ParserProcessor
+{
+    Q_OBJECT;
+private:
+    ParserProcessor*            next_processor_;
+    ParserProcessorDependencies dependencies_;
+protected:
+    void applyDependencies(ParserProcessorDependencies dependencies);
+public:
+    AbstractParserProcessor();
+    AbstractParserProcessor(ParserProcessorDependencies dependencies_);
+    // ParserProcessor interface
+public:
+    virtual ParserProcessor* setNextProcessor(ParserProcessor* next) override;
+    virtual QByteArray process(Code command) override;
+};
+
+
+
+
 //interface for every kind of parser
 //pure abstraction , no data
-class AbstractParser
+class AbstractParser :
+        public QObject
 {
+    Q_OBJECT;
+private slots:
+    virtual void parseCommand(Command* cmd) = 0;
 public:
     virtual bool packageReady() = 0;
     virtual DataPackage getParsedPackage() = 0;
     virtual bool atStart() = 0;
+signals:
+    void packageParsed();
 };
 
 //abstraction for a byte parser
 class AbstractLocalByteParser:
         public AbstractParser
 {
+    Q_OBJECT;
 public:
     virtual void setBuffer(port::ByteBuffer* buffer) = 0;
     virtual port::ByteBuffer* getBuffer() = 0;
@@ -83,12 +150,14 @@ public:
 class LocalByteParser:
         public AbstractLocalByteParser
 {
+    Q_OBJECT;
 private:
     port::ByteBuffer* buffer_;
     QSharedPointer<DataPackage> result_;
 
     // AbstractParser interface
 public:
+    virtual void parseCommand(Command* cmd);
     virtual bool packageReady() override;
     virtual DataPackage getParsedPackage() override;
     virtual bool atStart() override;
@@ -101,14 +170,18 @@ public:
 
 
 //complete object
+//reads only type descriptor and redirects to certain ParserProcessor
 class UnitTestLocalByteParser:
         public AbstractLocalByteParser
 {
+    Q_OBJECT;
 private:
    LocalByteParser byte_parser_;
+   QStateMachine machine;
 
    // AbstractParser interface
 public:
+   virtual void parseCommand(Command* cmd);
    virtual bool packageReady() override;
    virtual DataPackage getParsedPackage() override;
    virtual bool atStart() override;

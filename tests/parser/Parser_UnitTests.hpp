@@ -2,14 +2,22 @@
 
 #include <common.hpp>
 #include <Parser.hpp>
+#include <PortOperator.hpp>
 
-class Parser_UnitTests:
+//parser erases all commands and splits incoming data into
+//certain data
+//converter converts each package to full text which can be
+//send to frontend-qml
+
+class LocalParser_UnitTests:
         public ::testing::Test
 {
 protected:
-    Parser parser_;
+    LocalParser parser_;
+    port::ByteBuffer buffer_;
 public:
-    Parser_UnitTests();
+    LocalParser_UnitTests();
+    void appendCode(uint8_t code);
 };
 
 class StateMachineTest

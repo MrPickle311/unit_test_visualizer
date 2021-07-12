@@ -18,8 +18,10 @@ private:
 public:
     ByteBuffer(QObject *parent = nullptr);
     void       appendBytes(const QByteArray& array);
+    void       appendByte(char byte);
     QByteArray getAllBytes() noexcept;
     QByteArray getBytes(size_t count);
+    char       getByte();
     bool       isEmpty() const;
     size_t     size()    const;
 signals:

@@ -14,6 +14,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt5 REQUIRED)
+find_package(Threads REQUIRED)
 find_package(Qt5 COMPONENTS Core Quick SerialPort REQUIRED)
 
 ##qt service stage 1 END
@@ -25,7 +26,7 @@ add_definitions(-DGTEST_LANGUAGE_CXX11)
 set(GTEST_COLOR=1)
 
 
-find_package(Threads REQUIRED)
+
 
 set(GOOGLETEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../extern/googletest")
 

@@ -15,6 +15,13 @@ void ByteBuffer::appendBytes(const QByteArray& array)
     emit bytesArrived(array.size());
 }
 
+void ByteBuffer::appendByte(char byte)
+{
+    received_bytes_.append(byte);
+
+    emit bytesArrived(1);
+}
+
 QByteArray ByteBuffer::splitByteArray(size_t count)
 {
     QMutexLocker lock{&data_mutex_};
@@ -46,6 +53,11 @@ QByteArray ByteBuffer::getAllBytes() noexcept
 QByteArray ByteBuffer::getBytes(size_t count)
 {
     return splitByteArray(count);
+}
+
+char ByteBuffer::getByte()
+{
+    return getBytes(1).front();
 }
 
 bool ByteBuffer::isEmpty() const

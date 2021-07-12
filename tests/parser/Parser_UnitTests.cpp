@@ -4,8 +4,11 @@
 LocalParser_UnitTests::LocalParser_UnitTests()
 {
     local_parser_.setBuffer(&buffer_);//drops data from buffer
+
+    //this moves to upper function
     QObject::connect(&buffer_ , &port::ByteBuffer::bytesArrived ,
                      &local_parser_ ,&LocalParser::parseByte );
+
 }
 
 void LocalParser_UnitTests::appendCode(uint8_t code)
@@ -48,7 +51,9 @@ TEST_F(LocalParser_UnitTests , LogicTest)
     EXPECT_EQ(package.parsed_data_[1][0] , 1);
     EXPECT_EQ(package.parsed_data_[2][0] , 1);
 
+    //here parser is empty
+
     EXPECT_FALSE(local_parser_.packageReady());
 
-    EXPECT_TRUE(local_parser_.atStart());
+    EXPECT_TRUE(local_parser_.atStart());//useless maybe
 }

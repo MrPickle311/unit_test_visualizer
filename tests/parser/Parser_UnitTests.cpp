@@ -7,7 +7,7 @@ LocalParser_UnitTests::LocalParser_UnitTests()
 
     //this moves to upper function
     QObject::connect(&buffer_ , &port::ByteBuffer::bytesArrived ,
-                     &local_parser_ ,&LocalParser::parseByte );
+                     &local_parser_ ,&LocalByteParser::parseByte );
 
 }
 

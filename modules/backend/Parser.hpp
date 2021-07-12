@@ -63,7 +63,6 @@ struct UnitTestPackage:
 class AbstractParser
 {
 public:
-
     virtual bool packageReady() = 0;
     virtual DataPackage getParsedPackage() = 0;
     virtual bool atStart() = 0;
@@ -78,6 +77,7 @@ public:
     virtual port::ByteBuffer* getBuffer() = 0;
 };
 
+
 //incoming data -> DataPackage
 //real object but not complete yet
 class LocalByteParser:
@@ -85,12 +85,20 @@ class LocalByteParser:
 {
 private:
     port::ByteBuffer* buffer_;
+    QSharedPointer<DataPackage> result_;
+
+    // AbstractParser interface
+public:
+    virtual bool packageReady() override;
+    virtual DataPackage getParsedPackage() override;
+    virtual bool atStart() override;
+
     // AbstractLocalByteParser interface
 public:
     virtual void setBuffer(port::ByteBuffer* buffer) override;
     virtual port::ByteBuffer* getBuffer() override;
-    virtual DataPackage getParsedPackage() override;
 };
+
 
 //complete object
 class UnitTestLocalByteParser:
@@ -98,6 +106,17 @@ class UnitTestLocalByteParser:
 {
 private:
    LocalByteParser byte_parser_;
+
+   // AbstractParser interface
+public:
+   virtual bool packageReady() override;
+   virtual DataPackage getParsedPackage() override;
+   virtual bool atStart() override;
+
+   // AbstractLocalByteParser interface
+public:
+   virtual void setBuffer(port::ByteBuffer* buffer) override;
+   virtual port::ByteBuffer* getBuffer() override;
 };
 
 

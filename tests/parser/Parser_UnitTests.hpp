@@ -13,7 +13,7 @@ class LocalParser_UnitTests:
         public ::testing::Test
 {
 protected:
-    LocalParser parser_;
+    LocalByteParser local_parser_;
     port::ByteBuffer buffer_;
 public:
     LocalParser_UnitTests();

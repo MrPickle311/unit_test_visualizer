@@ -1,6 +1,7 @@
 #include "../Parser.hpp"
 
-
+namespace parser
+{
 
 void LocalByteParser::parseCommand(Command* cmd)
 {
@@ -59,17 +60,36 @@ port::ByteBuffer* UnitTestLocalByteParser::getBuffer()
 {
 }
 
+Processor::Processor(port::ByteBuffer* buffer_):
+    buffer_{buffer_}
+{}
 
-ParserProcessor* AbstractParserProcessor::setNextProcessor(ParserProcessor* next_processor)
+void Processor::setBuffer(port::ByteBuffer* newBuffer)
 {
-    this->next_processor_ = next_processor;
-    return next_processor;
+    buffer_ = newBuffer;
 }
 
-//default behaviour
-QByteArray AbstractParserProcessor::process(Code command)
+QByteArray parser::NameProcessor::process()
 {
-    if(this->next_processor_)
-        return this->next_processor_->process(command);
-    return QByteArray{""};//append empty
+    QByteArray result;
+
+    char byte {buffer_->getByte()};
+    while(byte != '\0')
+    {
+        result.append(byte);
+        byte = buffer_->getByte();
+    }
+
+    return result;
+}
+
+}
+
+QByteArray parser::TypeDescriptorProcessor::process()
+{
+    QByteArray result;
+
+    result.append(buffer_->getByte());
+
+    return result;
 }

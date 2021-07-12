@@ -6,6 +6,9 @@
 #include <QSignalTransition>
 #include "PortOperator.hpp"
 
+namespace parser
+{
+
 //change commands on this
 /*
  * class Colors
@@ -81,41 +84,56 @@ struct UnitTestPackage:
     Code       type_descriptor_;
 };
 
-struct ParserProcessorDependencies
+struct ProcessorDependencies
 {
+    ProcessorDependencies();
+    ProcessorDependencies(QSharedPointer<QByteArray>  result ,port::ByteBuffer* buffer);
     QSharedPointer<QByteArray>  result_;
     port::ByteBuffer*           buffer_;
 };
 
-class ParserProcessor:
+class AbstractProcessor:
         public QObject
 {
     Q_OBJECT;
 public:
-    virtual ~ParserProcessor(){}
-    virtual ParserProcessor* setNextProcessor(ParserProcessor* next) = 0;
-    virtual QByteArray process(Code command) = 0;
+    virtual ~AbstractProcessor(){}
+    virtual QByteArray process() = 0;
 };
 
-class AbstractParserProcessor:
-        public ParserProcessor
+class Processor:
+        public AbstractProcessor,
+        public ProgramObject
 {
     Q_OBJECT;
-private:
-    ParserProcessor*            next_processor_;
-    ParserProcessorDependencies dependencies_;
 protected:
-    void applyDependencies(ParserProcessorDependencies dependencies);
+    port::ByteBuffer* buffer_;
 public:
-    AbstractParserProcessor();
-    AbstractParserProcessor(ParserProcessorDependencies dependencies_);
-    // ParserProcessor interface
+    Processor(port::ByteBuffer* buffer_ = nullptr);
 public:
-    virtual ParserProcessor* setNextProcessor(ParserProcessor* next) override;
-    virtual QByteArray process(Code command) override;
+    void setBuffer(port::ByteBuffer* newBuffer);
 };
 
+class TypeDescriptorProcessor:
+        public Processor
+{
+public:
+    virtual QByteArray process() override;
+};
 
+class NameProcessor:
+        public Processor
+{
+public:
+    virtual QByteArray process() override;
+};
+
+class ValueProcessor:
+        public Processor
+{
+public:
+    virtual QByteArray process() override;
+};
 
 
 //interface for every kind of parser
@@ -192,4 +210,5 @@ public:
    virtual port::ByteBuffer* getBuffer() override;
 };
 
+}
 

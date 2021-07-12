@@ -13,8 +13,8 @@ class LocalParser_UnitTests:
         public ::testing::Test
 {
 protected:
-    LocalByteParser local_parser_;
     port::ByteBuffer buffer_;
+    parser::UnitTestLocalByteParser local_parser_;
 public:
     LocalParser_UnitTests();
     void appendCode(uint8_t code);

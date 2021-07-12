@@ -1,15 +1,10 @@
 #include "Parser_UnitTests.hpp"
 #include <QObject>
 
-LocalParser_UnitTests::LocalParser_UnitTests()
-{
-    local_parser_.setBuffer(&buffer_);//drops data from buffer
-
-    //this moves to upper function
-    QObject::connect(&buffer_ , &port::ByteBuffer::bytesArrived ,
-                     &local_parser_ ,&LocalByteParser::parseByte );
-
-}
+LocalParser_UnitTests::LocalParser_UnitTests():
+    buffer_{},
+    local_parser_(&buffer_)
+{}
 
 void LocalParser_UnitTests::appendCode(uint8_t code)
 {
@@ -21,39 +16,45 @@ TEST_F(LocalParser_UnitTests , DependencyTest)
     EXPECT_NE(local_parser_.getBuffer() , nullptr);
 }
 
-TEST_F(LocalParser_UnitTests , LogicTest)
+TEST_F(LocalParser_UnitTests , BoolVariableTest)
 {
-    appendCode(TestCaseCommand::SENDING_TYPE_DESCRIPTOR);
-    appendCode(8);
+    appendCode(parser::UnitTestCommand::SENDING_TYPE_DESCRIPTOR);
+    appendCode(parser::TypeDescriptor::BOOL);
 
-    appendCode(TestCaseCommand::SENDING_NAME);
+    appendCode(parser::UnitTestCommand::SENDING_NAME);
 
-    appendCode(120);
-    appendCode(100);
-    appendCode(40);
-    appendCode(41);
+    appendCode('x');
+    appendCode('d');
+    appendCode('(');
+    appendCode(')');
+    appendCode('\0');
 
-    appendCode(TestCaseCommand::SENDING_EXPECTED_VALUE);
+    appendCode(parser::UnitTestCommand::SENDING_EXPECTED_VALUE);
     appendCode(1);
 
-    appendCode(TestCaseCommand::SENDING_CURRENT_VALUE);
+    appendCode(parser::UnitTestCommand::SENDING_CURRENT_VALUE);
     appendCode(1);
 
-    appendCode(TestCaseCommand::END_SENDING_UNIT_TEST_RESULT);
+    appendCode(parser::UnitTestCommand::SENDING_TEST_RESULT);
+    appendCode(1);
 
-    UnitTestPackage package {local_parser_.getParsedPackage()};//it will be interface , but i dont care now
+    appendCode(parser::UnitTestCommand::END_SENDING_UNIT_TEST_RESULT);
+
+    local_parser_.parseData();
+
+    parser::DataPackage package {local_parser_.getParsedPackage()};//it will be interface , but i dont care now
 
     EXPECT_TRUE(local_parser_.packageReady());
 
-    EXPECT_EQ(package.type_descriptor_ , 8);
-    EXPECT_STREQ(package.unit_test_name_.data() , "xd()");
-    EXPECT_EQ(package.parsed_data_[0][0] , 1);
-    EXPECT_EQ(package.parsed_data_[1][0] , 1);
+    EXPECT_EQ(package.parsed_data_[0][0] , 8);
+    EXPECT_STREQ(package.parsed_data_[1].data() , "xd()");
     EXPECT_EQ(package.parsed_data_[2][0] , 1);
+    EXPECT_EQ(package.parsed_data_[3][0] , 1);
+    EXPECT_EQ(package.parsed_data_[4][0] , 1);
 
     //here parser is empty
 
     EXPECT_FALSE(local_parser_.packageReady());
 
-    EXPECT_TRUE(local_parser_.atStart());//useless maybe
+    EXPECT_TRUE(local_parser_.isEmptyResult());//useless maybe
 }

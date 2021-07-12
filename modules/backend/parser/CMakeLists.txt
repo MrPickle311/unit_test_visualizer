@@ -10,6 +10,6 @@ add_library( Parser
              ${parser_private_hpp_files}
             )
 
-target_link_libraries(Parser Qt5::Core Qt5::Quick ProgramObject)
+target_link_libraries(Parser Qt5::Core Qt5::Quick Qt5::SerialPort ProgramObject)
 
 set_target_properties(Parser PROPERTIES LINKER_LANGUAGE CXX)

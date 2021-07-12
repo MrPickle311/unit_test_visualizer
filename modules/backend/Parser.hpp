@@ -5,6 +5,7 @@
 #include <QState>
 #include <QSignalTransition>
 #include "PortOperator.hpp"
+#include <memory>
 
 namespace parser
 {
@@ -40,7 +41,12 @@ enum GlobalCommand{ START					 = 0 ,
                     END_SENDING_TEST_CASE    = 3 ,
                     END_ENTIRE_TRANSACTION   = 4 };
 
-enum TestCaseCommand{ SENDING_TYPE_DESCRIPTOR 		= 0 ,
+//enum TestCaseCommand{
+//    SENDING_UNIT_TEST_RESULT = 2 ,
+//    END_SENDING_TEST_CASE    = 3
+//};
+
+enum UnitTestCommand{ SENDING_TYPE_DESCRIPTOR 		= 0 ,
                       SENDING_NAME					= 1 ,
                       SENDING_CURRENT_VALUE			= 2 ,
                       SENDING_EXPECTED_VALUE		= 3 ,
@@ -48,7 +54,8 @@ enum TestCaseCommand{ SENDING_TYPE_DESCRIPTOR 		= 0 ,
                       SENDING_LINE_NMBR				= 5 ,
                       SENDING_LOWER_VALUE           = 6 ,
                       SENDING_UPPER_VALUE           = 7 ,
-                      END_SENDING_UNIT_TEST_RESULT	= 8 };
+                      END_SENDING_UNIT_TEST_RESULT	= 8 ,
+                      COMMANDS_COUNT};
 
 enum TypeDescriptor{ UINT8_T  = 0  ,
                      UINT16_T = 1  ,
@@ -92,71 +99,90 @@ struct ProcessorDependencies
     port::ByteBuffer*           buffer_;
 };
 
-class AbstractProcessor:
-        public QObject
+class AbstractProcessor
 {
-    Q_OBJECT;
 public:
     virtual ~AbstractProcessor(){}
-    virtual QByteArray process() = 0;
+    virtual QByteArray process(port::ByteBuffer* buffer) = 0;
 };
 
 class Processor:
         public AbstractProcessor,
         public ProgramObject
-{
-    Q_OBJECT;
-protected:
-    port::ByteBuffer* buffer_;
-public:
-    Processor(port::ByteBuffer* buffer_ = nullptr);
-public:
-    void setBuffer(port::ByteBuffer* newBuffer);
-};
+{};
 
 class TypeDescriptorProcessor:
         public Processor
 {
 public:
-    virtual QByteArray process() override;
+    virtual QByteArray process(port::ByteBuffer* buffer) override;
 };
 
 class NameProcessor:
         public Processor
 {
 public:
-    virtual QByteArray process() override;
+    virtual QByteArray process(port::ByteBuffer* buffer) override;
 };
 
-class ValueProcessor:
+class ExpectedValueProcessor:
         public Processor
 {
 public:
-    virtual QByteArray process() override;
+    virtual QByteArray process(port::ByteBuffer* buffer) override;
+};
+
+class CurrentValueProcessor:
+        public Processor
+{
+public:
+    virtual QByteArray process(port::ByteBuffer* buffer) override;
+};
+
+class TestResultProcessor:
+        public Processor
+{
+public:
+    virtual QByteArray process(port::ByteBuffer* buffer) override;
+};
+
+class Processors
+{
+private:
+    static QMutex mutex_;
+    static QMap<UnitTestCommand,std::shared_ptr<Processor>> processors_;
+    static bool processors_initialized_;
+private:
+    template<typename T>
+    static void addProcessor(UnitTestCommand code);
+    static void initProcessors();
+protected:
+    Processors();
+public:
+    static Processor* getProcessor(UnitTestCommand cmd);
 };
 
 
 //interface for every kind of parser
 //pure abstraction , no data
-class AbstractParser :
-        public QObject
+class AbstractParser //:
+        //public QObject
 {
-    Q_OBJECT;
-private slots:
+   // Q_OBJECT;
+private :
     virtual void parseCommand(Command* cmd) = 0;
 public:
     virtual bool packageReady() = 0;
     virtual DataPackage getParsedPackage() = 0;
     virtual bool atStart() = 0;
-signals:
-    void packageParsed();
+//signals:
+//    void packageParsed();
 };
 
 //abstraction for a byte parser
 class AbstractLocalByteParser:
         public AbstractParser
 {
-    Q_OBJECT;
 public:
     virtual void setBuffer(port::ByteBuffer* buffer) = 0;
     virtual port::ByteBuffer* getBuffer() = 0;
@@ -165,40 +191,43 @@ public:
 
 //incoming data -> DataPackage
 //real object but not complete yet
-class LocalByteParser:
-        public AbstractLocalByteParser
-{
-    Q_OBJECT;
-private:
-    port::ByteBuffer* buffer_;
-    QSharedPointer<DataPackage> result_;
-
-    // AbstractParser interface
-public:
-    virtual void parseCommand(Command* cmd);
-    virtual bool packageReady() override;
-    virtual DataPackage getParsedPackage() override;
-    virtual bool atStart() override;
-
-    // AbstractLocalByteParser interface
-public:
-    virtual void setBuffer(port::ByteBuffer* buffer) override;
-    virtual port::ByteBuffer* getBuffer() override;
-};
-
+//class LocalByteParser:
+//        public AbstractLocalByteParser
+//{
+//    Q_OBJECT;
+//protected:
+//    port::ByteBuffer* buffer_;
+//    DataPackage       result_;
+//
+//    // AbstractParser interface
+//public:
+//    virtual void parseCommand(Command* cmd);
+//    virtual bool packageReady() override;
+//    virtual DataPackage getParsedPackage() override;
+//    virtual bool atStart() override;
+//
+//    // AbstractLocalByteParser interface
+//public:
+//    virtual void setBuffer(port::ByteBuffer* buffer) override;
+//    virtual port::ByteBuffer* getBuffer() override;
+//};
+//
 
 //complete object
 //reads only type descriptor and redirects to certain ParserProcessor
 class UnitTestLocalByteParser:
-        public AbstractLocalByteParser
+        public AbstractLocalByteParser,
+        public ProgramObject
 {
-    Q_OBJECT;
 private:
-   LocalByteParser byte_parser_;
-   QStateMachine machine;
-
-   // AbstractParser interface
+   //LocalByteParser byte_parser_;
+    port::ByteBuffer* buffer_;
+    DataPackage       result_;
+    bool              package_ready_;
+    // AbstractParser interface
 public:
+    UnitTestLocalByteParser(port::ByteBuffer* buffer);
+
    virtual void parseCommand(Command* cmd);
    virtual bool packageReady() override;
    virtual DataPackage getParsedPackage() override;
@@ -208,6 +237,10 @@ public:
 public:
    virtual void setBuffer(port::ByteBuffer* buffer) override;
    virtual port::ByteBuffer* getBuffer() override;
+
+public:
+   void parseData();
+   void checkCode(Code cmd);
 };
 
 }

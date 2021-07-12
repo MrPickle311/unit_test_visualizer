@@ -172,9 +172,9 @@ class AbstractParser //:
 private :
     virtual void parseCommand(Command* cmd) = 0;
 public:
-    virtual bool packageReady() = 0;
+    virtual bool packageReady() const = 0;
     virtual DataPackage getParsedPackage() = 0;
-    virtual bool atStart() = 0;
+    virtual bool isEmptyResult() const = 0;
 //signals:
 //    void packageParsed();
 };
@@ -228,10 +228,10 @@ private:
 public:
     UnitTestLocalByteParser(port::ByteBuffer* buffer);
 
-   virtual void parseCommand(Command* cmd);
-   virtual bool packageReady() override;
+   virtual void parseCommand(Command* cmd) override;
+   virtual bool packageReady() const override;
    virtual DataPackage getParsedPackage() override;
-   virtual bool atStart() override;
+   virtual bool isEmptyResult() const override;
 
    // AbstractLocalByteParser interface
 public:

@@ -48,16 +48,18 @@ void UnitTestLocalByteParser::parseCommand(Command* cmd)
 
 }
 
-bool UnitTestLocalByteParser::packageReady()
+bool UnitTestLocalByteParser::packageReady() const
 {
+    return package_ready_;
 }
 
 DataPackage UnitTestLocalByteParser::getParsedPackage()
 {
+    package_ready_ = false;
     return  std::move(this->result_);
 }
 
-bool UnitTestLocalByteParser::atStart()
+bool UnitTestLocalByteParser::isEmptyResult() const
 {
     return result_.parsed_data_.isEmpty();
 }

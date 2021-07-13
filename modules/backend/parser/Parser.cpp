@@ -4,38 +4,12 @@
 namespace parser
 {
 
-//void LocalByteParser::parseCommand(Command* cmd)
-//{
-//
-//}
-//
-//bool LocalByteParser::packageReady()
-//{
-//
-//}
-//
-//DataPackage LocalByteParser::getParsedPackage()
-//{
-//
-//}
-//
-//bool LocalByteParser::atStart()
-//{
-//
-//}
-//
-//void LocalByteParser::setBuffer(port::ByteBuffer* buffer)
-//{
-//    this->buffer_ = buffer;
-//}
-//
-//port::ByteBuffer* LocalByteParser::getBuffer()
-//{
-//    return buffer_;
-//}
+AbstractLocalByteParser::AbstractLocalByteParser(port::ByteBuffer* buffer)
+    : buffer_{buffer}
+{}
 
 UnitTestLocalByteParser::UnitTestLocalByteParser(port::ByteBuffer* buffer) :
-    buffer_(buffer),
+    AbstractLocalByteParser{buffer},
     result_{},
     package_ready_{false}
 {
@@ -134,25 +108,6 @@ QByteArray TypeDescriptorProcessor::process(port::ByteBuffer* buffer)
 
     return result;
 }
-
-
-//QByteArray CurrentValueProcessor::process(port::ByteBuffer* buffer,[[maybe_unused]] TypeDescriptor desc)
-//{
-//    QByteArray result;
-//
-//    result.append(buffer->getByte());
-//
-//    return result;
-//}
-//
-//QByteArray ExpectedValueProcessor::process(port::ByteBuffer* buffer,[[maybe_unused]] TypeDescriptor desc)
-//{
-//    QByteArray result;
-//
-//    result.append(buffer->getByte());
-//
-//    return result;
-//}
 
 QByteArray TestResultProcessor::process(port::ByteBuffer* buffer)
 {

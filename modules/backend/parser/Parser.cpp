@@ -66,27 +66,28 @@ bool UnitTestLocalByteParser::isEmptyResult() const
 
 void UnitTestLocalByteParser::setBuffer(port::ByteBuffer* buffer)
 {
-
+    buffer_ = buffer;
 }
 
 port::ByteBuffer* UnitTestLocalByteParser::getBuffer()
 {
+    return buffer_;
 }
 
 void UnitTestLocalByteParser::parseData()
 {
-    Code cmd {buffer_->getByte()};
+    UnitTestCommand cmd {static_cast<UnitTestCommand>(buffer_->getByte())};
 
     while (cmd != UnitTestCommand::END_SENDING_UNIT_TEST_RESULT)
     {
-        checkCode(cmd);
-
-        Processor* proc {Processors::getProcessor(static_cast<UnitTestCommand>(cmd))};
+        Processor* proc {Processors::getProcessor(cmd)};
 
         QByteArray bytes {proc->process(buffer_)};
 
-        result_.parsed_data_.replace(cmd, bytes);
-        cmd = buffer_->getByte();
+        result_.parsed_data_.replace(cmd, bytes);//insert certain QByteArray to QByteArrayList
+
+        cmd = static_cast<UnitTestCommand>(buffer_->getByte());
+        checkCode(cmd);
     }
 
     this->package_ready_ = true;
@@ -95,9 +96,10 @@ void UnitTestLocalByteParser::parseData()
 
 void UnitTestLocalByteParser::checkCode(Code cmd)
 {
-    throwIf(cmd >= 8 , "Command error : bad command , out of range");
+    throwIf(cmd >= UnitTestCommand::COMMANDS_COUNT , "Command error : bad command , out of range");
 }
 
+TypeDescriptor AbstractProcessor::current_descriptor_{UINT8_T};
 
 QByteArray parser::NameProcessor::process(port::ByteBuffer* buffer)
 {
@@ -115,35 +117,42 @@ QByteArray parser::NameProcessor::process(port::ByteBuffer* buffer)
 
 QByteArray ValueProcessor::process(port::ByteBuffer* buffer)
 {
+    QByteArray result;
+
+    for(int i{0}; i < TypesSizes::getSize(current_descriptor_) ; ++i)
+            result.append(buffer->getByte());
+    return result;
 }
 
-QByteArray parser::TypeDescriptorProcessor::process(port::ByteBuffer* buffer)
+QByteArray TypeDescriptorProcessor::process(port::ByteBuffer* buffer)
 {
     QByteArray result;
 
     result.append(buffer->getByte());
 
-    return result;
-}
-
-
-QByteArray CurrentValueProcessor::process(port::ByteBuffer* buffer)
-{
-    QByteArray result;
-
-    result.append(buffer->getByte());
+    current_descriptor_ =  static_cast<TypeDescriptor>((uint8_t)result[0]);
 
     return result;
 }
 
-QByteArray ExpectedValueProcessor::process(port::ByteBuffer* buffer)
-{
-    QByteArray result;
 
-    result.append(buffer->getByte());
-
-    return result;
-}
+//QByteArray CurrentValueProcessor::process(port::ByteBuffer* buffer,[[maybe_unused]] TypeDescriptor desc)
+//{
+//    QByteArray result;
+//
+//    result.append(buffer->getByte());
+//
+//    return result;
+//}
+//
+//QByteArray ExpectedValueProcessor::process(port::ByteBuffer* buffer,[[maybe_unused]] TypeDescriptor desc)
+//{
+//    QByteArray result;
+//
+//    result.append(buffer->getByte());
+//
+//    return result;
+//}
 
 QByteArray TestResultProcessor::process(port::ByteBuffer* buffer)
 {
@@ -154,19 +163,15 @@ QByteArray TestResultProcessor::process(port::ByteBuffer* buffer)
     return result;
 }
 
-
-void Processors::setCurrentType(TypeDescriptor newCurrent_type)
-{
-    current_type_ = newCurrent_type;
-}
-
 void Processors::initProcessors()
 {
     addProcessor<NameProcessor>(UnitTestCommand::SENDING_NAME);
     addProcessor<TypeDescriptorProcessor>(UnitTestCommand::SENDING_TYPE_DESCRIPTOR);
-    addProcessor<CurrentValueProcessor>(UnitTestCommand::SENDING_CURRENT_VALUE);
-    addProcessor<ExpectedValueProcessor>(UnitTestCommand::SENDING_EXPECTED_VALUE);
+    addProcessor<ValueProcessor>(UnitTestCommand::SENDING_CURRENT_VALUE);
+    addProcessor<ValueProcessor>(UnitTestCommand::SENDING_EXPECTED_VALUE);
     addProcessor<TestResultProcessor>(UnitTestCommand::SENDING_TEST_RESULT);
+    addProcessor<ValueProcessor>(UnitTestCommand::SENDING_LOWER_VALUE);
+    addProcessor<ValueProcessor>(UnitTestCommand::SENDING_UPPER_VALUE);
 
     processors_initialized_ = true;
 }
@@ -183,7 +188,6 @@ Processor* Processors::getProcessor(UnitTestCommand cmd)
 QMutex Processors::mutex_{};
 QMap<UnitTestCommand,std::shared_ptr<Processor>> Processors::processors_;
 bool Processors::processors_initialized_{false};
-TypeDescriptor Processors::current_type_{};
 
 template<typename T>
 void Processors::addProcessor(UnitTestCommand code)

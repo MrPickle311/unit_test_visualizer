@@ -35,43 +35,43 @@ public:
 
 using Code = char;
 
-enum GlobalCommand{ START					 = 0 ,
-                    SENDING_TEST_CASE        = 1 ,
-                    SENDING_UNIT_TEST_RESULT = 2 ,
-                    END_SENDING_TEST_CASE    = 3 ,
-                    END_ENTIRE_TRANSACTION   = 4 };
+enum GlobalCommand : uint8_t{ START					   = 0 ,
+                              SENDING_TEST_CASE        = 1 ,
+                              SENDING_UNIT_TEST_RESULT = 2 ,
+                              END_SENDING_TEST_CASE    = 3 ,
+                              END_ENTIRE_TRANSACTION   = 4 };
 
 //enum TestCaseCommand{
 //    SENDING_UNIT_TEST_RESULT = 2 ,
 //    END_SENDING_TEST_CASE    = 3
 //};
 
-enum UnitTestCommand{ SENDING_TYPE_DESCRIPTOR 		= 0 ,
-                      SENDING_NAME					= 1 ,
-                      SENDING_CURRENT_VALUE			= 2 ,
-                      SENDING_EXPECTED_VALUE		= 3 ,
-                      SENDING_TEST_RESULT			= 4 ,
-                      SENDING_LINE_NMBR				= 5 ,
-                      SENDING_LOWER_VALUE           = 6 ,
-                      SENDING_UPPER_VALUE           = 7 ,
-                      END_SENDING_UNIT_TEST_RESULT	= 8 ,
-                      COMMANDS_COUNT};
+enum UnitTestCommand : uint8_t{ SENDING_TYPE_DESCRIPTOR 	 = 0 ,
+                                SENDING_NAME				 = 1 ,
+                                SENDING_CURRENT_VALUE		 = 2 ,
+                                SENDING_EXPECTED_VALUE		 = 3 ,
+                                SENDING_TEST_RESULT			 = 4 ,
+                                SENDING_LINE_NMBR			 = 5 ,
+                                SENDING_LOWER_VALUE          = 6 ,
+                                SENDING_UPPER_VALUE          = 7 ,
+                                END_SENDING_UNIT_TEST_RESULT = 8 ,
+                                COMMANDS_COUNT};
 
-enum TypeDescriptor{ UINT8_T  = 0  ,
-                     UINT16_T = 1  ,
-                     UINT32_T = 2  ,
-                     UINT64_T = 3  ,
+enum TypeDescriptor : uint8_t { UINT8_T  = 0  ,
+                                UINT16_T = 1  ,
+                                UINT32_T = 2  ,
+                                UINT64_T = 3  ,
 
-                     INT8_T   = 4  ,
-                     INT16_T  = 5  ,
-                     INT32_T  = 6  ,
-                     INT64_T  = 7  ,
+                                INT8_T   = 4  ,
+                                INT16_T  = 5  ,
+                                INT32_T  = 6  ,
+                                INT64_T  = 7  ,
 
-                     BOOL     = 8  ,
-                     CHAR     = 9  ,
-                     PTR	  = 10 ,
-                     BIT	  = 11 ,
-                     TYPES_COUNT};
+                                BOOL     = 8  ,
+                                CHAR     = 9  ,
+                                PTR	     = 10 ,
+                                BIT	     = 11 ,
+                                TYPES_COUNT};
 
 
 struct Command
@@ -87,6 +87,8 @@ struct DataPackage
 
 class AbstractProcessor
 {
+protected:
+    static TypeDescriptor current_descriptor_;//shared between processors
 public:
     virtual ~AbstractProcessor(){}
     virtual QByteArray process(port::ByteBuffer* buffer) = 0;
@@ -118,19 +120,23 @@ public:
     virtual QByteArray process(port::ByteBuffer* buffer) override;
 };
 
-class ExpectedValueProcessor:
-        public Processor
-{
-public:
-    virtual QByteArray process(port::ByteBuffer* buffer) override;
-};
+////aliases ,for less code duplication
+//using ExpectedValueProcessor = ValueProcessor;
+//using CurrentValueProcessor = ValueProcessor;
 
-class CurrentValueProcessor:
-        public Processor
-{
-public:
-    virtual QByteArray process(port::ByteBuffer* buffer) override;
-};
+//class ExpectedValueProcessor:
+//        public Processor
+//{
+//public:
+//    virtual QByteArray process(port::ByteBuffer* buffer,[[maybe_unused]] TypeDescriptor desc) override;
+//};
+//
+//class CurrentValueProcessor:
+//        public Processor
+//{
+//public:
+//    virtual QByteArray process(port::ByteBuffer* buffer,[[maybe_unused]] TypeDescriptor desc) override;
+//};
 
 class TestResultProcessor:
         public Processor
@@ -141,7 +147,7 @@ public:
 
 //useful singletons
 
-class TypesSizes
+class TypesSizes///DAJ MU STATYCZNĄ ZMIENNĄ CURRENT_TESCRIPTOR
 {
 private:
     static QMutex mutex_;
@@ -162,7 +168,6 @@ private:
     static QMutex mutex_;
     static QMap<UnitTestCommand , std::shared_ptr<Processor>> processors_;
     static bool processors_initialized_;
-    static TypeDescriptor current_type_;
 private:
     template<typename T>
     static void addProcessor(UnitTestCommand code);
@@ -171,7 +176,6 @@ protected:
     Processors(){};
 public:
     static Processor* getProcessor(UnitTestCommand cmd);
-    static void setCurrentType(TypeDescriptor newCurrent_type);
 };
 
 

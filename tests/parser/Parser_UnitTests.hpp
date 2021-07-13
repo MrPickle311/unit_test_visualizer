@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 #include <common.hpp>
-#include <Parser.hpp>
 #include <PortOperator.hpp>
+#include "UnitTestBuilder.hpp"
 
 //parser erases all commands and splits incoming data into
 //certain data
@@ -102,6 +102,14 @@ public:
     void checkEqual();
     void checkInRange();
 
+};
+
+class TestCaseParser_UnitTests
+{
+protected:
+
+public:
+    void check();
 };
 
 

@@ -17,16 +17,17 @@ using TestResult = int;
 class PackageTester
 {
 public:
-    void expectPackageTypeDescriptor(parser::TypeDescriptor desc);
     void setPackage(const parser::DataPackage& newPackage);
-
-    void expectPackageTestResult(TestResult result);
-    void expectPackageExpectedValues(QList<uint8_t> values);
-    void expectPackageCurrentValues(QList<uint8_t> values);
-    void expectPackageName(std::string name);
+    void expectTypeDescriptor(parser::TypeDescriptor desc);
+    void expectTestResult(TestResult result);
+    void expectExpectedValue(QList<uint8_t> values);
+    void expectCurrentValue(QList<uint8_t> values);
+    void expectLowerValue(QList<uint8_t> values);
+    void expectUpperValue(QList<uint8_t> values);
+    void expectName(std::string name);
 private:
     parser::DataPackage package_;
-    void expectPackageValues(parser::UnitTestCommand cmd, QList<uint8_t> values);
+    void expectValue(parser::UnitTestCommand cmd, QList<uint8_t> values);
 };
 
 class LocalParser_UnitTests_interface
@@ -34,18 +35,23 @@ class LocalParser_UnitTests_interface
 public:
     virtual void appendName(std::string name) = 0;
     virtual void appendType(parser::TypeDescriptor desc) = 0;
-    virtual void appendExpectedValues(QList<uint8_t> values) = 0;
-    virtual void appendCurrentValues(QList<uint8_t> values) = 0;
+    virtual void appendExpectedValue(QList<uint8_t> value) = 0;
+    virtual void appendCurrentValue(QList<uint8_t> value) = 0;
     virtual void appendTestResult(TestResult) = 0;
+    virtual void appendLowerValue(QList<uint8_t> value) = 0;
+    virtual void appendUpperValue(QList<uint8_t> value) = 0;
     virtual void appendEnd() = 0;
 };
 
 class AbstractLocalParser_UnitTests:
     public LocalParser_UnitTests_interface
 {
+    friend class LocalParser_UnitTests;
 protected:
-    QList<uint8_t> expected_values_;
-    QList<uint8_t> current_values_;
+    QList<uint8_t> expected_value_;
+    QList<uint8_t> current_value_;
+    QList<uint8_t> lower_value_;
+    QList<uint8_t> upper_value_;
     std::string name_;
     parser::TypeDescriptor descriptor_;
     TestResult  result_;
@@ -54,9 +60,11 @@ protected:
 public:
     virtual void appendName(std::string name) override;
     virtual void appendType(parser::TypeDescriptor desc) override;
-    virtual void appendExpectedValues(QList<uint8_t> values) override;
-    virtual void appendCurrentValues(QList<uint8_t> values) override;
+    virtual void appendExpectedValue(QList<uint8_t> values) override;
+    virtual void appendCurrentValue(QList<uint8_t> values) override;
     virtual void appendTestResult(TestResult) override;
+    virtual void appendLowerValue(QList<uint8_t> value) override;
+    virtual void appendUpperValue(QList<uint8_t> value) override;
     virtual void appendEnd() override;
 };
 
@@ -77,15 +85,23 @@ public:
     void expectEmptyResult() const;
     void expectNotEmptyResult() const;
     void expectParserNotReady() const;
+private:
+    void appendSeveralCodes(QList<uint8_t> codes);
+    void fillPackage();
+    void checkCommon();
 public:
     virtual void appendName(std::string name) override;
     virtual void appendType(parser::TypeDescriptor desc) override;
+    virtual void appendExpectedValue(QList<uint8_t> values) override;
+    virtual void appendCurrentValue(QList<uint8_t> values) override;
     virtual void appendTestResult(TestResult) override;
+    virtual void appendLowerValue(QList<uint8_t> value) override;
+    virtual void appendUpperValue(QList<uint8_t> value) override;
     virtual void appendEnd() override;
-    virtual void appendExpectedValues(QList<uint8_t> values) override;
-    virtual void appendCurrentValues(QList<uint8_t> values) override;
 public:
-    void run();
+    void checkEqual();
+    void checkInRange();
+
 };
 
 

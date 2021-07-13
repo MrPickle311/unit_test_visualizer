@@ -6,33 +6,43 @@ void PackageTester::setPackage(const parser::DataPackage& newPackage)
     package_ = newPackage;
 }
 
-void PackageTester::expectPackageTypeDescriptor(parser::TypeDescriptor desc)
+void PackageTester::expectTypeDescriptor(parser::TypeDescriptor desc)
 {
     EXPECT_EQ(package_.parsed_data_[parser::UnitTestCommand::SENDING_TYPE_DESCRIPTOR][0] , desc);//only first byte
 }
 
-void PackageTester::expectPackageName(std::string name)
+void PackageTester::expectName(std::string name)
 {
     EXPECT_STREQ(package_.parsed_data_[parser::UnitTestCommand::SENDING_NAME].data() , name.c_str());//only first byte
 }
 
-void PackageTester::expectPackageValues(parser::UnitTestCommand cmd ,QList<uint8_t> values)
+void PackageTester::expectValue(parser::UnitTestCommand cmd ,QList<uint8_t> values)
 {
     for(int i{0}; i < values.size() ; ++i)
         EXPECT_EQ(static_cast<uint8_t>(package_.parsed_data_[cmd][i]) , values[i]);
 }
 
-void PackageTester::expectPackageCurrentValues(QList<uint8_t> values)
+void PackageTester::expectCurrentValue(QList<uint8_t> values)
 {
-    expectPackageValues(parser::UnitTestCommand::SENDING_CURRENT_VALUE , values);
+    expectValue(parser::UnitTestCommand::SENDING_CURRENT_VALUE , values);
 }
 
-void PackageTester::expectPackageExpectedValues(QList<uint8_t> values)
+void PackageTester::expectLowerValue(QList<uint8_t> values)
 {
-    expectPackageValues(parser::UnitTestCommand::SENDING_EXPECTED_VALUE , values);
+    expectValue(parser::UnitTestCommand::SENDING_LOWER_VALUE , values);
 }
 
-void PackageTester::expectPackageTestResult(TestResult result )
+void PackageTester::expectUpperValue(QList<uint8_t> values)
+{
+    expectValue(parser::UnitTestCommand::SENDING_UPPER_VALUE , values);
+}
+
+void PackageTester::expectExpectedValue(QList<uint8_t> values)
+{
+    expectValue(parser::UnitTestCommand::SENDING_EXPECTED_VALUE , values);
+}
+
+void PackageTester::expectTestResult(TestResult result )
 {
     EXPECT_EQ(package_.parsed_data_[parser::UnitTestCommand::SENDING_TEST_RESULT][0] , result);
 }
@@ -49,19 +59,29 @@ void AbstractLocalParser_UnitTests::appendType(parser::TypeDescriptor desc)
     descriptor_ = desc;
 }
 
-void AbstractLocalParser_UnitTests::appendExpectedValues(QList<uint8_t> values)
+void AbstractLocalParser_UnitTests::appendExpectedValue(QList<uint8_t> values)
 {
-    expected_values_ = values;
+    expected_value_ = values;
 }
 
-void AbstractLocalParser_UnitTests::appendCurrentValues(QList<uint8_t> values)
+void AbstractLocalParser_UnitTests::appendCurrentValue(QList<uint8_t> values)
 {
-    current_values_ = values;
+    current_value_ = values;
 }
 
 void AbstractLocalParser_UnitTests::appendTestResult(TestResult result)
 {
     result_ = result;
+}
+
+void AbstractLocalParser_UnitTests::appendLowerValue(QList<uint8_t> value)
+{
+    lower_value_ = value;
+}
+
+void AbstractLocalParser_UnitTests::appendUpperValue(QList<uint8_t> value)
+{
+    upper_value_ = value;
 }
 
 void AbstractLocalParser_UnitTests::appendEnd(){} //empty
@@ -105,6 +125,44 @@ void LocalParser_UnitTests::appendTestResult(TestResult result)
     appendCode(result);
 }
 
+void LocalParser_UnitTests::appendSeveralCodes(QList<uint8_t> codes)
+{
+    for(auto&& value : codes)
+        appendCode(value);
+}
+
+void LocalParser_UnitTests::appendExpectedValue(QList<uint8_t> values)
+{
+    test_body_.appendExpectedValue(values);
+
+    appendCode(parser::UnitTestCommand::SENDING_EXPECTED_VALUE);
+    appendSeveralCodes(values);
+}
+
+void LocalParser_UnitTests::appendCurrentValue(QList<uint8_t> values)
+{
+    test_body_.appendCurrentValue(values);
+
+    appendCode(parser::UnitTestCommand::SENDING_CURRENT_VALUE);
+    appendSeveralCodes(values);
+}
+
+void LocalParser_UnitTests::appendLowerValue(QList<uint8_t> value)
+{
+    test_body_.appendLowerValue(value);
+
+    appendCode(parser::UnitTestCommand::SENDING_LOWER_VALUE);
+    appendSeveralCodes(value);
+}
+
+void LocalParser_UnitTests::appendUpperValue(QList<uint8_t> value)
+{
+    test_body_.appendUpperValue(value);
+
+    appendCode(parser::UnitTestCommand::SENDING_UPPER_VALUE);
+    appendSeveralCodes(value);
+}
+
 void LocalParser_UnitTests::appendEnd()
 {
     test_body_.appendEnd();
@@ -112,22 +170,45 @@ void LocalParser_UnitTests::appendEnd()
     appendCode(parser::UnitTestCommand::END_SENDING_UNIT_TEST_RESULT);
 }
 
-void LocalParser_UnitTests::appendExpectedValues(QList<uint8_t> values)
+void LocalParser_UnitTests::fillPackage()
 {
-    test_body_.appendExpectedValues(values);
+    local_parser_.parseData();
 
-    appendCode(parser::UnitTestCommand::SENDING_EXPECTED_VALUE);
-    for(auto&& value : values)
-        appendCode(value);
+    expectParserReady();
+
+    package_tester_.setPackage(local_parser_.getParsedPackage());
 }
 
-void LocalParser_UnitTests::appendCurrentValues(QList<uint8_t> values)
+void LocalParser_UnitTests::checkCommon()
 {
-    test_body_.appendCurrentValues(values);
+    package_tester_.expectTypeDescriptor(test_body_.descriptor_);
+    package_tester_.expectName(test_body_.name_);
+    package_tester_.expectCurrentValue(test_body_.current_value_);
+    package_tester_.expectTestResult(test_body_.result_);
+}
 
-    appendCode(parser::UnitTestCommand::SENDING_CURRENT_VALUE);
-    for(auto&& value : values)
-        appendCode(value);
+void LocalParser_UnitTests::checkEqual()
+{
+    fillPackage();
+    checkCommon();
+
+    package_tester_.expectExpectedValue(test_body_.expected_value_);
+    //here parser is empty
+
+    expectParserNotReady();
+    expectEmptyResult();
+}
+
+void LocalParser_UnitTests::checkInRange()
+{
+    fillPackage();
+    checkCommon();
+
+    package_tester_.expectLowerValue(test_body_.lower_value_);
+    package_tester_.expectUpperValue(test_body_.upper_value_);
+
+    expectParserNotReady();
+    expectEmptyResult();
 }
 
 void LocalParser_UnitTests::expectParserReady() const
@@ -159,89 +240,71 @@ TEST_F(LocalParser_UnitTests , BoolVariableTest)
 {
     appendType(parser::TypeDescriptor::BOOL);
     appendName("xd()");
-    appendExpectedValues({1});
-    appendCurrentValues({1});
+    appendExpectedValue({1});
+    appendCurrentValue({1});
     appendTestResult(PASSED);
     appendEnd();
 
-    local_parser_.parseData();
-
-    expectParserReady();
-
-    package_tester_.setPackage(local_parser_.getParsedPackage());
-
-   // parser::DataPackage package {};//it will be interface , but i dont care now
-
-    package_tester_.expectPackageTypeDescriptor(parser::TypeDescriptor::BOOL);
-    package_tester_.expectPackageName("xd()");
-    package_tester_.expectPackageExpectedValues({1});
-    package_tester_.expectPackageCurrentValues({1});
-
-    package_tester_.expectPackageTestResult(PASSED);
-
-    //here parser is empty
-
-    expectParserNotReady();
-
-    expectEmptyResult();
+    checkEqual();
 }
 
 TEST_F(LocalParser_UnitTests , Uint32VariableTest)
 {
     appendType(parser::TypeDescriptor::UINT32_T);
     appendName("xc");
-    appendExpectedValues({177 , 1 , 0 , 0});
-    appendCurrentValues({177 , 1 , 0 , 0});
+    appendExpectedValue({177 , 1 , 0 , 0});
+    appendCurrentValue({177 , 1 , 0 , 0});
     appendTestResult(PASSED);
     appendEnd();
 
-    local_parser_.parseData();
+    checkEqual();
+}
 
-    expectParserReady();
+TEST_F(LocalParser_UnitTests , BitSetTest)
+{
+    appendType(parser::TypeDescriptor::BIT);
+    appendName("reg");
+    appendExpectedValue({1});
+    appendCurrentValue({1});
+    appendTestResult(PASSED);
+    appendEnd();
 
-    package_tester_.setPackage(local_parser_.getParsedPackage());
-
-    package_tester_.expectPackageTypeDescriptor( parser::TypeDescriptor::UINT32_T);
-    package_tester_.expectPackageName("xc");
-    package_tester_.expectPackageExpectedValues( {177 , 1 , 0 , 0});
-    package_tester_.expectPackageCurrentValues( {177 , 1 , 0 , 0});
-
-    package_tester_.expectPackageTestResult(PASSED);
-
-    //here parser is empty
-
-    expectParserNotReady();
-
-    expectEmptyResult();
+    checkEqual();
 }
 
 TEST_F(LocalParser_UnitTests , Int64VariableTest)
 {
     appendType(parser::TypeDescriptor::INT64_T);
     appendName("openmb");
-    appendExpectedValues({177, 1, 0, 0, 0, 0, 0 ,0});
-    appendCurrentValues({118, 194, 250, 255, 255, 255, 255, 255});
+    appendExpectedValue({177, 1, 0, 0, 0, 0, 0 ,0});
+    appendCurrentValue({118, 194, 250, 255, 255, 255, 255, 255});
     appendTestResult(FAILURE);
     appendEnd();
 
-    local_parser_.parseData();
-
-    expectParserReady();
-
-    package_tester_.setPackage(local_parser_.getParsedPackage());
-
-    package_tester_.expectPackageTypeDescriptor(parser::TypeDescriptor::INT64_T);
-    package_tester_.expectPackageName( "openmb");
-    package_tester_.expectPackageExpectedValues( {177, 1, 0, 0, 0, 0, 0 ,0});
-    package_tester_.expectPackageCurrentValues(  {118, 194, 250, 255, 255, 255, 255, 255});
-
-    package_tester_.expectPackageTestResult( FAILURE);
-
-    //here parser is empty
-
-    expectParserNotReady();
-
-    expectEmptyResult();
+    checkEqual();
 }
 
+TEST_F(LocalParser_UnitTests , PtrVariableTest)
+{
+    appendType(parser::TypeDescriptor::PTR);
+    appendName("ptr");
+    appendExpectedValue({0});
+    appendCurrentValue({0});
+    appendTestResult(PASSED);
+    appendEnd();
 
+    checkEqual();
+}
+
+TEST_F(LocalParser_UnitTests , Int16RangeVariableTest)
+{
+    appendType(parser::TypeDescriptor::INT16_T);
+    appendName("dfname");
+    appendCurrentValue({67 , 0});
+    appendLowerValue({249 , 255});
+    appendUpperValue({226 , 19});
+    appendTestResult(PASSED);
+    appendEnd();
+
+    checkInRange();
+}

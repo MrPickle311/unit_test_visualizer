@@ -43,6 +43,11 @@ public:
     virtual void appendEnd() = 0;
 };
 
+class UnitTestPackage
+{
+
+};
+
 class AbstractLocalParser_UnitTests:
     public LocalParser_UnitTests_interface
 {
@@ -102,14 +107,6 @@ public:
     void checkEqual();
     void checkInRange();
 
-};
-
-class TestCaseParser_UnitTests
-{
-protected:
-
-public:
-    void check();
 };
 
 

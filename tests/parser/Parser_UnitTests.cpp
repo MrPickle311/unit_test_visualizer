@@ -310,33 +310,6 @@ TEST_F(LocalParser_UnitTests , Int16RangeVariableTest)
 }
 
 
-TEST_F(TestCaseParser_UnitTest , LogicTest)
-{
-    UnitTest_INT16_Range_Builder builder;
-
-    builder.setName("dfname");
-    builder.setCurrentValue({67 , 0});
-    builder.setLowerValue({249 , 255});
-    builder.setUpperValue({226 , 19});
-    builder.setTestResult({PASSED});
-    //end is appended automatically
-
-    append(builder.createTestData());
-
-    builder.setName("xd");
-
-    append(builder.createTestData());
 
 
-    UnitTest_PTR_Builder ptr_builder;
 
-    ptr_builder.setName("ptr");
-    ptr_builder.setExpectedValue({0});
-    ptr_builder.setCurrentValue({0});
-    ptr_builder.setTestResult(PASSED);
-
-    append(ptr_builder.createTestData());
-    append(ptr_builder.createTestData());
-
-    check();
-}

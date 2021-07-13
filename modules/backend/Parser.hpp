@@ -37,7 +37,8 @@ using Code = char;
 
 enum GlobalCommand : uint8_t{ START					   = 0 ,
                               SENDING_TEST_CASE        = 1 ,
-                              END_ENTIRE_TRANSACTION   = 4 };
+                              END_ENTIRE_TRANSACTION   = 4 ,
+                              CMD_CNT};
 
 enum TestCaseCommand : uint8_t{ SENDING_UNIT_TEST_RESULT = 2 ,
                                 END_SENDING_TEST_CASE    = 3};
@@ -81,11 +82,12 @@ struct DataPackage
     QByteArrayList parsed_data_;
 };
 
-struct ParserDataPackage
+class ParserDataPackage
 {
-    QList<ParserDataPackage> children;
-    bool is_leaf_ = false;
-    QByteArray bytes_;
+private:
+    QList<QSharedPointer<ParserDataPackage>> children;
+    bool is_leaf_;
+    QByteArray bytes_;//if its composite , bytes_ is empty
 };
 
 class AbstractProcessor
@@ -211,8 +213,8 @@ public:
    virtual DataPackage getParsedPackage() override;
    virtual bool isEmptyResult() const override;
 public:
-   void parseData();
-   void checkCode(Code cmd);
+   virtual void parseData();
+   virtual void checkCode(Code cmd);
 };
 
 }

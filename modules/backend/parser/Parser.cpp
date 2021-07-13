@@ -4,12 +4,22 @@
 namespace parser
 {
 
-AbstractLocalByteParser::AbstractLocalByteParser(port::ByteBuffer* buffer)
+AbstractByteParser::AbstractByteParser(port::ByteBuffer* buffer)
     : buffer_{buffer}
 {}
 
+void AbstractByteParser::setBuffer(port::ByteBuffer* buffer)
+{
+    buffer_ = buffer;
+}
+
+port::ByteBuffer* AbstractByteParser::getBuffer()
+{
+    return buffer_;
+}
+
 UnitTestLocalByteParser::UnitTestLocalByteParser(port::ByteBuffer* buffer) :
-    AbstractLocalByteParser{buffer},
+    AbstractByteParser{buffer},
     result_{},
     package_ready_{false}
 {
@@ -17,9 +27,13 @@ UnitTestLocalByteParser::UnitTestLocalByteParser(port::ByteBuffer* buffer) :
         result_.parsed_data_.push_back({});
 }
 
-void UnitTestLocalByteParser::parseCommand(Command* cmd)
+void UnitTestLocalByteParser::parseCommand(Code cmd)
 {
+    Processor* proc {Processors::getProcessor(static_cast<UnitTestCommand>(cmd))};
 
+    QByteArray result {proc->process(buffer_)};
+
+    result_.parsed_data_.replace(cmd, result);//insert certain QByteArray to QByteArrayList
 }
 
 bool UnitTestLocalByteParser::packageReady() const
@@ -38,29 +52,15 @@ bool UnitTestLocalByteParser::isEmptyResult() const
     return result_.parsed_data_.isEmpty();
 }
 
-void UnitTestLocalByteParser::setBuffer(port::ByteBuffer* buffer)
-{
-    buffer_ = buffer;
-}
-
-port::ByteBuffer* UnitTestLocalByteParser::getBuffer()
-{
-    return buffer_;
-}
-
 void UnitTestLocalByteParser::parseData()
 {
-    UnitTestCommand cmd {static_cast<UnitTestCommand>(buffer_->getByte())};
+    Code cmd {buffer_->getByte()};
 
     while (cmd != UnitTestCommand::END_SENDING_UNIT_TEST_RESULT)
     {
-        Processor* proc {Processors::getProcessor(cmd)};
+        parseCommand(cmd);
 
-        QByteArray bytes {proc->process(buffer_)};
-
-        result_.parsed_data_.replace(cmd, bytes);//insert certain QByteArray to QByteArrayList
-
-        cmd = static_cast<UnitTestCommand>(buffer_->getByte());
+        cmd = buffer_->getByte();
         checkCode(cmd);
     }
 

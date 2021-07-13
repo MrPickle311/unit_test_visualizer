@@ -81,6 +81,13 @@ struct DataPackage
     QByteArrayList parsed_data_;
 };
 
+struct ParserDataPackage
+{
+    QList<ParserDataPackage> children;
+    bool is_leaf_ = false;
+    QByteArray bytes_;
+};
+
 class AbstractProcessor
 {
 protected:
@@ -162,7 +169,7 @@ public:
 class AbstractParser
 {
 private :
-    virtual void parseCommand(Command* cmd) = 0;
+    virtual void parseCommand(Code cmd) = 0;
 public:
     virtual bool packageReady() const = 0;
     virtual DataPackage getParsedPackage() = 0;
@@ -177,8 +184,8 @@ protected:
     port::ByteBuffer* buffer_;
 public:
     AbstractByteParser(port::ByteBuffer* buffer);
-    virtual void setBuffer(port::ByteBuffer* buffer) = 0;
-    virtual port::ByteBuffer* getBuffer() = 0;
+    virtual void setBuffer(port::ByteBuffer* buffer);
+    virtual port::ByteBuffer* getBuffer();
 };
 
 class TestCaseParser:
@@ -194,23 +201,15 @@ class UnitTestLocalByteParser:
         public ProgramObject
 {
 private:
-   //LocalByteParser byte_parser_;
     DataPackage       result_;
     bool              package_ready_;
-    // AbstractParser interface
 public:
-    UnitTestLocalByteParser(port::ByteBuffer* buffer);
-
-   virtual void parseCommand(Command* cmd) override;
+   UnitTestLocalByteParser(port::ByteBuffer* buffer);
+public:
+   virtual void parseCommand(Code cmd) override;
    virtual bool packageReady() const override;
    virtual DataPackage getParsedPackage() override;
    virtual bool isEmptyResult() const override;
-
-   // AbstractLocalByteParser interface
-public:
-   virtual void setBuffer(port::ByteBuffer* buffer) override;
-   virtual port::ByteBuffer* getBuffer() override;
-
 public:
    void parseData();
    void checkCode(Code cmd);

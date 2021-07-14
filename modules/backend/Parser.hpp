@@ -1,9 +1,7 @@
 #pragma once
 
 #include <QByteArray>
-#include <QStateMachine>
-#include <QState>
-#include <QSignalTransition>
+#include <QMap>
 #include "PortOperator.hpp"
 #include <memory>
 #include "parser/ParsedDataPackage.hpp"
@@ -73,57 +71,9 @@ enum TypeDescriptor : uint8_t { UINT8_T  = 0  ,
                                 TYPES_COUNT};
 
 
-struct Command
-{
-    Code command_code_;
-};
-
-//replace with using DataPackage = QByteArrayList;
 struct DataPackage
 {
     QByteArrayList parsed_data_;
-};
-
-class AbstractProcessor
-{
-protected:
-    static TypeDescriptor current_descriptor_;//shared between processors
-public:
-    virtual ~AbstractProcessor(){}
-    virtual QByteArray process(port::ByteBuffer* buffer) = 0;
-};
-
-class Processor:
-        public AbstractProcessor,
-        public ProgramObject
-{};
-
-class TypeDescriptorProcessor:
-        public Processor
-{
-public:
-    virtual QByteArray process(port::ByteBuffer* buffer) override;
-};
-
-class NameProcessor:
-        public Processor
-{
-public:
-    virtual QByteArray process(port::ByteBuffer* buffer) override;
-};
-
-class ValueProcessor:
-        public Processor
-{
-public:
-    virtual QByteArray process(port::ByteBuffer* buffer) override;
-};
-
-class TestResultProcessor:
-        public Processor
-{
-public:
-    virtual QByteArray process(port::ByteBuffer* buffer) override;
 };
 
 //useful singletons
@@ -143,70 +93,6 @@ public:
     static int getSize(TypeDescriptor desc) ;
 };
 
-class Processors
-{
-private:
-    static QMutex mutex_;
-    static QMap<UnitTestCommand , std::shared_ptr<Processor>> processors_;
-    static bool processors_initialized_;
-private:
-    template<typename T>
-    static void addProcessor(UnitTestCommand code);
-    static void initProcessors();
-protected:
-    Processors(){};
-public:
-    static Processor* getProcessor(UnitTestCommand cmd);
-};
-
-
-//interface for every kind of parser
-//pure abstraction , no data
-class AbstractParser
-{
-private :
-    virtual void parseCommand(Code cmd) = 0;
-public:
-    virtual bool packageReady() const = 0;
-    virtual DataPackage getParsedPackage() = 0;
-    virtual bool isEmptyResult() const = 0;
-};
-
-//abstraction for a byte parser
-class AbstractByteParser:
-        public AbstractParser
-{
-protected:
-    port::ByteBuffer* buffer_;
-public:
-    AbstractByteParser(port::ByteBuffer* buffer);
-    virtual void setBuffer(port::ByteBuffer* buffer);
-    virtual port::ByteBuffer* getBuffer();
-};
-
-
-//complete object
-//reads only type descriptor and redirects to certain ParserProcessor
-class UnitTestLocalByteParser:
-        public AbstractByteParser,
-        public ProgramObject
-{
-private:
-    DataPackage       result_;
-    bool              package_ready_;
-public:
-   UnitTestLocalByteParser(port::ByteBuffer* buffer);
-public:
-   virtual void parseCommand(Code cmd) override;
-   virtual bool packageReady() const override;
-   virtual DataPackage getParsedPackage() override;
-   virtual bool isEmptyResult() const override;
-public:
-   virtual void parseData();
-   virtual void checkCode(Code cmd);
-};
-
-
 ///idea
 
 class ParserComponent
@@ -225,7 +111,7 @@ public:
     {
         this->parent_ = newParent;
     }
-    virtual void addChild(QSharedPointer<ParserComponent> child){};
+    virtual void addChild(uint8_t cmd , QSharedPointer<ParserComponent> child){};
     virtual bool isComposite() const
     {
         return false;
@@ -242,8 +128,8 @@ class ComplexParser:
         public ProgramObject
 {
 protected:
-    QList<QSharedPointer<ParserComponent>> children_;
-    Code                                   commands_count_;
+    QMap<Code , QSharedPointer<ParserComponent>> children_;
+    Code                                         commands_count_;
 public:
     ComplexParser(Code commands_count):
         commands_count_{commands_count}{}
@@ -251,14 +137,14 @@ public:
     {
         return true;
     }
-    virtual void addChild(QSharedPointer<ParserComponent> child) override
+    virtual void addChild(uint8_t cmd , QSharedPointer<ParserComponent> child) override
     {
         throwIf(child.isNull() , "Child cannot be a nullptr!");
 
         child->setParent(this);
         child->setBuffer(buffer_);
 
-        children_.push_back(child);
+        children_[cmd] = child;
     }
     void checkCode(Code cmd, std::string class_name)
     {
@@ -284,7 +170,7 @@ public:
         Code cmd {buffer_->getByte()};
         checkCode(cmd, typeid (*this).name() );
 
-        while (children_.at(cmd)->parseCommand(package_))//make a map further
+        while (children_[cmd]->parseCommand(package_))//make a map further
         {
             cmd = buffer_->getByte();
             checkCode(cmd, typeid (*this).name() );
@@ -343,7 +229,7 @@ public:
         Code cmd {buffer_->getByte()};
         checkCode(cmd, typeid (*this).name() );
 
-        while (children_.at(cmd)->parseCommand(package_))//make a map further
+        while (children_[cmd]->parseCommand(package_))//make a map further
         {
             cmd = buffer_->getByte();
             checkCode(cmd, typeid (*this).name() );
@@ -367,7 +253,7 @@ public:
         Code cmd {buffer_->getByte()};
         checkCode(cmd, typeid (*this).name() );
 
-        while (children_.at(cmd)->parseCommand(package_))//make a map further
+        while (children_[cmd]->parseCommand(package_))//make a map further
         {
             cmd = buffer_->getByte();
             checkCode(cmd, typeid (*this).name() );

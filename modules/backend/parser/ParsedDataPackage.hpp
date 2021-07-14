@@ -41,6 +41,6 @@ public:
     QSharedPointer<ParsedDataPackage> getParent();
     void setParent(QSharedPointer<ParsedDataPackage> newParent);
 
-    void addChildren(QSharedPointer<ParsedDataPackage> child);
+    void addChild(QSharedPointer<ParsedDataPackage> child);
 };
 

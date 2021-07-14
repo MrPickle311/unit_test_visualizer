@@ -32,7 +32,7 @@ void ParsedDataPackage::setParent(QSharedPointer<ParsedDataPackage> newParent)
     parent_.reset(newParent.data());
 }
 
-void ParsedDataPackage::addChildren(QSharedPointer<ParsedDataPackage> child)
+void ParsedDataPackage::addChild(QSharedPointer<ParsedDataPackage> child)
 {
     children_.push_back(child);
 }
@@ -41,3 +41,9 @@ void ParsedDataPackage::addChildren(QSharedPointer<ParsedDataPackage> child)
 ByteStorage::ByteStorage()
     : bytes_{}
 {  }
+
+ParsedDataPackage::ParsedDataPackage(QSharedPointer<ParsedDataPackage> parent) :
+    parent_{parent},
+    is_leaf_{false},
+    children_{}
+{}

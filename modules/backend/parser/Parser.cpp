@@ -190,4 +190,9 @@ int TypesSizes::getSize(TypeDescriptor desc)
     return sizes_[desc];
 }
 
+TypeDescriptor  ParserComponent::current_type_{};
+
 }
+
+
+

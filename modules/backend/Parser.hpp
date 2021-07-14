@@ -6,6 +6,7 @@
 #include <QSignalTransition>
 #include "PortOperator.hpp"
 #include <memory>
+#include "parser/ParsedDataPackage.hpp"
 
 namespace parser
 {
@@ -37,11 +38,12 @@ using Code = char;
 
 enum GlobalCommand : uint8_t{ START					   = 0 ,
                               SENDING_TEST_CASE        = 1 ,
-                              END_ENTIRE_TRANSACTION   = 4 ,
-                              CMD_CNT};
+                              END_ENTIRE_TRANSACTION   = 2 ,
+                              GLOBAL_COMMAND_COUNT};
 
-enum TestCaseCommand : uint8_t{ SENDING_UNIT_TEST_RESULT = 2 ,
-                                END_SENDING_TEST_CASE    = 3};
+enum TestCaseCommand : uint8_t{ SENDING_UNIT_TEST_RESULT = 0 ,
+                                END_SENDING_TEST_CASE    = 1 ,
+                                TEST_CASE_COMMAND_COUNT};
 
 enum UnitTestCommand : uint8_t{ SENDING_TYPE_DESCRIPTOR 	 = 0 ,
                                 SENDING_NAME				 = 1 ,
@@ -80,14 +82,6 @@ struct Command
 struct DataPackage
 {
     QByteArrayList parsed_data_;
-};
-
-class ParserDataPackage
-{
-private:
-    QList<QSharedPointer<ParserDataPackage>> children;
-    bool is_leaf_;
-    QByteArray bytes_;//if its composite , bytes_ is empty
 };
 
 class AbstractProcessor
@@ -190,11 +184,6 @@ public:
     virtual port::ByteBuffer* getBuffer();
 };
 
-class TestCaseParser:
-        public AbstractByteParser
-{
-
-};
 
 //complete object
 //reads only type descriptor and redirects to certain ParserProcessor
@@ -215,6 +204,253 @@ public:
 public:
    virtual void parseData();
    virtual void checkCode(Code cmd);
+};
+
+
+///idea
+
+class ParserComponent
+{
+protected:
+    ParserComponent*                  parent_;
+    port::ByteBuffer*                 buffer_;
+    QSharedPointer<ParsedDataPackage> package_;
+    static TypeDescriptor             current_type_;
+public:
+    virtual ParserComponent* getParent()
+    {
+        return  this->parent_;
+    }
+    virtual void setParent(ParserComponent* newParent)
+    {
+        this->parent_ = newParent;
+    }
+    virtual void addChild(ParserComponent* child){}
+    virtual bool isComposite() const
+    {
+        return false;
+    }
+    virtual bool parseCommand(QSharedPointer<ParsedDataPackage> result) = 0;//if true -> still parsing
+    void setBuffer(port::ByteBuffer* newBuffer)
+    {
+        buffer_ = newBuffer;
+    }
+};
+
+class ComplexParser:
+        public ParserComponent,
+        public ProgramObject
+{
+protected:
+    QList<QSharedPointer<ParserComponent>> children_;
+    Code                                   commands_count_;
+public:
+    ComplexParser(Code commands_count):
+        commands_count_{commands_count}{}
+    virtual bool isComposite() const override
+    {
+        return true;
+    }
+    virtual void addChild(ParserComponent* child) override
+    {
+        child->setParent(this);
+        child->setBuffer(buffer_);
+        children_.push_back(QSharedPointer<ParserComponent>{});
+    }
+    void checkCode(Code cmd, std::string class_name)
+    {
+        throwIf(cmd >= commands_count_ , { "Command error : " +
+                                           class_name +
+                                           " , out of range"});
+    }
+};
+
+///real
+
+class GlobalParser:
+        public ComplexParser
+{
+public:
+    GlobalParser():
+        ComplexParser{GlobalCommand::GLOBAL_COMMAND_COUNT}{}
+    virtual bool parseCommand(QSharedPointer<ParsedDataPackage> result) override
+    {
+        package_ = QSharedPointer<ParsedDataPackage>::create();
+
+
+        Code cmd {buffer_->getByte()};
+        checkCode(cmd, typeid (*this).name() );
+
+        while (children_.at(cmd)->parseCommand(package_))//make a map further
+        {
+            cmd = buffer_->getByte();
+            checkCode(cmd, typeid (*this).name() );
+        }
+
+        result = package_;
+
+        return false;
+    }
+};
+
+class GlobalStartParser:
+        public ParserComponent
+{
+public:
+    virtual bool parseCommand(QSharedPointer<ParsedDataPackage> result) override
+    {
+        return true;
+    }
+};
+
+class EndParser:
+        public ParserComponent
+{
+public:
+    virtual bool parseCommand(QSharedPointer<ParsedDataPackage> result) override
+    {
+        return false;
+    }
+};
+
+class TestCaseParser:
+        public ComplexParser
+{
+public:
+    TestCaseParser():
+        ComplexParser{TestCaseCommand::TEST_CASE_COMMAND_COUNT }{}
+    virtual bool parseCommand(QSharedPointer<ParsedDataPackage> result) override//test obj
+    {
+        package_ = QSharedPointer<ParsedDataPackage>::create();//create a test case
+        result->addChild(package_);//append a test case
+
+        Code cmd {buffer_->getByte()};
+        checkCode(cmd, typeid (*this).name() );
+
+        while (children_.at(cmd)->parseCommand(package_))//make a map further
+        {
+            cmd = buffer_->getByte();
+            checkCode(cmd, typeid (*this).name() );
+        }
+
+        result = package_;
+
+        return true;
+    }
+};
+
+class UnitTestParser:
+        public ComplexParser
+{
+public:
+    UnitTestParser():
+        ComplexParser{UnitTestCommand::COMMANDS_COUNT}{}
+    virtual bool parseCommand(QSharedPointer<ParsedDataPackage> result) override//test obj
+    {
+        package_ = QSharedPointer<ParsedDataPackage>::create();//create a unit test
+        result->addChild(package_);//append a unit test
+
+        Code cmd {buffer_->getByte()};
+        checkCode(cmd, typeid (*this).name() );
+
+        while (children_.at(cmd)->parseCommand(package_))//make a map further
+        {
+            cmd = buffer_->getByte();
+            checkCode(cmd, typeid (*this).name() );
+        }
+
+        result = package_;
+
+        return true;
+    }
+};
+
+class NameParser:
+        public ParserComponent
+{
+public:
+    virtual bool parseCommand(QSharedPointer<ParsedDataPackage> result) override//unit test
+    {
+        package_ = QSharedPointer<ParsedDataPackage>::create();//create a name
+        result->addChild(package_);//append a name
+        package_->setIsLeaf(true);
+
+        QByteArray name_bytes;
+
+        char byte {buffer_->getByte()};
+        while(byte != '\0')
+        {
+            name_bytes.append(byte);
+            byte = buffer_->getByte();
+        }
+
+        package_->setbytes(name_bytes);
+
+        return true;
+    }
+};
+
+class TypeDescriptorParser:
+        public ParserComponent
+{
+public:
+    virtual bool parseCommand(QSharedPointer<ParsedDataPackage> result) override//unit test
+    {
+        package_ = QSharedPointer<ParsedDataPackage>::create();//create a type desc
+        result->addChild(package_);//append a type desc
+        package_->setIsLeaf(true);
+
+        QByteArray desc_result;
+
+        desc_result.append(buffer_->getByte());
+
+        current_type_ =  static_cast<TypeDescriptor>((uint8_t)desc_result[0]);
+
+        package_->setbytes(desc_result);
+
+        return true;
+    }
+};
+
+class ValueDescriptorParser:
+        public ParserComponent
+{
+public:
+    virtual bool parseCommand(QSharedPointer<ParsedDataPackage> result) override//unit test
+    {
+        package_ = QSharedPointer<ParsedDataPackage>::create();//create a type desc
+        result->addChild(package_);//append a type desc
+        package_->setIsLeaf(true);
+
+        QByteArray value_result;
+
+        for(int i{0}; i < TypesSizes::getSize(current_type_) ; ++i)
+                value_result.append(buffer_->getByte());
+
+        package_->setbytes(value_result);
+
+        return true;
+    }
+};
+
+class TestResultParser:
+        public ParserComponent
+{
+public:
+    virtual bool parseCommand(QSharedPointer<ParsedDataPackage> result) override//unit test
+    {
+        package_ = QSharedPointer<ParsedDataPackage>::create();//create a type desc
+        result->addChild(package_);//append a type desc
+        package_->setIsLeaf(true);
+
+        QByteArray test_result;
+
+        test_result.append(buffer_->getByte());
+
+        package_->setbytes(test_result);
+
+        return true;
+    }
 };
 
 }

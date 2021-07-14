@@ -68,7 +68,6 @@ TEST(ParserTests , ComposingTest )
 
     global->setBuffer(buf.data());
 
-
     Ptr<GlobalStartParser> start{Ptr<GlobalStartParser>::create()};
 
     Ptr<EndParser> end_global {Ptr<EndParser>::create()};
@@ -100,43 +99,44 @@ TEST(ParserTests , ComposingTest )
     unit_parser->addChild(value_parser);
     unit_parser->addChild(end_global);
 
-    buf->appendByte(0);//start
+    TestCase test_case;
+    test_case.setTestCaseName("test1");
 
-    buf->appendByte(1);//send test case
+    Ptr<UnitTestDataPackage> pack_{Ptr<UnitTestDataPackage>::create()};
+    pack_->setDescriptor(TypeDescriptor::BOOL);
+    pack_->setName("xd()");
+    pack_->setExpectedValue({1});
+    pack_->setCurrentValue({1});
+    pack_->setResult(1);
 
+    test_case.addUnitTest(pack_);
 
-    buf->appendByte(116);
-    buf->appendByte(101);
-    buf->appendByte(115);
-    buf->appendByte(116);
-    buf->appendByte(49);
-    buf->appendByte(0);
+    pack_->setName("loloo");
+    test_case.addUnitTest(pack_);
 
+    Ptr<RangeUnitTestDataPackage> range_pack{Ptr<RangeUnitTestDataPackage>::create()};
 
+    range_pack->setDescriptor(TypeDescriptor::INT16_T);
+    range_pack->setName("dfname");
+    range_pack->setLowerValue({249 , 255});
+    range_pack->setUpperValue({226 , 19});
+    range_pack->setResult(1);
 
-    UnitTestDataPackage pack_;
-    pack_.setDescriptor(TypeDescriptor::BOOL);
-    pack_.setName("xd()");
-    pack_.setExpectedValue({1});
-    pack_.setCurrentValue({1});
-    pack_.setResult(1);
-    pack_.setbuffer(buf.data());
+    test_case.addUnitTest(range_pack);
 
-    buf->appendByte(0);//sending unit test
-    pack_.inject();
-    pack_.setName("loloo");
-    buf->appendByte(0);//sending unit test
-    pack_.inject();
+    Transaction transaction;
+    transaction.addTestCase(test_case);
+    test_case.setTestCaseName("test2");
+    transaction.addTestCase(test_case);
 
-
-    buf->appendByte(1);//test case stop
-
-    buf->appendByte(2);//stop
+    transaction.setBuffer(buf.data());
+    transaction.inject();
 
     Ptr<ParsedDataPackage> package_{};
 
     global->parseCommand(package_);
 
-    EXPECT_STREQ(package_->getBytes().data() , "test1");
+    EXPECT_STREQ(package_->getChild(0).getBytes().data() , "test1");
+    EXPECT_STREQ(package_->getChild(1).getBytes().data() , "test2");
 
 }

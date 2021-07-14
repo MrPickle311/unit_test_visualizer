@@ -5,28 +5,17 @@
 using TestResult = uint8_t;
 using byte_t     = uint8_t;
 
-class TestDataPackage
-{
-
-};
-
-
-
-class TestCase
-{
-
-};
-
-
-//void appendExpectedValue(QList<uint8_t> values) override;
-//
-//void appendLowerValue(QList<uint8_t> value) override;
-//void appendUpperValue(QList<uint8_t> value) override;
-
-class AbstractUnitTestDataPackage
+class BufferStorage
 {
 protected:
     port::ByteBuffer* buffer_;
+public:
+    virtual void setBuffer(port::ByteBuffer* newBuffer);
+};
+
+class AbstractUnitTestDataPackage:
+        public BufferStorage
+{
 private:
     void injectName();
     void injectType();
@@ -52,7 +41,6 @@ protected:
     QList<byte_t>           current_value_;
 public:
     void inject();
-    void setbuffer(port::ByteBuffer* newBuffer);
 };
 
 class UnitTestDataPackage:
@@ -87,12 +75,35 @@ protected:
     QList<uint8_t> upper_value_;
 };
 
-
-
-class UnitTestBuilder
+class TestCase:
+        public BufferStorage
 {
 public:
-    UnitTestBuilder();
+    using TestPackPtr = QSharedPointer<AbstractUnitTestDataPackage>;
+private:
+    QList<TestPackPtr> tests_;
+    std::string        test_case_name_;
+private:
+    void injectCaseName();
+public:
+    void inject();
+    const std::string& getTestCaseName() const;
+    void setTestCaseName(const std::string& newTest_case_name);
+    void addUnitTest(TestPackPtr test);
+public:
+    virtual void setBuffer(port::ByteBuffer* newBuffer) override;
 };
 
+class Transaction:
+        public BufferStorage
+{
+private:
+    QList<TestCase> cases_;
+public:
+    void inject();
+    void addTestCase(TestCase test_case);
 
+    // BufferStorage interface
+public:
+    virtual void setBuffer(port::ByteBuffer* newBuffer) override;
+};

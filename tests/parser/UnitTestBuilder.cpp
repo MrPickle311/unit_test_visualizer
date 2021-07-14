@@ -1,11 +1,6 @@
 #include "UnitTestBuilder.hpp"
 
-UnitTestBuilder::UnitTestBuilder()
-{
-
-}
-
-void AbstractUnitTestDataPackage::setbuffer(port::ByteBuffer* newBuffer)
+void BufferStorage::setBuffer(port::ByteBuffer* newBuffer)
 {
     buffer_ = newBuffer;
 }
@@ -159,4 +154,77 @@ const QList<uint8_t>& RangeUnitTestDataPackage::getUpperValue() const
 void RangeUnitTestDataPackage::setUpperValue(const QList<uint8_t>& newUpper_value)
 {
     upper_value_ = newUpper_value;
+}
+
+///
+
+void TestCase::injectCaseName()
+{
+    for(auto&& c : test_case_name_)
+        buffer_->appendByte(c);
+    buffer_->appendByte('\0');
+}
+
+void TestCase::inject()
+{
+    injectCaseName();
+
+    for(auto&& test : tests_)
+    {
+        buffer_->appendByte(parser::TestCaseCommand::SENDING_UNIT_TEST_RESULT);
+        test->inject();
+    }
+    buffer_->appendByte(parser::TestCaseCommand::END_SENDING_TEST_CASE);
+}
+
+const std::string& TestCase::getTestCaseName() const
+{
+    return test_case_name_;
+}
+
+void TestCase::setTestCaseName(const std::string& newTest_case_name)
+{
+    test_case_name_ = newTest_case_name;
+}
+
+void TestCase::addUnitTest(TestPackPtr test)
+{
+    tests_.append(test);
+}
+
+///
+
+void Transaction::inject()
+{
+    buffer_->appendByte(parser::GlobalCommand::START);
+
+    for(auto&& test_case : cases_)
+    {
+        buffer_->appendByte(parser::GlobalCommand::SENDING_TEST_CASE);
+        test_case.inject();
+    }
+
+    buffer_->appendByte(parser::GlobalCommand::END_ENTIRE_TRANSACTION);
+}
+
+void Transaction::addTestCase(TestCase test_case)
+{
+    cases_.push_back(test_case);
+}
+
+void Transaction::setBuffer(port::ByteBuffer* newBuffer)
+{
+    BufferStorage::setBuffer(newBuffer);
+
+    for(auto&& test_case : cases_)
+        test_case.setBuffer(newBuffer);
+
+}
+
+void TestCase::setBuffer(port::ByteBuffer* newBuffer)
+{
+    BufferStorage::setBuffer(newBuffer);
+
+    for(auto&& test : tests_)
+        test->setBuffer(newBuffer);
 }

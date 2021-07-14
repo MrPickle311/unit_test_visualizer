@@ -75,10 +75,8 @@ TEST(ParserTests , ComposingTest )
 
     Ptr<TestCaseParser> case_parser_ {Ptr<TestCaseParser>::create()};
 
-    //global->addChild(start_.data());
-    //global.addChild(case_parser_.data());
-    //global.addChild(end_.data());
-
-   // QList<
+    global->addChild(start_);
+    global->addChild(case_parser_);
+    global->addChild(end_);
 
 }

@@ -225,7 +225,7 @@ public:
     {
         this->parent_ = newParent;
     }
-    virtual void addChild(ParserComponent* child){}
+    virtual void addChild(QSharedPointer<ParserComponent> child){};
     virtual bool isComposite() const
     {
         return false;
@@ -251,11 +251,11 @@ public:
     {
         return true;
     }
-    virtual void addChild(ParserComponent* child) override
+    virtual void addChild(QSharedPointer<ParserComponent> child) override
     {
         child->setParent(this);
         child->setBuffer(buffer_);
-        children_.push_back(QSharedPointer<ParserComponent>{});
+        children_.push_back(child);
     }
     void checkCode(Code cmd, std::string class_name)
     {

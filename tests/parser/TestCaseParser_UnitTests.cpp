@@ -1,4 +1,5 @@
 #include "TestCaseParser_UnitTests.hpp"
+#include "UnitTestBuilder.hpp"
 
 //TestCaseParser_UnitTests::TestCaseParser_UnitTests()
 //{
@@ -103,6 +104,7 @@ TEST(ParserTests , ComposingTest )
 
     buf->appendByte(1);//send test case
 
+
     buf->appendByte(116);
     buf->appendByte(101);
     buf->appendByte(115);
@@ -110,7 +112,22 @@ TEST(ParserTests , ComposingTest )
     buf->appendByte(49);
     buf->appendByte(0);
 
-    buf->appendByte(0);
+
+
+    UnitTestDataPackage pack_;
+    pack_.setDescriptor(TypeDescriptor::BOOL);
+    pack_.setName("xd()");
+    pack_.setExpectedValue({1});
+    pack_.setCurrentValue({1});
+    pack_.setResult(1);
+    pack_.setbuffer(buf.data());
+
+    buf->appendByte(0);//sending unit test
+    pack_.inject();
+    pack_.setName("loloo");
+    buf->appendByte(0);//sending unit test
+    pack_.inject();
+
 
     buf->appendByte(1);//test case stop
 

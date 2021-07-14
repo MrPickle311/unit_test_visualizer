@@ -349,8 +349,6 @@ public:
             checkCode(cmd, typeid (*this).name() );
         }
 
-        result = package_;
-
         return true;
     }
 };
@@ -374,8 +372,6 @@ public:
             cmd = buffer_->getByte();
             checkCode(cmd, typeid (*this).name() );
         }
-
-        result = package_;
 
         return true;
     }

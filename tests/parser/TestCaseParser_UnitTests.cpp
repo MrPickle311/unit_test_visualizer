@@ -65,18 +65,61 @@ TEST(ParserTests , ComposingTest )
 
     Ptr<GlobalParser> global{Ptr<GlobalParser>::create()};
 
-
     global->setBuffer(buf.data());
 
 
-    Ptr<GlobalStartParser> start_{Ptr<GlobalStartParser>::create()};
+    Ptr<GlobalStartParser> start{Ptr<GlobalStartParser>::create()};
 
-    Ptr<EndParser> end_ {Ptr<EndParser>::create()};
+    Ptr<EndParser> end_global {Ptr<EndParser>::create()};
 
-    Ptr<TestCaseParser> case_parser_ {Ptr<TestCaseParser>::create()};
+    Ptr<TestCaseParser> case_parser {Ptr<TestCaseParser>::create()};
 
-    global->addChild(start_);
-    global->addChild(case_parser_);
-    global->addChild(end_);
+    global->addChild(start);
+    global->addChild(case_parser);
+    global->addChild(end_global);
+
+    Ptr<UnitTestParser> unit_parser{Ptr<UnitTestParser>::create()};
+    //Ptr<EndParser> end_case {Ptr<EndParser>::create()};
+
+    case_parser->addChild(unit_parser);
+    case_parser->addChild(end_global);
+
+    Ptr<TypeDescriptorParser>  type_parser   {Ptr<TypeDescriptorParser>::create()};
+    Ptr<NameParser>            name_parser   {Ptr<NameParser>::create()};
+    Ptr<ValueDescriptorParser> value_parser  {Ptr<ValueDescriptorParser>::create()};
+    Ptr<TestResultParser>      result_parser {Ptr<TestResultParser>::create()};
+
+    unit_parser->addChild(type_parser);
+    unit_parser->addChild(name_parser);
+    unit_parser->addChild(value_parser);
+    unit_parser->addChild(value_parser);
+    unit_parser->addChild(result_parser);
+    unit_parser->addChild(Ptr<EmptyParser>::create());//5 - line nmbr -> not implemented yet
+    unit_parser->addChild(value_parser);
+    unit_parser->addChild(value_parser);
+    unit_parser->addChild(end_global);
+
+    buf->appendByte(0);//start
+
+    buf->appendByte(1);//send test case
+
+    buf->appendByte(116);
+    buf->appendByte(101);
+    buf->appendByte(115);
+    buf->appendByte(116);
+    buf->appendByte(49);
+    buf->appendByte(0);
+
+    buf->appendByte(0);
+
+    buf->appendByte(1);//test case stop
+
+    buf->appendByte(2);//stop
+
+    Ptr<ParsedDataPackage> package_{};
+
+    global->parseCommand(package_);
+
+    EXPECT_STREQ(package_->getBytes().data() , "test1");
 
 }

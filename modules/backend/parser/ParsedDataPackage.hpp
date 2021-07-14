@@ -22,8 +22,8 @@ protected:
     QByteArray bytes_;//if its composite , bytes_ is empty
 public:
     ByteStorage();
-    const QByteArray& getbytes() const;
-    void setbytes(const QByteArray& newBytes);
+    const QByteArray& getBytes() const;
+    void setBytes(const QByteArray& newBytes);
 };
 
 class ParsedDataPackage:
@@ -42,5 +42,6 @@ public:
     void setParent(QSharedPointer<ParsedDataPackage> newParent);
 
     void addChild(QSharedPointer<ParsedDataPackage> child);
+    ParsedDataPackage& getChild(int idx);
 };
 

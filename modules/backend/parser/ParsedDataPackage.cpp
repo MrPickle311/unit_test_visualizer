@@ -1,11 +1,11 @@
 #include "ParsedDataPackage.hpp"
 
-const QByteArray& ByteStorage::getbytes() const
+const QByteArray& ByteStorage::getBytes() const
 {
     return bytes_;
 }
 
-void ByteStorage::setbytes(const QByteArray& newBytes)
+void ByteStorage::setBytes(const QByteArray& newBytes)
 {
     bytes_ = newBytes;
 }
@@ -35,6 +35,11 @@ void ParsedDataPackage::setParent(QSharedPointer<ParsedDataPackage> newParent)
 void ParsedDataPackage::addChild(QSharedPointer<ParsedDataPackage> child)
 {
     children_.push_back(child);
+}
+
+ParsedDataPackage& ParsedDataPackage::getChild(int idx)
+{
+    return *children_.at(idx);
 }
 
 

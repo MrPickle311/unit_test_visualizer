@@ -37,3 +37,7 @@ void ParsedDataPackage::addChildren(QSharedPointer<ParsedDataPackage> child)
     children_.push_back(child);
 }
 
+
+ByteStorage::ByteStorage()
+    : bytes_{}
+{  }

@@ -21,6 +21,7 @@ class ByteStorage
 protected:
     QByteArray bytes_;//if its composite , bytes_ is empty
 public:
+    ByteStorage();
     const QByteArray& getbytes() const;
     void setbytes(const QByteArray& newBytes);
 };
@@ -33,6 +34,7 @@ private:
     bool                                     is_leaf_;//if its true -> end of processing
     QList<QSharedPointer<ParsedDataPackage>> children_;
 public:
+    ParsedDataPackage(QSharedPointer<ParsedDataPackage> parent = nullptr);
     bool isLeaf();//if its a leaf -> contains bytes
     void setIsLeaf(bool newIs_leaf);
 

@@ -14,6 +14,56 @@
 //    virtual void       addChildren(Composite* child)   = 0 ;
 //};
 
+class UnitTestDataPackage
+{
+public:
+    const QByteArray& getName()          const;
+    const QByteArray& getDescriptor()    const;
+    const QByteArray& getResult()        const;
+    const QByteArray& getCurrentValue()  const;
+    const QByteArray& getExpectedValue() const;
+    const QByteArray& getLowerValue()    const;
+    const QByteArray& getUpperValue()    const;
+
+    void setName(const          QByteArray& newName);
+    void setDescriptor(const    QByteArray& newDescriptor);
+    void setResult(const        QByteArray& newResult);
+    void setCurrentValue(const  QByteArray& newCurrent_value);
+    void setExpectedValue(const QByteArray& newExpected_value);
+    void setLowerValue(const    QByteArray& newLower_value);
+    void setUpperValue(const    QByteArray& newUpper_value);
+protected:
+    QByteArray  name_;
+    QByteArray  descriptor_;
+    QByteArray  result_;
+    QByteArray  current_value_;
+    QByteArray  expected_value_;
+    QByteArray  lower_value_;
+    QByteArray  upper_value_;
+};
+
+class TestCase
+{
+public:
+    using TestPackPtr = QSharedPointer<UnitTestDataPackage>;
+private:
+    QList<TestPackPtr> tests_;
+    QByteArray         test_case_name_;
+public:
+    const QByteArray& getTestCaseName() const;
+    void setTestCaseName(const QByteArray& newTest_case_name);
+    void addUnitTest(TestPackPtr test);
+    QSharedPointer<UnitTestDataPackage> getUnitTest(int idx);
+};
+
+class Transaction
+{
+private:
+    QList<QSharedPointer<TestCase>> cases_;
+public:
+    void addTestCase(QSharedPointer<TestCase> test_case);
+    QSharedPointer<TestCase> getTestCase(int idx);
+};
 
 //byte specialized
 class ByteStorage

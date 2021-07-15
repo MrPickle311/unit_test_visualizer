@@ -1,6 +1,8 @@
 #include "TestCaseParser_UnitTests.hpp"
 #include "UnitTestBuilder.hpp"
 
+#include <variant>
+
 //TestCaseParser_UnitTests::TestCaseParser_UnitTests()
 //{
 //
@@ -98,44 +100,89 @@ TEST(ParserTests , ComposingTest )
     unit_parser->addChild(parser::UnitTestCommand::SENDING_LOWER_VALUE , value_parser);
     unit_parser->addChild(parser::UnitTestCommand::END_SENDING_UNIT_TEST_RESULT , end_global);
 
-    TestCase test_case;
-    test_case.setTestCaseName("test1");
+    //TestCase test_case;
+    //test_case.setTestCaseName("test1");
+    //
+    //Ptr<UnitTestDataPackage> pack_{Ptr<UnitTestDataPackage>::create()};
+    //pack_->setDescriptor(TypeDescriptor::BOOL);
+    //pack_->setName("xd()");
+    //pack_->setExpectedValue({1});
+    //pack_->setCurrentValue({1});
+    //pack_->setResult(1);
+    //
+    //test_case.addUnitTest(pack_);
+    //
+    //pack_->setName("loloo");
+    //test_case.addUnitTest(pack_);
+    //
+    //Ptr<RangeUnitTestDataPackage> range_pack{Ptr<RangeUnitTestDataPackage>::create()};
+    //
+    //range_pack->setDescriptor(TypeDescriptor::INT16_T);
+    //range_pack->setName("dfname");
+    //range_pack->setLowerValue({249 , 255});
+    //range_pack->setUpperValue({226 , 19});
+    //range_pack->setResult(1);
+    //
+    ////test_case.addUnitTest(range_pack);
+    //
+    //Transaction transaction;
+    ////transaction.addTestCase(test_case);
+    //test_case.setTestCaseName("test2");
+    ////transaction.addTestCase(test_case);
+    //
+    //transaction.setBuffer(buf.data());
+    //transaction.inject();
+    //
+    //Ptr<ParsedDataPackage> package_{};
 
-    Ptr<UnitTestDataPackage> pack_{Ptr<UnitTestDataPackage>::create()};
-    pack_->setDescriptor(TypeDescriptor::BOOL);
-    pack_->setName("xd()");
-    pack_->setExpectedValue({1});
-    pack_->setCurrentValue({1});
-    pack_->setResult(1);
+    //global->parseCommand(package_);
 
-    test_case.addUnitTest(pack_);
-
-    pack_->setName("loloo");
-    test_case.addUnitTest(pack_);
-
-    Ptr<RangeUnitTestDataPackage> range_pack{Ptr<RangeUnitTestDataPackage>::create()};
-
-    range_pack->setDescriptor(TypeDescriptor::INT16_T);
-    range_pack->setName("dfname");
-    range_pack->setLowerValue({249 , 255});
-    range_pack->setUpperValue({226 , 19});
-    range_pack->setResult(1);
-
-    //test_case.addUnitTest(range_pack);
-
-    Transaction transaction;
-    transaction.addTestCase(test_case);
-    test_case.setTestCaseName("test2");
-    transaction.addTestCase(test_case);
-
-    transaction.setBuffer(buf.data());
-    transaction.inject();
-
-    Ptr<ParsedDataPackage> package_{};
-
-    global->parseCommand(package_);
-
-    EXPECT_STREQ(package_->getChild(0).getBytes().data() , "test1");
-    EXPECT_STREQ(package_->getChild(1).getBytes().data() , "test2");
+    //EXPECT_STREQ(package_->getChild(0).getBytes().data() , "test1");
+    //EXPECT_STREQ(package_->getChild(1).getBytes().data() , "test2");
 
 }
+
+
+using AcceptedTypes = std::variant< Ptr<UnitTestDataPackage> , Ptr<TestCase> , Ptr<Transaction> , std::monostate >;
+
+void ff(AcceptedTypes types)
+{
+    auto package {std::get<Ptr<UnitTestDataPackage>>(types)};
+
+    package->setName("XDXDXDXD");
+}
+
+void gg(AcceptedTypes test_case , AcceptedTypes test, AcceptedTypes transaction)
+{
+    std::get<Ptr<TestCase>>(test_case)->addUnitTest(std::get<Ptr<UnitTestDataPackage>>(test));
+
+    std::get<Ptr<Transaction>>(transaction)->addTestCase(std::get<Ptr<TestCase>>(test_case));
+}
+
+TEST(XD ,xd)
+{
+    Ptr<UnitTestDataPackage> pck{Ptr<UnitTestDataPackage>::create()};
+
+    ff(pck);
+
+    Ptr<TestCase> test_case{Ptr<TestCase>::create()};
+
+    Ptr<Transaction> transaction{Ptr<Transaction>::create()};
+
+    gg(test_case , pck , transaction );
+
+    qDebug() << pck->getName().data();
+
+
+}
+
+
+
+
+
+
+
+
+
+
+

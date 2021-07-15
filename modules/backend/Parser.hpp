@@ -5,6 +5,7 @@
 #include "PortOperator.hpp"
 #include <memory>
 #include "parser/ParsedDataPackage.hpp"
+#include <variant>
 
 namespace parser
 {
@@ -95,13 +96,18 @@ public:
 
 ///idea
 
+using AcceptedTypes = std::variant< QSharedPointer<UnitTestDataPackage> ,
+                                    QSharedPointer<TestCase> ,
+                                    QSharedPointer<Transaction> ,
+                                    std::monostate >;
+
 class ParserComponent
 {
 protected:
-    ParserComponent*                  parent_;
-    port::ByteBuffer*                 buffer_;
-    QSharedPointer<ParsedDataPackage> package_;
-    static TypeDescriptor             current_type_;
+    ParserComponent*      parent_;
+    port::ByteBuffer*     buffer_;
+    AcceptedTypes         package_;
+    static TypeDescriptor current_type_;
 public:
     virtual ParserComponent* getParent()
     {
@@ -116,10 +122,14 @@ public:
     {
         return false;
     }
-    virtual bool parseCommand(QSharedPointer<ParsedDataPackage>& result) = 0;//if true -> still parsing
+    virtual bool parseCommand(AcceptedTypes result) = 0;//if true -> still parsing
     void setBuffer(port::ByteBuffer* newBuffer)
     {
         buffer_ = newBuffer;
+    }
+    virtual void createPackage()
+    {
+        package_ = QSharedPointer<UnitTestDataPackage>::create();
     }
 };
 
@@ -152,6 +162,17 @@ public:
                                            class_name +
                                            " , out of range"});
     }
+    void proccessingLoop()
+    {
+        Code cmd {buffer_->getByte()};
+        checkCode(cmd, typeid (*this).name() );
+
+        while (children_[cmd]->parseCommand(package_))//make a map further
+        {
+            cmd = buffer_->getByte();
+            checkCode(cmd, typeid (*this).name() );
+        }
+    }
 };
 
 ///real
@@ -162,23 +183,19 @@ class GlobalParser:
 public:
     GlobalParser():
         ComplexParser{GlobalCommand::GLOBAL_COMMAND_COUNT}{}
-    virtual bool parseCommand(QSharedPointer<ParsedDataPackage>& result) override
+    virtual bool parseCommand(AcceptedTypes result) override
     {
-        package_ = QSharedPointer<ParsedDataPackage>::create();
+        createPackage();
 
+        proccessingLoop();
 
-        Code cmd {buffer_->getByte()};
-        checkCode(cmd, typeid (*this).name() );
-
-        while (children_[cmd]->parseCommand(package_))//make a map further
-        {
-            cmd = buffer_->getByte();
-            checkCode(cmd, typeid (*this).name() );
-        }
-
-        result = std::move(package_);
+        auto res = std::get<QSharedPointer<Transaction>>(package_);
 
         return false;
+    }
+    virtual void createPackage() override
+    {
+        package_ = QSharedPointer<Transaction>::create();
     }
 };
 
@@ -186,7 +203,7 @@ class GlobalStartParser:
         public ParserComponent
 {
 public:
-    virtual bool parseCommand(QSharedPointer<ParsedDataPackage>& result) override
+    virtual bool parseCommand(AcceptedTypes result) override
     {
         return true;
     }
@@ -198,7 +215,7 @@ class EndParser:
         public ParserComponent
 {
 public:
-    virtual bool parseCommand(QSharedPointer<ParsedDataPackage>& result) override
+    virtual bool parseCommand(AcceptedTypes result) override
     {
         return false;
     }
@@ -210,10 +227,11 @@ class TestCaseParser:
 public:
     TestCaseParser():
         ComplexParser{TestCaseCommand::TEST_CASE_COMMAND_COUNT }{}
-    virtual bool parseCommand(QSharedPointer<ParsedDataPackage>& result) override//test obj
+    virtual bool parseCommand(AcceptedTypes result) override//test obj
     {
-        package_ = QSharedPointer<ParsedDataPackage>::create();//create a test case
-        result->addChild(package_);//append a test case
+        createPackage();//create a test case
+        //append a test case
+        std::get<QSharedPointer<Transaction>>(result)->addTestCase(std::get<QSharedPointer<TestCase>>(package_));
 
         QByteArray name_bytes;
 
@@ -224,18 +242,15 @@ public:
             byte = buffer_->getByte();
         }
 
-        package_->setBytes(name_bytes);
+        std::get<QSharedPointer<TestCase>>(package_)->setTestCaseName(name_bytes);
 
-        Code cmd {buffer_->getByte()};
-        checkCode(cmd, typeid (*this).name() );
-
-        while (children_[cmd]->parseCommand(package_))//make a map further
-        {
-            cmd = buffer_->getByte();
-            checkCode(cmd, typeid (*this).name() );
-        }
+        proccessingLoop();
 
         return true;
+    }
+    virtual void createPackage() override
+    {
+        package_ = QSharedPointer<TestCase>::create();
     }
 };
 
@@ -245,10 +260,10 @@ class UnitTestParser:
 public:
     UnitTestParser():
         ComplexParser{UnitTestCommand::COMMANDS_COUNT}{}
-    virtual bool parseCommand(QSharedPointer<ParsedDataPackage>& result) override//test obj
+    virtual bool parseCommand(AcceptedTypes result) override//test obj
     {
-        package_ = QSharedPointer<ParsedDataPackage>::create();//create a unit test
-        result->addChild(package_);//append a unit test
+        createPackage();//create a unit test
+        std::get<QSharedPointer<TestCase>>(result)->addUnitTest(std::get<QSharedPointer<UnitTestDataPackage>>(package_));//append a unit test
 
         Code cmd {buffer_->getByte()};
         checkCode(cmd, typeid (*this).name() );
@@ -267,11 +282,9 @@ class NameParser:
         public ParserComponent
 {
 public:
-    virtual bool parseCommand(QSharedPointer<ParsedDataPackage>& result) override//unit test
+    virtual bool parseCommand(AcceptedTypes result) override//unit test
     {
-        package_ = QSharedPointer<ParsedDataPackage>::create();//create a name
-        result->addChild(package_);//append a name
-        package_->setIsLeaf(true);
+        auto test_case {std::get<QSharedPointer<UnitTestDataPackage>>(result)};
 
         QByteArray name_bytes;
 
@@ -282,7 +295,7 @@ public:
             byte = buffer_->getByte();
         }
 
-        package_->setBytes(name_bytes);
+        test_case->setName(name_bytes);
 
         return true;
     }
@@ -292,11 +305,9 @@ class TypeDescriptorParser:
         public ParserComponent
 {
 public:
-    virtual bool parseCommand(QSharedPointer<ParsedDataPackage>& result) override//unit test
+    virtual bool parseCommand(AcceptedTypes result) override//unit test
     {
-        package_ = QSharedPointer<ParsedDataPackage>::create();//create a type desc
-        result->addChild(package_);//append a type desc
-        package_->setIsLeaf(true);
+        auto test_case {std::get<QSharedPointer<UnitTestDataPackage>>(result)};
 
         QByteArray desc_result;
 
@@ -304,30 +315,73 @@ public:
 
         current_type_ =  static_cast<TypeDescriptor>((uint8_t)desc_result[0]);
 
-        package_->setBytes(desc_result);
+        test_case->setDescriptor(desc_result);
 
         return true;
     }
 };
 
-class ValueDescriptorParser:
+class ValueParser:
         public ParserComponent
 {
 public:
-    virtual bool parseCommand(QSharedPointer<ParsedDataPackage>& result) override//unit test
+    virtual bool parseCommand(AcceptedTypes result) override//unit test
     {
-        package_ = QSharedPointer<ParsedDataPackage>::create();//create a type desc
-        result->addChild(package_);//append a type desc
-        package_->setIsLeaf(true);
+        auto test_case {std::get<QSharedPointer<UnitTestDataPackage>>(result)};
 
         QByteArray value_result;
 
         for(int i{0}; i < TypesSizes::getSize(current_type_) ; ++i)
                 value_result.append(buffer_->getByte());
 
-        package_->setBytes(value_result);
+        redirectValueBytes(value_result, test_case);
 
         return true;
+    }
+    virtual void redirectValueBytes(const QByteArray& value_result, QSharedPointer<UnitTestDataPackage>& unit_test ) = 0;
+};
+
+class CurrentValueParser:
+        public ValueParser
+{
+public:
+    virtual void redirectValueBytes(const QByteArray& value_result,
+                                    QSharedPointer<UnitTestDataPackage>& unit_test) override
+    {
+        unit_test->setCurrentValue(value_result);
+    }
+};
+
+class ExpectedValueParser:
+        public ValueParser
+{
+public:
+    virtual void redirectValueBytes(const QByteArray& value_result,
+                                    QSharedPointer<UnitTestDataPackage>& unit_test) override
+    {
+        unit_test->setExpectedValue(value_result);
+    }
+};
+
+class LowerValueParser:
+        public ValueParser
+{
+public:
+    virtual void redirectValueBytes(const QByteArray& value_result,
+                                    QSharedPointer<UnitTestDataPackage>& unit_test) override
+    {
+        unit_test->setLowerValue(value_result);
+    }
+};
+
+class UpperValueParser:
+        public ValueParser
+{
+public:
+    virtual void redirectValueBytes(const QByteArray& value_result,
+                                    QSharedPointer<UnitTestDataPackage>& unit_test) override
+    {
+        unit_test->setUpperValue(value_result);
     }
 };
 
@@ -335,17 +389,15 @@ class TestResultParser:
         public ParserComponent
 {
 public:
-    virtual bool parseCommand(QSharedPointer<ParsedDataPackage>& result) override//unit test
+    virtual bool parseCommand(AcceptedTypes result) override//unit test
     {
-        package_ = QSharedPointer<ParsedDataPackage>::create();//create a type desc
-        result->addChild(package_);//append a type desc
-        package_->setIsLeaf(true);
+        auto test_case {std::get<QSharedPointer<UnitTestDataPackage>>(result)};
 
         QByteArray test_result;
 
         test_result.append(buffer_->getByte());
 
-        package_->setBytes(test_result);
+        test_case->setResult(test_result);
 
         return true;
     }

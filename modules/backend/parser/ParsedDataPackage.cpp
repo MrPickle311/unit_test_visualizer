@@ -126,6 +126,11 @@ void UnitTestDataPackage::setUpperValue(const QByteArray& newUpper_value)
     upper_value_ = newUpper_value;
 }
 
+const QList<QSharedPointer<UnitTestDataPackage>>& TestCase::getTests() const
+{
+    return tests_;
+}
+
 const QByteArray& TestCase::getTestCaseName() const
 {
     return test_case_name_;
@@ -144,6 +149,11 @@ void TestCase::addUnitTest(TestPackPtr test)
 QSharedPointer<UnitTestDataPackage> TestCase::getUnitTest(int idx)
 {
     return tests_[idx];
+}
+
+const QList<QSharedPointer<TestCase> >& Transaction::getCases() const
+{
+    return cases_;
 }
 
 void Transaction::addTestCase(QSharedPointer<TestCase> test_case)

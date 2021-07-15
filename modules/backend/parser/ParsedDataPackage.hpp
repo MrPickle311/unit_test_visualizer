@@ -54,6 +54,7 @@ public:
     void setTestCaseName(const QByteArray& newTest_case_name);
     void addUnitTest(TestPackPtr test);
     QSharedPointer<UnitTestDataPackage> getUnitTest(int idx);
+    const QList<TestPackPtr>& getTests() const;
 };
 
 class Transaction
@@ -63,6 +64,7 @@ private:
 public:
     void addTestCase(QSharedPointer<TestCase> test_case);
     QSharedPointer<TestCase> getTestCase(int idx);
+    const QList<QSharedPointer<TestCase> >& getCases() const;
 };
 
 //byte specialized

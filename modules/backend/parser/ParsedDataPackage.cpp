@@ -1,61 +1,5 @@
 #include "ParsedDataPackage.hpp"
 
-const QByteArray& ByteStorage::getBytes() const
-{
-    return bytes_;
-}
-
-void ByteStorage::setBytes(const QByteArray& newBytes)
-{
-    bytes_ = newBytes;
-}
-
-///
-
-
-///
-
-bool ParsedDataPackage::isLeaf()
-{
-    return is_leaf_;
-}
-
-void ParsedDataPackage::setIsLeaf(bool newIs_leaf)
-{
-    is_leaf_ = newIs_leaf;
-}
-
-QSharedPointer<ParsedDataPackage> ParsedDataPackage::getParent()
-{
-    return parent_;
-}
-
-void ParsedDataPackage::setParent(QSharedPointer<ParsedDataPackage> newParent)
-{
-    parent_.reset(newParent.data());
-}
-
-void ParsedDataPackage::addChild(QSharedPointer<ParsedDataPackage> child)
-{
-    children_.push_back(child);
-}
-
-ParsedDataPackage& ParsedDataPackage::getChild(int idx)
-{
-    return *children_.at(idx);
-}
-
-
-ByteStorage::ByteStorage()
-    : bytes_{}
-{  }
-
-ParsedDataPackage::ParsedDataPackage(QSharedPointer<ParsedDataPackage> parent) :
-    parent_{parent},
-    is_leaf_{false},
-    children_{}
-{}
-
 const QByteArray& UnitTestDataPackage::getName() const
 {
     return name_;
@@ -126,42 +70,42 @@ void UnitTestDataPackage::setUpperValue(const QByteArray& newUpper_value)
     upper_value_ = newUpper_value;
 }
 
-const QList<QSharedPointer<UnitTestDataPackage>>& TestCase::getTests() const
+const QList<QSharedPointer<UnitTestDataPackage>>& TestCaseDataPackage::getTests() const
 {
     return tests_;
 }
 
-const QByteArray& TestCase::getTestCaseName() const
+const QByteArray& TestCaseDataPackage::getTestCaseName() const
 {
     return test_case_name_;
 }
 
-void TestCase::setTestCaseName(const QByteArray& newTest_case_name)
+void TestCaseDataPackage::setTestCaseName(const QByteArray& newTest_case_name)
 {
     test_case_name_ = newTest_case_name;
 }
 
-void TestCase::addUnitTest(TestPackPtr test)
+void TestCaseDataPackage::addUnitTest(TestPackPtr test)
 {
     tests_.append(test);
 }
 
-QSharedPointer<UnitTestDataPackage> TestCase::getUnitTest(int idx)
+QSharedPointer<UnitTestDataPackage> TestCaseDataPackage::getUnitTest(int idx)
 {
     return tests_[idx];
 }
 
-const QList<QSharedPointer<TestCase> >& Transaction::getCases() const
+const QList<QSharedPointer<TestCaseDataPackage> >& TransactionDataPackage::getCases() const
 {
     return cases_;
 }
 
-void Transaction::addTestCase(QSharedPointer<TestCase> test_case)
+void TransactionDataPackage::addTestCase(QSharedPointer<TestCaseDataPackage> test_case)
 {
     cases_.append(test_case);
 }
 
-QSharedPointer<TestCase> Transaction::getTestCase(int idx)
+QSharedPointer<TestCaseDataPackage> TransactionDataPackage::getTestCase(int idx)
 {
     return cases_[idx];
 }

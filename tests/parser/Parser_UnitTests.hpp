@@ -81,7 +81,7 @@ protected:
     port::ByteBuffer buffer_;
 public:
     BufferAppender();//appends start
-    void appendTestCase(TestCase test_case);
+    void appendTestCase(TestCaseDataPackage test_case);
     void appendEnd();
 };
 

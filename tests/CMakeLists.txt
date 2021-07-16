@@ -90,8 +90,6 @@ set(ParserTest_files
     parser/Parser_UnitTests.hpp
     parser/UnitTestBuilder.hpp
     parser/UnitTestBuilder.cpp
-    parser/TestCaseParser_UnitTests.hpp
-    parser/TestCaseParser_UnitTests.cpp
     )
 
 set(Tests_files

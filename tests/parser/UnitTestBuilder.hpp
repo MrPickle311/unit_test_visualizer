@@ -64,7 +64,7 @@ private:
 private:
     void injectCaseName(const QByteArray& test_case_name);
 public:
-    void inject(const QSharedPointer<TestCase>& test_case);
+    void inject(const QSharedPointer<TestCaseDataPackage>& test_case);
     virtual void setBuffer(port::ByteBuffer* newBuffer) override;
 };
 
@@ -75,5 +75,5 @@ private:
     TestCaseInjecter case_injecter_;
 public:
     virtual void setBuffer(port::ByteBuffer* newBuffer) override;
-    void inject(const QSharedPointer<Transaction>& test_case);
+    void inject(const QSharedPointer<TransactionDataPackage>& test_case);
 };

@@ -4,16 +4,6 @@
 #include <QSharedPointer>
 #include <memory>
 
-//class Composite
-//{
-//public:
-//    virtual bool       isLeaf()                        = 0 ;//if its a leaf -> contains bytes
-//    virtual void       setIsLeaf(bool newIs_leaf)      = 0 ;
-//    virtual Composite* getParent()                     = 0 ;
-//    virtual void       setParent(Composite* newParent) = 0 ;
-//    virtual void       addChildren(Composite* child)   = 0 ;
-//};
-
 class UnitTestDataPackage
 {
 public:
@@ -42,7 +32,7 @@ protected:
     QByteArray  upper_value_;
 };
 
-class TestCase
+class TestCaseDataPackage
 {
 public:
     using TestPackPtr = QSharedPointer<UnitTestDataPackage>;
@@ -57,43 +47,13 @@ public:
     const QList<TestPackPtr>& getTests() const;
 };
 
-class Transaction
+class TransactionDataPackage
 {
 private:
-    QList<QSharedPointer<TestCase>> cases_;
+    QList<QSharedPointer<TestCaseDataPackage>> cases_;
 public:
-    void addTestCase(QSharedPointer<TestCase> test_case);
-    QSharedPointer<TestCase> getTestCase(int idx);
-    const QList<QSharedPointer<TestCase> >& getCases() const;
-};
-
-//byte specialized
-class ByteStorage
-{
-protected:
-    QByteArray bytes_;//if its composite , bytes_ is empty
-public:
-    ByteStorage();
-    const QByteArray& getBytes() const;
-    void setBytes(const QByteArray& newBytes);
-};
-
-class ParsedDataPackage:
-        public ByteStorage
-{
-private:
-    QSharedPointer<ParsedDataPackage>        parent_;
-    bool                                     is_leaf_;//if its true -> end of processing
-    QList<QSharedPointer<ParsedDataPackage>> children_;
-public:
-    ParsedDataPackage(QSharedPointer<ParsedDataPackage> parent = nullptr);
-    bool isLeaf();//if its a leaf -> contains bytes
-    void setIsLeaf(bool newIs_leaf);
-
-    QSharedPointer<ParsedDataPackage> getParent();
-    void setParent(QSharedPointer<ParsedDataPackage> newParent);
-
-    void addChild(QSharedPointer<ParsedDataPackage> child);
-    ParsedDataPackage& getChild(int idx);
+    void addTestCase(QSharedPointer<TestCaseDataPackage> test_case);
+    QSharedPointer<TestCaseDataPackage> getTestCase(int idx);
+    const QList<QSharedPointer<TestCaseDataPackage> >& getCases() const;
 };
 

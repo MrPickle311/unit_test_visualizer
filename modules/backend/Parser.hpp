@@ -97,40 +97,27 @@ public:
 ///idea
 
 using AcceptedTypes = std::variant< QSharedPointer<UnitTestDataPackage> ,
-                                    QSharedPointer<TestCase> ,
-                                    QSharedPointer<Transaction> ,
+                                    QSharedPointer<TestCaseDataPackage> ,
+                                    QSharedPointer<TransactionDataPackage> ,
                                     std::monostate >;
 
 class ParserComponent
 {
+    friend class ComplexParser;
 protected:
     ParserComponent*      parent_;
     port::ByteBuffer*     buffer_;
     AcceptedTypes         package_;
     static TypeDescriptor current_type_;
 public:
-    virtual ParserComponent* getParent()
-    {
-        return  this->parent_;
-    }
-    virtual void setParent(ParserComponent* newParent)
-    {
-        this->parent_ = newParent;
-    }
-    virtual void addChild(uint8_t cmd , QSharedPointer<ParserComponent> child){};
-    virtual bool isComposite() const
-    {
-        return false;
-    }
+    virtual ParserComponent* getParent();
+    virtual void setParent(ParserComponent* newParent);
+    virtual void addChild(uint8_t cmd , QSharedPointer<ParserComponent> child);
+    virtual bool isComposite() const;
+    void setBuffer(port::ByteBuffer* newBuffer);
+protected:
     virtual bool parseCommand(AcceptedTypes result) = 0;//if true -> still parsing
-    void setBuffer(port::ByteBuffer* newBuffer)
-    {
-        buffer_ = newBuffer;
-    }
-    virtual void createPackage()
-    {
-        package_ = QSharedPointer<UnitTestDataPackage>::create();
-    }
+    virtual void createPackage();
 };
 
 class ComplexParser:
@@ -141,38 +128,15 @@ protected:
     QMap<Code , QSharedPointer<ParserComponent>> children_;
     Code                                         commands_count_;
 public:
-    ComplexParser(Code commands_count):
-        commands_count_{commands_count}{}
-    virtual bool isComposite() const override
-    {
-        return true;
-    }
-    virtual void addChild(uint8_t cmd , QSharedPointer<ParserComponent> child) override
-    {
-        throwIf(child.isNull() , "Child cannot be a nullptr!");
-
-        child->setParent(this);
-        child->setBuffer(buffer_);
-
-        children_[cmd] = child;
-    }
-    void checkCode(Code cmd, std::string class_name)
-    {
-        throwIf(cmd >= commands_count_ , { "Command error : " +
-                                           class_name +
-                                           " , out of range"});
-    }
-    void proccessingLoop()
-    {
-        Code cmd {buffer_->getByte()};
-        checkCode(cmd, typeid (*this).name() );
-
-        while (children_[cmd]->parseCommand(package_))//make a map further
-        {
-            cmd = buffer_->getByte();
-            checkCode(cmd, typeid (*this).name() );
-        }
-    }
+    ComplexParser(Code commands_count);
+    virtual bool isComposite() const override;
+    virtual void addChild(uint8_t cmd , QSharedPointer<ParserComponent> child) override;
+protected:
+    void checkCode(Code cmd, std::string class_name);
+    void proccessingLoop();
+    virtual bool parseCommand(AcceptedTypes result) override;
+    virtual void specialPreOperations(AcceptedTypes result);
+    virtual void specialPostOperations(AcceptedTypes result);//operations specific to parser
 };
 
 ///real
@@ -181,32 +145,17 @@ class GlobalParser:
         public ComplexParser
 {
 public:
-    GlobalParser():
-        ComplexParser{GlobalCommand::GLOBAL_COMMAND_COUNT}{}
-    virtual bool parseCommand(AcceptedTypes result) override
-    {
-        createPackage();
-
-        proccessingLoop();
-
-        auto res = std::get<QSharedPointer<Transaction>>(package_);
-
-        return false;
-    }
-    virtual void createPackage() override
-    {
-        package_ = QSharedPointer<Transaction>::create();
-    }
+    GlobalParser();
+    virtual void createPackage() override;
+    QSharedPointer<TransactionDataPackage> getPackage();
+    void startProcessing();
 };
 
 class GlobalStartParser:
         public ParserComponent
 {
 public:
-    virtual bool parseCommand(AcceptedTypes result) override
-    {
-        return true;
-    }
+    virtual bool parseCommand(AcceptedTypes result) override;
 };
 
 using EmptyParser = GlobalStartParser;
@@ -214,130 +163,48 @@ using EmptyParser = GlobalStartParser;
 class EndParser:
         public ParserComponent
 {
-public:
-    virtual bool parseCommand(AcceptedTypes result) override
-    {
-        return false;
-    }
+protected:
+    virtual bool parseCommand(AcceptedTypes result) override;
 };
 
 class TestCaseParser:
         public ComplexParser
 {
 public:
-    TestCaseParser():
-        ComplexParser{TestCaseCommand::TEST_CASE_COMMAND_COUNT }{}
-    virtual bool parseCommand(AcceptedTypes result) override//test obj
-    {
-        createPackage();//create a test case
-        //append a test case
-        std::get<QSharedPointer<Transaction>>(result)->addTestCase(std::get<QSharedPointer<TestCase>>(package_));
-
-        QByteArray name_bytes;
-
-        char byte {buffer_->getByte()};
-        while(byte != '\0')
-        {
-            name_bytes.append(byte);
-            byte = buffer_->getByte();
-        }
-
-        std::get<QSharedPointer<TestCase>>(package_)->setTestCaseName(name_bytes);
-
-        proccessingLoop();
-
-        return true;
-    }
-    virtual void createPackage() override
-    {
-        package_ = QSharedPointer<TestCase>::create();
-    }
+    TestCaseParser();
+protected:
+    virtual void createPackage() override;
+    virtual void specialPreOperations(AcceptedTypes result) override;
 };
 
 class UnitTestParser:
         public ComplexParser
 {
 public:
-    UnitTestParser():
-        ComplexParser{UnitTestCommand::COMMANDS_COUNT}{}
-    virtual bool parseCommand(AcceptedTypes result) override//test obj
-    {
-        createPackage();//create a unit test
-        std::get<QSharedPointer<TestCase>>(result)->addUnitTest(std::get<QSharedPointer<UnitTestDataPackage>>(package_));//append a unit test
-
-        Code cmd {buffer_->getByte()};
-        checkCode(cmd, typeid (*this).name() );
-
-        while (children_[cmd]->parseCommand(package_))//make a map further
-        {
-            cmd = buffer_->getByte();
-            checkCode(cmd, typeid (*this).name() );
-        }
-
-        return true;
-    }
+    UnitTestParser();
+protected:
+    virtual void specialPreOperations(AcceptedTypes result) override;
 };
 
 class NameParser:
         public ParserComponent
 {
-public:
-    virtual bool parseCommand(AcceptedTypes result) override//unit test
-    {
-        auto test_case {std::get<QSharedPointer<UnitTestDataPackage>>(result)};
-
-        QByteArray name_bytes;
-
-        char byte {buffer_->getByte()};
-        while(byte != '\0')
-        {
-            name_bytes.append(byte);
-            byte = buffer_->getByte();
-        }
-
-        test_case->setName(name_bytes);
-
-        return true;
-    }
+protected:
+    virtual bool parseCommand(AcceptedTypes result) override;
 };
 
 class TypeDescriptorParser:
         public ParserComponent
 {
-public:
-    virtual bool parseCommand(AcceptedTypes result) override//unit test
-    {
-        auto test_case {std::get<QSharedPointer<UnitTestDataPackage>>(result)};
-
-        QByteArray desc_result;
-
-        desc_result.append(buffer_->getByte());
-
-        current_type_ =  static_cast<TypeDescriptor>((uint8_t)desc_result[0]);
-
-        test_case->setDescriptor(desc_result);
-
-        return true;
-    }
+protected:
+    virtual bool parseCommand(AcceptedTypes result) override;
 };
 
 class ValueParser:
         public ParserComponent
 {
-public:
-    virtual bool parseCommand(AcceptedTypes result) override//unit test
-    {
-        auto test_case {std::get<QSharedPointer<UnitTestDataPackage>>(result)};
-
-        QByteArray value_result;
-
-        for(int i{0}; i < TypesSizes::getSize(current_type_) ; ++i)
-                value_result.append(buffer_->getByte());
-
-        redirectValueBytes(value_result, test_case);
-
-        return true;
-    }
+protected:
+    virtual bool parseCommand(AcceptedTypes result) override;
     virtual void redirectValueBytes(const QByteArray& value_result, QSharedPointer<UnitTestDataPackage>& unit_test ) = 0;
 };
 
@@ -346,61 +213,38 @@ class CurrentValueParser:
 {
 public:
     virtual void redirectValueBytes(const QByteArray& value_result,
-                                    QSharedPointer<UnitTestDataPackage>& unit_test) override
-    {
-        unit_test->setCurrentValue(value_result);
-    }
+                                    QSharedPointer<UnitTestDataPackage>& unit_test) override;
 };
 
 class ExpectedValueParser:
         public ValueParser
 {
-public:
+protected:
     virtual void redirectValueBytes(const QByteArray& value_result,
-                                    QSharedPointer<UnitTestDataPackage>& unit_test) override
-    {
-        unit_test->setExpectedValue(value_result);
-    }
+                                    QSharedPointer<UnitTestDataPackage>& unit_test) override;
 };
 
 class LowerValueParser:
         public ValueParser
 {
-public:
+protected:
     virtual void redirectValueBytes(const QByteArray& value_result,
-                                    QSharedPointer<UnitTestDataPackage>& unit_test) override
-    {
-        unit_test->setLowerValue(value_result);
-    }
+                                    QSharedPointer<UnitTestDataPackage>& unit_test) override;
 };
 
 class UpperValueParser:
         public ValueParser
 {
-public:
+protected:
     virtual void redirectValueBytes(const QByteArray& value_result,
-                                    QSharedPointer<UnitTestDataPackage>& unit_test) override
-    {
-        unit_test->setUpperValue(value_result);
-    }
+                                    QSharedPointer<UnitTestDataPackage>& unit_test) override;
 };
 
 class TestResultParser:
         public ParserComponent
 {
-public:
-    virtual bool parseCommand(AcceptedTypes result) override//unit test
-    {
-        auto test_case {std::get<QSharedPointer<UnitTestDataPackage>>(result)};
-
-        QByteArray test_result;
-
-        test_result.append(buffer_->getByte());
-
-        test_case->setResult(test_result);
-
-        return true;
-    }
+protected:
+    virtual bool parseCommand(AcceptedTypes result) override;
 };
 
 }

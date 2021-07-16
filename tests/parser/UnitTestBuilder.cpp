@@ -97,7 +97,7 @@ void TestCaseInjecter::injectCaseName(const QByteArray& test_case_name)
     sendByte('\0');
 }
 
-void TestCaseInjecter::inject(const QSharedPointer<TestCase>& test_case)
+void TestCaseInjecter::inject(const QSharedPointer<TestCaseDataPackage>& test_case)
 {
     injectCaseName(test_case->getTestCaseName());
 
@@ -120,7 +120,7 @@ void TestCaseInjecter::setBuffer(port::ByteBuffer* newBuffer)
 
 ///
 
-void TransactionInjecter::inject(const QSharedPointer<Transaction>& test_case)
+void TransactionInjecter::inject(const QSharedPointer<TransactionDataPackage>& test_case)
 {
     buffer_->appendByte(parser::GlobalCommand::START);
 

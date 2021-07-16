@@ -29,12 +29,41 @@ struct Transaction
     QList<TestCase> cases_;
 };
 
+class NumericValueConverter
+{
+public:
+    ValueType getNumericValue(const QByteArray& bytes);
+};
+
+class UnitTestConverter:
+        public ProgramObject
+{
+protected:
+    NumericValueConverter numeric_converter_;
+protected:
+    uint8_t getDescriptor(const QSharedPointer<UnitTestDataPackage>& test);
+    bool    getTestResult(const QSharedPointer<UnitTestDataPackage>& test);
+public:
+    UnitTest getUnitTest(const QSharedPointer<UnitTestDataPackage>& test);
+};
+
+class TestCaseConverter
+{
+private:
+    UnitTestConverter test_converter_;
+public:
+    TestCaseConverter();
+    TestCase getTestCase(const QSharedPointer<TestCaseDataPackage>& test_case);
+};
+
 
 class Converter
 {
 private:
-    const Transaction& transaction_;
+    Transaction transaction_;
+    const TransactionDataPackage& pack_;
+    TestCaseConverter case_converter_;
 public:
-    void setTarget(const TransactionDataPackage& pack);
+    Converter(const TransactionDataPackage& pack);
     Transaction getConverterTransaction();
 };

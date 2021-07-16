@@ -23,7 +23,8 @@ add_subdirectory(parser)
 set(backend_public_headers
     PortOperator.hpp
     PortSettings.hpp
-    Parser.hpp)
+    Parser.hpp
+    Converter.hpp)
 
 add_library(BACKEND_LIBRARIES STATIC
     ${backend_public_headers})

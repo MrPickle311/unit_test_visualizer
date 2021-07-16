@@ -60,15 +60,5 @@ public:
     void addTestCase(QSharedPointer<TestCaseDataPackage> test_case);
     QSharedPointer<TestCaseDataPackage> getTestCase(int idx);
     const QList<QSharedPointer<TestCaseDataPackage> >& getCases() const;
-    bool operator==(const TransactionDataPackage& other)
-    {
-        if(this->cases_.size() != other.cases_.size())
-            return false;
-
-        for(int i{0} ; i < cases_.size() ; ++i)
-            if(*this->cases_[i] != *other.cases_[i])
-                return false;
-
-        return true;
-    }
+    bool operator==(const TransactionDataPackage& other);
 };

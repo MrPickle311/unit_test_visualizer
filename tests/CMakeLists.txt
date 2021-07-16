@@ -93,6 +93,10 @@ set(ParserTest_files
     parser/UnitTestBuilder.cpp
     )
 
+set(ConverterTest_files
+    converter/Converter_UnitTests.cpp
+    converter/Converter_UnitTests.hpp)
+
 set(Tests_files
     main.cpp
     common.cpp
@@ -100,6 +104,7 @@ set(Tests_files
     ${PortTest_files}
     ${TESTED_HEADERS}
     ${ParserTest_files}
+    ${ConverterTest_files}
     )
 
 function(add_test_exec test_name test_files test_libs)

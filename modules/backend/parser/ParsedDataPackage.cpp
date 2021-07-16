@@ -151,6 +151,18 @@ const QList<QSharedPointer<TestCaseDataPackage> >& TransactionDataPackage::getCa
     return cases_;
 }
 
+bool TransactionDataPackage::operator==(const TransactionDataPackage& other)
+{
+    if(this->cases_.size() != other.cases_.size())
+        return false;
+
+    for(int i{0} ; i < cases_.size() ; ++i)
+        if(*this->cases_[i] != *other.cases_[i])
+            return false;
+
+    return true;
+}
+
 void TransactionDataPackage::addTestCase(QSharedPointer<TestCaseDataPackage> test_case)
 {
     cases_.append(test_case);

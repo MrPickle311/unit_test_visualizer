@@ -77,7 +77,8 @@ set(TESTED_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/../modules/global/GlobalFunctions.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../modules/backend/PortSettings.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../modules/backend/PortOperator.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../modules/backend/Parser.hpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/../modules/backend/Parser.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../modules/backend/parser/ParsedDataPackage.hpp)
 
 set(PortTest_files
     port/Port_UnitTests.cpp

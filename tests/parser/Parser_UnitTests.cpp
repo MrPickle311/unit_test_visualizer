@@ -1,6 +1,39 @@
 #include "Parser_UnitTests.hpp"
 #include <QObject>
 
+template<typename T>
+using Ptr = QSharedPointer<T>;
+
+ParserTests::ParserTests():
+    result_{},
+    root_{Ptr<parser::GlobalParser>::create()},
+    buffer_{Ptr<port::ByteBuffer>::create()}
+{
+    root_->setBuffer(buffer_.data());
+
+    Ptr<parser::EndParser> end {Ptr<parser::EndParser>::create()};
+
+    Ptr<parser::TestCaseParser> case_parser {Ptr<parser::TestCaseParser>::create()};
+
+    root_->addChild(parser::GlobalCommand::START ,                 Ptr<parser::GlobalStartParser>::create());
+    root_->addChild(parser::GlobalCommand::SENDING_TEST_CASE,      case_parser);
+    root_->addChild(parser::GlobalCommand::END_ENTIRE_TRANSACTION, end);
+
+    Ptr<parser::UnitTestParser> unit_parser{Ptr<parser::UnitTestParser>::create()};
+
+    case_parser->addChild(parser::TestCaseCommand::SENDING_UNIT_TEST_RESULT , unit_parser);
+    case_parser->addChild(parser::TestCaseCommand::END_SENDING_TEST_CASE ,    end);
+
+    unit_parser->addChild(parser::UnitTestCommand::SENDING_TYPE_DESCRIPTOR ,      Ptr<parser::TypeDescriptorParser>::create());
+    unit_parser->addChild(parser::UnitTestCommand::SENDING_NAME ,                 Ptr<parser::NameParser>::create());
+    unit_parser->addChild(parser::UnitTestCommand::SENDING_CURRENT_VALUE ,        Ptr<parser::CurrentValueParser>::create());
+    unit_parser->addChild(parser::UnitTestCommand::SENDING_EXPECTED_VALUE ,       Ptr<parser::ExpectedValueParser>::create());
+    unit_parser->addChild(parser::UnitTestCommand::SENDING_TEST_RESULT ,          Ptr<parser::TestResultParser>::create());
+    unit_parser->addChild(parser::UnitTestCommand::SENDING_UPPER_VALUE ,          Ptr<parser::UpperValueParser>::create());
+    unit_parser->addChild(parser::UnitTestCommand::SENDING_LOWER_VALUE ,          Ptr<parser::LowerValueParser>::create());
+    unit_parser->addChild(parser::UnitTestCommand::END_SENDING_UNIT_TEST_RESULT , end);
+}
+
 //void PackageTester::setPackage(const parser::DataPackage& newPackage)
 //{
 //    package_ = newPackage;
@@ -318,42 +351,11 @@ QByteArray bytes(QList<uint8_t> byte_lits)
     return  result;
 }
 
-template<typename T>
-using Ptr = QSharedPointer<T>;
-
 //MAKE A FACTORY
 
-TEST(ParserTests , ComposingTest )
+TEST_F(ParserTests , LogicTest )
 {
     using namespace parser;
-
-    Ptr<port::ByteBuffer> buf{Ptr<port::ByteBuffer>::create()};
-
-    Ptr<GlobalParser> global{Ptr<GlobalParser>::create()};
-
-    global->setBuffer(buf.data());
-
-    Ptr<EndParser> end {Ptr<EndParser>::create()};
-
-    Ptr<TestCaseParser> case_parser {Ptr<TestCaseParser>::create()};
-
-    global->addChild(parser::GlobalCommand::START , Ptr<GlobalStartParser>::create());
-    global->addChild(parser::GlobalCommand::SENDING_TEST_CASE, case_parser);
-    global->addChild(parser::GlobalCommand::END_ENTIRE_TRANSACTION, end);
-
-    Ptr<UnitTestParser> unit_parser{Ptr<UnitTestParser>::create()};
-
-    case_parser->addChild(parser::TestCaseCommand::SENDING_UNIT_TEST_RESULT , unit_parser);
-    case_parser->addChild(parser::TestCaseCommand::END_SENDING_TEST_CASE , end);
-
-    unit_parser->addChild(parser::UnitTestCommand::SENDING_TYPE_DESCRIPTOR , Ptr<TypeDescriptorParser>::create());
-    unit_parser->addChild(parser::UnitTestCommand::SENDING_NAME , Ptr<NameParser>::create());
-    unit_parser->addChild(parser::UnitTestCommand::SENDING_CURRENT_VALUE , Ptr<CurrentValueParser>::create());
-    unit_parser->addChild(parser::UnitTestCommand::SENDING_EXPECTED_VALUE , Ptr<ExpectedValueParser>::create());
-    unit_parser->addChild(parser::UnitTestCommand::SENDING_TEST_RESULT , Ptr<TestResultParser>::create());
-    unit_parser->addChild(parser::UnitTestCommand::SENDING_UPPER_VALUE , Ptr<UpperValueParser>::create());
-    unit_parser->addChild(parser::UnitTestCommand::SENDING_LOWER_VALUE , Ptr<LowerValueParser>::create());
-    unit_parser->addChild(parser::UnitTestCommand::END_SENDING_UNIT_TEST_RESULT , end);
 
     Ptr<TestCaseDataPackage> test_case{Ptr<TestCaseDataPackage>::create()};
     test_case->setTestCaseName("test1");
@@ -388,20 +390,14 @@ TEST(ParserTests , ComposingTest )
 
     TransactionInjecter injecter;
 
-    injecter.setBuffer(buf.data());
+    injecter.setBuffer(buffer_.data());
     injecter.inject(transaction);
 
-    Ptr<TransactionDataPackage> transaction2;
+    root_->startProcessing();
 
-    global->startProcessing();
-
-    transaction2 = global->getPackage();
+    result_ = root_->getPackage();
 
     //EXPECT_STREQ(package_->getChild(0).getBytes().data() , "test1");
     //EXPECT_STREQ(package_->getChild(1).getBytes().data() , "test2");
 
 }
-
-
-
-

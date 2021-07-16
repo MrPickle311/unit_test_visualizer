@@ -5,13 +5,6 @@
 #include "UnitTestBuilder.hpp"
 #include <Parser.hpp>
 
-//parser erases all commands and splits incoming data into
-//certain data
-//converter converts each package to full text which can be
-//send to frontend-qml
-
-//using TestResult = int;
-
 #define FAILURE 0
 #define PASSED  1
 

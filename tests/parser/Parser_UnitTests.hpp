@@ -8,6 +8,19 @@
 #define FAILURE 0
 #define PASSED  1
 
+class PackageFactory
+{
+protected:
+    QSharedPointer<UnitTestDataPackage> allocPackage();
+public:
+    QSharedPointer<UnitTestDataPackage> createBoolUnitTest();
+    QSharedPointer<UnitTestDataPackage> createUint32UnitTest();
+    QSharedPointer<UnitTestDataPackage> createBitUnitTest();
+    QSharedPointer<UnitTestDataPackage> createInt64UnitTest();
+    QSharedPointer<UnitTestDataPackage> createPtrUnitTest();
+    QSharedPointer<UnitTestDataPackage> createInt16RangeUnitTest();
+};
+
 class ParserTests:
         public ::testing::Test
 {
@@ -16,16 +29,9 @@ protected:
     QSharedPointer<parser::GlobalParser>   root_;
     QSharedPointer<port::ByteBuffer>       buffer_;
     TransactionInjecter                    injecter_;
-protected:
-    QSharedPointer<UnitTestDataPackage> allocTest();
+    PackageFactory                         factory_;
 public:
     ParserTests();
-    QSharedPointer<UnitTestDataPackage> createBoolUnitTest();
-    QSharedPointer<UnitTestDataPackage> createUint32UnitTest();
-    QSharedPointer<UnitTestDataPackage> createBitUnitTest();
-    QSharedPointer<UnitTestDataPackage> createInt64UnitTest();
-    QSharedPointer<UnitTestDataPackage> createPtrUnitTest();
-    QSharedPointer<UnitTestDataPackage> createInt16RangeUnitTest();
     void insertDataAndRun(QSharedPointer<TransactionDataPackage> transaction);
 };
 

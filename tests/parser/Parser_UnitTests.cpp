@@ -12,7 +12,7 @@ QByteArray bytes(QList<uint8_t> byte_lits)
     return  result;
 }
 
-QSharedPointer<UnitTestDataPackage> ParserTests::allocTest()
+QSharedPointer<UnitTestDataPackage> PackageFactory::allocTest()
 {
     return QSharedPointer<UnitTestDataPackage>::create();
 }
@@ -47,7 +47,7 @@ ParserTests::ParserTests():
     unit_parser->addChild(parser::UnitTestCommand::END_SENDING_UNIT_TEST_RESULT , end);
 }
 
-QSharedPointer<UnitTestDataPackage> ParserTests::createBoolUnitTest()
+QSharedPointer<UnitTestDataPackage> PackageFactory::createBoolUnitTest()
 {
     QSharedPointer<UnitTestDataPackage> pack{allocTest()};
     pack->setDescriptor(bytes({parser::TypeDescriptor::BOOL}));
@@ -58,7 +58,7 @@ QSharedPointer<UnitTestDataPackage> ParserTests::createBoolUnitTest()
     return pack;
 }
 
-QSharedPointer<UnitTestDataPackage> ParserTests::createUint32UnitTest()
+QSharedPointer<UnitTestDataPackage> PackageFactory::createUint32UnitTest()
 {
     QSharedPointer<UnitTestDataPackage> pack{allocTest()};
     pack->setDescriptor(bytes({parser::TypeDescriptor::UINT32_T}));
@@ -69,7 +69,7 @@ QSharedPointer<UnitTestDataPackage> ParserTests::createUint32UnitTest()
     return pack;
 }
 
-QSharedPointer<UnitTestDataPackage> ParserTests::createBitUnitTest()
+QSharedPointer<UnitTestDataPackage> PackageFactory::createBitUnitTest()
 {
     QSharedPointer<UnitTestDataPackage> pack{allocTest()};
     pack->setDescriptor(bytes({parser::TypeDescriptor::BIT}));
@@ -80,7 +80,7 @@ QSharedPointer<UnitTestDataPackage> ParserTests::createBitUnitTest()
     return pack;
 }
 
-QSharedPointer<UnitTestDataPackage> ParserTests::createInt64UnitTest()
+QSharedPointer<UnitTestDataPackage> PackageFactory::createInt64UnitTest()
 {
     QSharedPointer<UnitTestDataPackage> pack{allocTest()};
     pack->setDescriptor(bytes({parser::TypeDescriptor::INT64_T}));
@@ -92,7 +92,7 @@ QSharedPointer<UnitTestDataPackage> ParserTests::createInt64UnitTest()
 
 }
 
-QSharedPointer<UnitTestDataPackage> ParserTests::createPtrUnitTest()
+QSharedPointer<UnitTestDataPackage> PackageFactory::createPtrUnitTest()
 {
     QSharedPointer<UnitTestDataPackage> pack{allocTest()};
     pack->setDescriptor(bytes({parser::TypeDescriptor::PTR}));
@@ -103,7 +103,7 @@ QSharedPointer<UnitTestDataPackage> ParserTests::createPtrUnitTest()
     return pack;
 }
 
-QSharedPointer<UnitTestDataPackage> ParserTests::createInt16RangeUnitTest()
+QSharedPointer<UnitTestDataPackage> PackageFactory::createInt16RangeUnitTest()
 {
     QSharedPointer<UnitTestDataPackage> pack{allocTest()};
     pack->setDescriptor(bytes({parser::TypeDescriptor::INT16_T}));
@@ -130,7 +130,7 @@ TEST_F(ParserTests , SimpleLogicTest)
     Ptr<TestCaseDataPackage> test_case1{Ptr<TestCaseDataPackage>::create()};
     test_case1->setTestCaseName("test1");
 
-    test_case1->addUnitTest(createUint32UnitTest());
+    test_case1->addUnitTest(factory_.createUint32UnitTest());
 
     Ptr<TransactionDataPackage> transaction{Ptr<TransactionDataPackage>::create()};
     transaction->addTestCase(test_case1);
@@ -145,20 +145,20 @@ TEST_F(ParserTests , ComplexLogicTest)
     Ptr<TestCaseDataPackage> test_case1{Ptr<TestCaseDataPackage>::create()};
     test_case1->setTestCaseName("test1");
 
-    test_case1->addUnitTest(createUint32UnitTest());
-    test_case1->addUnitTest(createInt64UnitTest());
-    test_case1->addUnitTest(createInt64UnitTest());
-    test_case1->addUnitTest(createBitUnitTest());
-    test_case1->addUnitTest(createPtrUnitTest());
-    test_case1->addUnitTest(createInt16RangeUnitTest());
+    test_case1->addUnitTest(factory_.createUint32UnitTest());
+    test_case1->addUnitTest(factory_.createInt64UnitTest());
+    test_case1->addUnitTest(factory_.createInt64UnitTest());
+    test_case1->addUnitTest(factory_.createBitUnitTest());
+    test_case1->addUnitTest(factory_.createPtrUnitTest());
+    test_case1->addUnitTest(factory_.createInt16RangeUnitTest());
 
     Ptr<TransactionDataPackage> transaction{Ptr<TransactionDataPackage>::create()};
     transaction->addTestCase(test_case1);
 
     Ptr<TestCaseDataPackage> test_case2{Ptr<TestCaseDataPackage>::create()};
     test_case2->setTestCaseName("test2");
-    test_case2->addUnitTest(createBitUnitTest());
-    test_case2->addUnitTest(createPtrUnitTest());
+    test_case2->addUnitTest(factory_.createBitUnitTest());
+    test_case2->addUnitTest(factory_.createPtrUnitTest());
 
     transaction->addTestCase(test_case2);
 
@@ -172,20 +172,20 @@ TEST_F(ParserTests , ChildrenCountTest )
     Ptr<TestCaseDataPackage> test_case1{Ptr<TestCaseDataPackage>::create()};
     test_case1->setTestCaseName("test1");
 
-    test_case1->addUnitTest(createUint32UnitTest());
-    test_case1->addUnitTest(createInt64UnitTest());
-    test_case1->addUnitTest(createInt64UnitTest());
-    test_case1->addUnitTest(createBitUnitTest());
-    test_case1->addUnitTest(createPtrUnitTest());
-    test_case1->addUnitTest(createInt16RangeUnitTest());
+    test_case1->addUnitTest(factory_.createUint32UnitTest());
+    test_case1->addUnitTest(factory_.createInt64UnitTest());
+    test_case1->addUnitTest(factory_.createInt64UnitTest());
+    test_case1->addUnitTest(factory_.createBitUnitTest());
+    test_case1->addUnitTest(factory_.createPtrUnitTest());
+    test_case1->addUnitTest(factory_.createInt16RangeUnitTest());
 
     Ptr<TransactionDataPackage> transaction{Ptr<TransactionDataPackage>::create()};
     transaction->addTestCase(test_case1);
 
     Ptr<TestCaseDataPackage> test_case2{Ptr<TestCaseDataPackage>::create()};
     test_case2->setTestCaseName("test2");
-    test_case2->addUnitTest(createBitUnitTest());
-    test_case2->addUnitTest(createPtrUnitTest());
+    test_case2->addUnitTest(factory_.createBitUnitTest());
+    test_case2->addUnitTest(factory_.createPtrUnitTest());
 
     transaction->addTestCase(test_case2);
 

@@ -4,6 +4,19 @@
 template<typename T>
 using Ptr = QSharedPointer<T>;
 
+QByteArray bytes(QList<uint8_t> byte_lits)
+{
+    QByteArray result;
+    for(auto&& byte : byte_lits)
+        result.append(byte);
+    return  result;
+}
+
+QSharedPointer<UnitTestDataPackage> ParserTests::allocTest()
+{
+    return QSharedPointer<UnitTestDataPackage>::create();
+}
+
 ParserTests::ParserTests():
     result_{},
     root_{Ptr<parser::GlobalParser>::create()},
@@ -33,6 +46,86 @@ ParserTests::ParserTests():
     unit_parser->addChild(parser::UnitTestCommand::SENDING_LOWER_VALUE ,          Ptr<parser::LowerValueParser>::create());
     unit_parser->addChild(parser::UnitTestCommand::END_SENDING_UNIT_TEST_RESULT , end);
 }
+
+QSharedPointer<UnitTestDataPackage> ParserTests::createBoolUnitTest()
+{
+    QSharedPointer<UnitTestDataPackage> pack{allocTest()};
+    pack->setDescriptor(bytes({parser::TypeDescriptor::BOOL}));
+    pack->setName("xd()");
+    pack->setExpectedValue(bytes({1}));
+    pack->setCurrentValue(bytes({1}));
+    pack->setResult(bytes({PASSED}));
+    return pack;
+}
+
+QSharedPointer<UnitTestDataPackage> ParserTests::createUint32UnitTest()
+{
+    QSharedPointer<UnitTestDataPackage> pack{allocTest()};
+    pack->setDescriptor(bytes({parser::TypeDescriptor::UINT32_T}));
+    pack->setName("xc");
+    pack->setExpectedValue(bytes({177 , 1 , 0 , 0}));
+    pack->setCurrentValue(bytes({177 , 1 , 0 , 0}));
+    pack->setResult(bytes({PASSED}));
+    return pack;
+}
+
+QSharedPointer<UnitTestDataPackage> ParserTests::createBitUnitTest()
+{
+    QSharedPointer<UnitTestDataPackage> pack{allocTest()};
+    pack->setDescriptor(bytes({parser::TypeDescriptor::BIT}));
+    pack->setName("reg");
+    pack->setExpectedValue(bytes({1}));
+    pack->setCurrentValue(bytes({1}));
+    pack->setResult(bytes({PASSED}));
+    return pack;
+}
+
+QSharedPointer<UnitTestDataPackage> ParserTests::createInt64UnitTest()
+{
+    QSharedPointer<UnitTestDataPackage> pack{allocTest()};
+    pack->setDescriptor(bytes({parser::TypeDescriptor::INT64_T}));
+    pack->setName("openmb");
+    pack->setExpectedValue(bytes({177, 1, 0, 0, 0, 0, 0 ,0}));
+    pack->setCurrentValue(bytes({118, 194, 250, 255, 255, 255, 255, 255}));
+    pack->setResult(bytes({FAILURE}));
+    return pack;
+
+}
+
+QSharedPointer<UnitTestDataPackage> ParserTests::createPtrUnitTest()
+{
+    QSharedPointer<UnitTestDataPackage> pack{allocTest()};
+    pack->setDescriptor(bytes({parser::TypeDescriptor::PTR}));
+    pack->setName("ptr");
+    pack->setExpectedValue(bytes({0}));
+    pack->setCurrentValue(bytes({0}));
+    pack->setResult(bytes({PASSED}));
+    return pack;
+}
+
+QSharedPointer<UnitTestDataPackage> ParserTests::createInt16RangeUnitTest()
+{
+    QSharedPointer<UnitTestDataPackage> pack{allocTest()};
+    pack->setDescriptor(bytes({parser::TypeDescriptor::INT16_T}));
+    pack->setName("dfname");
+    pack->setCurrentValue(bytes({67 , 0}));
+    pack->setLowerValue(bytes({249 , 255}));
+    pack->setUpperValue(bytes({226 , 19}));
+    pack->setResult(bytes({PASSED}));
+    return pack;
+}
+
+void ParserTests::insertDataAndRun(QSharedPointer<TransactionDataPackage> transaction)
+{
+    injecter_.setBuffer(buffer_.data());
+    injecter_.inject(transaction);
+
+    root_->startProcessing();
+
+    result_ = root_->getPackage();
+}
+
+/*
 
 //void PackageTester::setPackage(const parser::DataPackage& newPackage)
 //{
@@ -268,136 +361,101 @@ ParserTests::ParserTests():
 //{
 //    EXPECT_NE(local_parser_.getBuffer() , nullptr);
 //}
-//
-//TEST_F(LocalParser_UnitTests , BoolVariableTest)
-//{
-//    appendType(parser::TypeDescriptor::BOOL);
-//    appendName("xd()");
-//    appendExpectedValue({1});
-//    appendCurrentValue({1});
-//    appendTestResult(PASSED);
-//    appendEnd();
-//
-//    checkEqual();
-//}
-//
-//TEST_F(LocalParser_UnitTests , Uint32VariableTest)
-//{
-//    appendType(parser::TypeDescriptor::UINT32_T);
-//    appendName("xc");
-//    appendExpectedValue({177 , 1 , 0 , 0});
-//    appendCurrentValue({177 , 1 , 0 , 0});
-//    appendTestResult(PASSED);
-//    appendEnd();
-//
-//    checkEqual();
-//}
-//
-//TEST_F(LocalParser_UnitTests , BitSetTest)
-//{
-//    appendType(parser::TypeDescriptor::BIT);
-//    appendName("reg");
-//    appendExpectedValue({1});
-//    appendCurrentValue({1});
-//    appendTestResult(PASSED);
-//    appendEnd();
-//
-//    checkEqual();
-//}
-//
-//TEST_F(LocalParser_UnitTests , Int64VariableTest)
-//{
-//    appendType(parser::TypeDescriptor::INT64_T);
-//    appendName("openmb");
-//    appendExpectedValue({177, 1, 0, 0, 0, 0, 0 ,0});
-//    appendCurrentValue({118, 194, 250, 255, 255, 255, 255, 255});
-//    appendTestResult(FAILURE);
-//    appendEnd();
-//
-//    checkEqual();
-//}
-//
-//TEST_F(LocalParser_UnitTests , PtrVariableTest)
-//{
-//    appendType(parser::TypeDescriptor::PTR);
-//    appendName("ptr");
-//    appendExpectedValue({0});
-//    appendCurrentValue({0});
-//    appendTestResult(PASSED);
-//    appendEnd();
-//
-//    checkEqual();
-//}
-//
-//TEST_F(LocalParser_UnitTests , Int16RangeVariableTest)
-//{
-//    appendType(parser::TypeDescriptor::INT16_T);
-//    appendName("dfname");
-//    appendCurrentValue({67 , 0});
-//    appendLowerValue({249 , 255});
-//    appendUpperValue({226 , 19});
-//    appendTestResult(PASSED);
-//    appendEnd();
-//
-//    checkInRange();
-//}
-//
+*/
 
-QByteArray bytes(QList<uint8_t> byte_lits)
+TEST_F(ParserTests , SimpleLogicTest)
 {
-    QByteArray result;
-    for(auto&& byte : byte_lits)
-        result.append(byte);
-    return  result;
-}
+    Ptr<TestCaseDataPackage> test_case1{Ptr<TestCaseDataPackage>::create()};
+    test_case1->setTestCaseName("test1");
 
-//MAKE A FACTORY
-
-TEST_F(ParserTests , LogicTest )
-{
-    using namespace parser;
-
-    Ptr<TestCaseDataPackage> test_case{Ptr<TestCaseDataPackage>::create()};
-    test_case->setTestCaseName("test1");
-
-    Ptr<UnitTestDataPackage> pack_{Ptr<UnitTestDataPackage>::create()};
-    pack_->setDescriptor(bytes({TypeDescriptor::BOOL}));
-    pack_->setName("xd()");
-    pack_->setExpectedValue(bytes({1}));
-    pack_->setCurrentValue(bytes({1}));
-    pack_->setResult(bytes({1}));
-
-    test_case->addUnitTest(pack_);
-
-    pack_->setName("loloo");
-    test_case->addUnitTest(pack_);
-
-    Ptr<UnitTestDataPackage> range_pack{Ptr<UnitTestDataPackage>::create()};
-
-    range_pack->setDescriptor(bytes({TypeDescriptor::INT16_T}));
-    range_pack->setName("dfname");
-    range_pack->setCurrentValue(bytes({67 , 0}));
-    range_pack->setLowerValue(bytes({249 , 255}));
-    range_pack->setUpperValue(bytes({226 , 19}));
-    range_pack->setResult(bytes({1}));
-
-    test_case->addUnitTest(range_pack);
+    test_case1->addUnitTest(createUint32UnitTest());
 
     Ptr<TransactionDataPackage> transaction{Ptr<TransactionDataPackage>::create()};
-    transaction->addTestCase(test_case);
-    test_case->setTestCaseName("test2");
-    transaction->addTestCase(test_case);
+    transaction->addTestCase(test_case1);
 
-    TransactionInjecter injecter;
+    insertDataAndRun(transaction);
 
-    injecter.setBuffer(buffer_.data());
-    injecter.inject(transaction);
+    EXPECT_TRUE(*result_ == *transaction);
+}
 
-    root_->startProcessing();
+TEST_F(ParserTests , ComplexLogicTest)
+{
+    Ptr<TestCaseDataPackage> test_case1{Ptr<TestCaseDataPackage>::create()};
+    test_case1->setTestCaseName("test1");
 
-    result_ = root_->getPackage();
+    test_case1->addUnitTest(createUint32UnitTest());
+    test_case1->addUnitTest(createInt64UnitTest());
+    test_case1->addUnitTest(createInt64UnitTest());
+    test_case1->addUnitTest(createBitUnitTest());
+    test_case1->addUnitTest(createPtrUnitTest());
+    test_case1->addUnitTest(createInt16RangeUnitTest());
 
-    //EXPECT_STREQ(package_->getChild(0).getBytes().data() , "test1");
-    //EXPECT_STREQ(package_->getChild(1).getBytes().data() , "test2");
+    Ptr<TransactionDataPackage> transaction{Ptr<TransactionDataPackage>::create()};
+    transaction->addTestCase(test_case1);
 
+    Ptr<TestCaseDataPackage> test_case2{Ptr<TestCaseDataPackage>::create()};
+    test_case2->setTestCaseName("test2");
+    test_case2->addUnitTest(createBitUnitTest());
+    test_case2->addUnitTest(createPtrUnitTest());
+
+    transaction->addTestCase(test_case2);
+
+    insertDataAndRun(transaction);
+
+    EXPECT_TRUE(*result_ == *transaction);
+}
+
+TEST_F(ParserTests , ChildrenCountTest )
+{
+    Ptr<TestCaseDataPackage> test_case1{Ptr<TestCaseDataPackage>::create()};
+    test_case1->setTestCaseName("test1");
+
+    test_case1->addUnitTest(createUint32UnitTest());
+    test_case1->addUnitTest(createInt64UnitTest());
+    test_case1->addUnitTest(createInt64UnitTest());
+    test_case1->addUnitTest(createBitUnitTest());
+    test_case1->addUnitTest(createPtrUnitTest());
+    test_case1->addUnitTest(createInt16RangeUnitTest());
+
+    Ptr<TransactionDataPackage> transaction{Ptr<TransactionDataPackage>::create()};
+    transaction->addTestCase(test_case1);
+
+    Ptr<TestCaseDataPackage> test_case2{Ptr<TestCaseDataPackage>::create()};
+    test_case2->setTestCaseName("test2");
+    test_case2->addUnitTest(createBitUnitTest());
+    test_case2->addUnitTest(createPtrUnitTest());
+
+    transaction->addTestCase(test_case2);
+
+    insertDataAndRun(transaction);
+
+    EXPECT_STREQ(result_->getCases().at(0)->getTestCaseName() , "test1");
+    EXPECT_STREQ(result_->getCases().at(1)->getTestCaseName() , "test2");
+
+    EXPECT_EQ(result_->getCases().size() , 2);
+
+    EXPECT_EQ(result_->getCases().at(0)->getTests().size() , 6);
+    EXPECT_NE(result_->getCases().at(0)->getTests().size() , 5);
+    EXPECT_EQ(result_->getCases().at(1)->getTests().size() , 2);
+    EXPECT_NE(result_->getCases().at(1)->getTests().size() , 0);
+}
+
+#include <gtest/gtest.h>
+
+TEST_F(ParserTests , EmptyTest )
+{
+    Ptr<TransactionDataPackage> transaction{Ptr<TransactionDataPackage>::create()};
+
+    EXPECT_NO_FATAL_FAILURE(insertDataAndRun(transaction));
+}
+
+TEST_F(ParserTests , EmptyCase )
+{
+    Ptr<TestCaseDataPackage> test_case1{Ptr<TestCaseDataPackage>::create()};
+    test_case1->setTestCaseName("test1");
+
+    Ptr<TransactionDataPackage> transaction{Ptr<TransactionDataPackage>::create()};
+    transaction->addTestCase(test_case1);
+
+    EXPECT_NO_FATAL_FAILURE(insertDataAndRun(transaction));
 }

@@ -22,8 +22,17 @@ protected:
     QSharedPointer<TransactionDataPackage> result_;
     QSharedPointer<parser::GlobalParser>   root_;
     QSharedPointer<port::ByteBuffer>       buffer_;
+    TransactionInjecter                    injecter_;
+protected:
+    QSharedPointer<UnitTestDataPackage> allocTest();
 public:
     ParserTests();
-
+    QSharedPointer<UnitTestDataPackage> createBoolUnitTest();
+    QSharedPointer<UnitTestDataPackage> createUint32UnitTest();
+    QSharedPointer<UnitTestDataPackage> createBitUnitTest();
+    QSharedPointer<UnitTestDataPackage> createInt64UnitTest();
+    QSharedPointer<UnitTestDataPackage> createPtrUnitTest();
+    QSharedPointer<UnitTestDataPackage> createInt16RangeUnitTest();
+    void insertDataAndRun(QSharedPointer<TransactionDataPackage> transaction);
 };
 

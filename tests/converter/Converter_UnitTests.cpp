@@ -26,7 +26,7 @@ TEST(ConverterTests , LogicTest)
 
     EXPECT_TRUE(transaction.cases_.at(0).test_case_name_ == "test1");
 
-    EXPECT_EQ(transaction.cases_.at(0).tests_.at(0).type_descriptor_ , "Bool");
+    EXPECT_EQ(transaction.cases_.at(0).tests_.at(0).type_descriptor_ , "bool");
 
     EXPECT_EQ(transaction.cases_.at(0).tests_.at(0).name_ , "xd()");
 

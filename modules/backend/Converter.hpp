@@ -76,23 +76,8 @@ public:
     virtual QString getValue(const QByteArray& bytes) const override;
 };
 
-class ValueConverters
-{
-private:
-    static QMutex mutex_;
-    static QMap<parser::TypeDescriptor , QSharedPointer<AbstractValueConverter> > value_converters_;
-    static bool value_converters_initialized_;
-private:
-    static void addConverter(parser::TypeDescriptor desc , QSharedPointer<AbstractValueConverter> value_converters);
-    static void initValueConverters();
-protected:
-    ValueConverters(){};
-public:
-    static const AbstractValueConverter& getConverter(parser::TypeDescriptor desc) ;
-};
-
 template<typename T>
-class Generator//TODO
+class Generator
 {
 private:
     static QMutex mutex_;
@@ -101,9 +86,9 @@ private:
 private:
     static void addValue(parser::TypeDescriptor descriptor , T value)
     {
-
+        variables_[descriptor] = value;
     }
-    static void initValues();
+    static void initValues();//requires user implementation
 protected:
     Generator(){};
 public:
@@ -116,6 +101,9 @@ public:
     }
 };
 
+using ValueGenerator = Generator<QSharedPointer<AbstractValueConverter>>;
+using StringGenerator = Generator<QString>;
+
 template<typename T>
 QMutex Generator<T>::mutex_;
 
@@ -124,6 +112,12 @@ QMap<parser::TypeDescriptor , T > Generator<T>::variables_;
 
 template<typename T>
 bool Generator<T>::is_initialized_{false};
+
+template<>
+void Generator<QSharedPointer<AbstractValueConverter>>::initValues();
+
+template<>
+void Generator<QString>::initValues();
 
 class UnitTestConverter:
         public ProgramObject

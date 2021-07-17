@@ -76,10 +76,17 @@ void UnitTestConverter::convertValues(UnitTest& test, const QSharedPointer<UnitT
 
     if(pack->getExpectedValue().isEmpty())
     {
+        throwIf(pack->getLowerValue().isEmpty() , "Error: lower value not specified!");
+        throwIf(pack->getUpperValue().isEmpty() , "Error: upper value not specified!");
+
         test.lower_value_ = value_conveter->getValue(pack->getLowerValue());
         test.upper_value_ = value_conveter->getValue(pack->getUpperValue());
     }
-    else    test.expecteted_value_ = value_conveter->getValue(pack->getExpectedValue());
+    else
+    {
+        throwIf(pack->getExpectedValue().isEmpty() , "Error: expected value not specified!");
+        test.expecteted_value_ = value_conveter->getValue(pack->getExpectedValue());
+    }
 }
 
 QString UnitTestConverter::getTestResult(const QSharedPointer<UnitTestDataPackage>& test)
@@ -97,6 +104,10 @@ QString UnitTestConverter::getTestResult(const QSharedPointer<UnitTestDataPackag
 UnitTest UnitTestConverter::getUnitTest(const QSharedPointer<UnitTestDataPackage>& test)
 {
     UnitTest result;
+
+    throwIf(test->getName().isEmpty() , "Error: expression text is empty!");
+    throwIf(test->getResult().isEmpty() , "Error: test result not specified!");
+    throwIf(test->getCurrentValue().isEmpty() , "Error: current value not specified!");
 
     result.name_ = test->getName().data();
     result.test_result_ = getTestResult(test);

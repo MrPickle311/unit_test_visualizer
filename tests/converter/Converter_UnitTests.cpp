@@ -4,33 +4,99 @@
 #include <parser/Parser_UnitTests.hpp>
 #include <QString>
 
-TEST(ConverterTests , LogicTest)
+void ConverterTest::run()
 {
-    TestPackageFactory factory;
+    result_ = converter_.getConverterTransaction();
+}
 
-    TransactionDataPackage parsed_package;
 
-    QSharedPointer<TestCaseDataPackage> test_case{QSharedPointer<TestCaseDataPackage>::create()};
+TEST_F(ConverterTest , SimpleLogicTest)
+{
+    using namespace parser;
+
+    TestCasePackPtr test_case{TestCasePackPtr::create()};
     test_case->setTestCaseName("test1");
 
-    test_case->addUnitTest(factory.createBoolUnitTest());
+    test_case->addUnitTest(factory_.createBoolUnitTest());
 
-    parsed_package.addTestCase(test_case);
+    transaction_pack_.addTestCase(test_case);
 
-    Converter converter{parsed_package};
+    run();
 
-    Transaction transaction;
+    EXPECT_TRUE(result_.cases_.at(0).test_case_name_ == "test1");
 
-    transaction = converter.getConverterTransaction();
+    EXPECT_EQ(result_.cases_.at(0).tests_.at(0).type_descriptor_ , "bool");
 
+    EXPECT_EQ(result_.cases_.at(0).tests_.at(0).name_ , "xd()");
 
-    EXPECT_TRUE(transaction.cases_.at(0).test_case_name_ == "test1");
-
-    EXPECT_EQ(transaction.cases_.at(0).tests_.at(0).type_descriptor_ , "bool");
-
-    EXPECT_EQ(transaction.cases_.at(0).tests_.at(0).name_ , "xd()");
-
-    EXPECT_EQ(transaction.cases_.at(0).tests_.at(0).expecteted_value_ , "True");
-    EXPECT_EQ(transaction.cases_.at(0).tests_.at(0).current_value_ , "True");
-    EXPECT_EQ(transaction.cases_.at(0).tests_.at(0).test_result_ , "Passed");
+    EXPECT_EQ(result_.cases_.at(0).tests_.at(0).expecteted_value_ , "True");
+    EXPECT_EQ(result_.cases_.at(0).tests_.at(0).current_value_ , "True");
+    EXPECT_EQ(result_.cases_.at(0).tests_.at(0).test_result_ , "Passed");
 }
+
+TEST_F(ConverterTest , ForceThrowTest)//it fails if it throws
+{
+    using namespace parser;
+
+    TestCasePackPtr test_case1{TestCasePackPtr::create()};
+    test_case1->setTestCaseName("test1");
+
+    TestCasePackPtr test_case2{TestCasePackPtr::create()};
+    test_case2->setTestCaseName("test2");
+
+    test_case1->addUnitTest(factory_.createUint32UnitTest());
+    test_case1->addUnitTest(factory_.createInt64UnitTest());
+    test_case1->addUnitTest(factory_.createInt64UnitTest());
+    test_case1->addUnitTest(factory_.createBitUnitTest());
+    test_case1->addUnitTest(factory_.createPtrUnitTest());
+    test_case1->addUnitTest(factory_.createInt16RangeUnitTest());
+
+    test_case2->setTestCaseName("test2");
+    test_case2->addUnitTest(factory_.createBitUnitTest());
+    test_case2->addUnitTest(factory_.createPtrUnitTest());
+
+    transaction_pack_.addTestCase(test_case1);
+    transaction_pack_.addTestCase(test_case2);
+
+    EXPECT_NO_THROW(run());
+}
+
+TEST_F(ConverterTest , EmptyUnitTestTest)//it fails if it throws
+{
+    using namespace parser;
+
+    TestCasePackPtr test_case1{TestCasePackPtr::create()};
+    test_case1->setTestCaseName("test1");
+
+    test_case1->addUnitTest(UnitTestPackPtr::create());
+
+    transaction_pack_.addTestCase(test_case1);
+
+    EXPECT_ANY_THROW(run());
+}
+
+TEST_F(ConverterTest , EmptyTestCaseTest)//it fails if it throws
+{
+    using namespace parser;
+
+    TestCasePackPtr test_case1{TestCasePackPtr::create()};
+    test_case1->setTestCaseName("test1");
+
+    transaction_pack_.addTestCase(test_case1);
+
+    EXPECT_NO_THROW(run());
+}
+
+TEST_F(ConverterTest , EmptyTransactionTest)//it fails if it throws
+{
+    EXPECT_NO_THROW(run());
+}
+
+
+
+ConverterTest::ConverterTest():
+    transaction_pack_{},
+    converter_{transaction_pack_},
+    factory_{}
+{}
+

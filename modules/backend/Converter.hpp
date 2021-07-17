@@ -3,19 +3,18 @@
 #include <QList>
 #include <QString>
 #include <variant>
-#include <Parser.hpp>
-
-using ValueType = std::variant<int , uint , std::monostate>;
+#include "Parser.hpp"
+#include <map>
 
 struct UnitTest
 {
-    uint8_t   type_descriptor_;
+    QString   type_descriptor_;
     QString   name_;
-    ValueType expecteted_value_;
-    ValueType current_value_;
-    ValueType lower_value_;
-    ValueType upper_value_;
-    bool      test_result_;
+    QString   expecteted_value_;
+    QString   current_value_;
+    QString   lower_value_;
+    QString   upper_value_;
+    QString   test_result_;
 };
 
 struct TestCase
@@ -29,21 +28,112 @@ struct Transaction
     QList<TestCase> cases_;
 };
 
-class NumericValueConverter
+class AbstractValueConverter
 {
 public:
-    ValueType getNumericValue(const QByteArray& bytes);
+    virtual QString getValue(const QByteArray& bytes) const = 0;
 };
+
+class SignedNumericValueConverter:
+        public AbstractValueConverter
+{
+public:
+    virtual QString getValue(const QByteArray& bytes) const override;
+};
+
+class UnsignedNumericValueConverter:
+        public AbstractValueConverter
+{
+public:
+    virtual QString getValue(const QByteArray& bytes) const override;
+};
+
+class BoolValueConverter:
+        public AbstractValueConverter
+{
+public:
+    virtual QString getValue(const QByteArray& bytes) const override;
+};
+
+class PtrValueConverter:
+        public AbstractValueConverter
+{
+public:
+    virtual QString getValue(const QByteArray& bytes) const override;
+};
+
+class BitValueConverter:
+        public AbstractValueConverter
+{
+public:
+    virtual QString getValue(const QByteArray& bytes) const override;
+};
+
+class CharValueConverter:
+        public AbstractValueConverter
+{
+public:
+    virtual QString getValue(const QByteArray& bytes) const override;
+};
+
+class ValueConverters
+{
+private:
+    static QMutex mutex_;
+    static QMap<parser::TypeDescriptor , QSharedPointer<AbstractValueConverter> > value_converters_;
+    static bool value_converters_initialized_;
+private:
+    static void addConverter(parser::TypeDescriptor desc , QSharedPointer<AbstractValueConverter> value_converters);
+    static void initValueConverters();
+protected:
+    ValueConverters(){};
+public:
+    static const AbstractValueConverter& getConverter(parser::TypeDescriptor desc) ;
+};
+
+template<typename T>
+class Generator//TODO
+{
+private:
+    static QMutex mutex_;
+    static QMap<parser::TypeDescriptor , T > variables_;
+    static bool is_initialized_;
+private:
+    static void addValue(parser::TypeDescriptor descriptor , T value)
+    {
+
+    }
+    static void initValues();
+protected:
+    Generator(){};
+public:
+    static const T getValue(parser::TypeDescriptor desc)
+    {
+        QMutexLocker{&mutex_};
+        if(not is_initialized_)
+            initValues();
+        return variables_[desc];
+    }
+};
+
+template<typename T>
+QMutex Generator<T>::mutex_;
+
+template<typename T>
+QMap<parser::TypeDescriptor , T > Generator<T>::variables_;
+
+template<typename T>
+bool Generator<T>::is_initialized_{false};
 
 class UnitTestConverter:
         public ProgramObject
 {
 protected:
-    NumericValueConverter numeric_converter_;
-protected:
-    uint8_t getDescriptor(const QSharedPointer<UnitTestDataPackage>& test);
-    bool    getTestResult(const QSharedPointer<UnitTestDataPackage>& test);
+    void                      convertValues(UnitTest& test , const QSharedPointer<UnitTestDataPackage>& pack);
+    parser::TypeDescriptor    getDescriptor(const QSharedPointer<UnitTestDataPackage>& test);
+    QString                   getTestResult(const QSharedPointer<UnitTestDataPackage>& test);
 public:
+    UnitTestConverter();
     UnitTest getUnitTest(const QSharedPointer<UnitTestDataPackage>& test);
 };
 

@@ -66,7 +66,8 @@ add_subdirectory("../modules" build)
 set(LIBS
     Port
     ProgramObject
-    Parser)
+    Parser
+    Converter)
 
 set(TESTED_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/../modules/global

@@ -72,11 +72,6 @@ enum TypeDescriptor : uint8_t { UINT8_T  = 0  ,
                                 TYPES_COUNT};
 
 
-struct DataPackage
-{
-    QByteArrayList parsed_data_;
-};
-
 //useful singletons
 
 class TypesSizes

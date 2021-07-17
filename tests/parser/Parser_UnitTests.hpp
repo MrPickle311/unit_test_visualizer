@@ -8,7 +8,7 @@
 #define FAILURE 0
 #define PASSED  1
 
-class PackageFactory
+class TestPackageFactory
 {
 protected:
     QSharedPointer<UnitTestDataPackage> allocPackage();
@@ -29,7 +29,7 @@ protected:
     QSharedPointer<parser::GlobalParser>   root_;
     QSharedPointer<port::ByteBuffer>       buffer_;
     TransactionInjecter                    injecter_;
-    PackageFactory                         factory_;
+    TestPackageFactory                         factory_;
 public:
     ParserTests();
     void insertDataAndRun(QSharedPointer<TransactionDataPackage> transaction);

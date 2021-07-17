@@ -1,40 +1,107 @@
 #include "../Converter.hpp"
 
-ValueType NumericValueConverter::getNumericValue(const QByteArray& bytes)
-{
+#define BITS_IN_BYTE 8
 
+QString SignedNumericValueConverter::getValue(const QByteArray& bytes) const
+{
+    int64_t temp_result{0};
+
+    for(int i{0}; i < bytes.size() ; ++i)
+        temp_result |= static_cast<int64_t>(bytes[i]) << BITS_IN_BYTE * i;
+
+    return QString::number(temp_result);
+}
+
+QString UnsignedNumericValueConverter::getValue(const QByteArray& bytes) const
+{
+    uint64_t temp_result{0};
+
+    for(int i{0}; i < bytes.size() ; ++i)
+        temp_result |= static_cast<uint64_t>(bytes[i]) << BITS_IN_BYTE * i;
+
+    return QString::number(temp_result);
+}
+
+QString BoolValueConverter::getValue(const QByteArray& bytes) const
+{
+    uint result {static_cast<uint>(bytes.at(0))};
+
+    if(result == 0)
+        return "False";
+    return "True";
+}
+
+QString PtrValueConverter::getValue(const QByteArray& bytes) const
+{
+    uint result {static_cast<uint>(bytes.at(0))};
+
+    if(result == 0)
+        return "Is null pointer";
+    return "Is not null pointer";
+}
+
+QString BitValueConverter::getValue(const QByteArray& bytes) const
+{
+    uint result {static_cast<uint>(bytes.at(0))};
+
+    if(result == 0)
+        return "Bit is not set";
+    return "Bit is set";
+}
+
+QString CharValueConverter::getValue(const QByteArray& bytes) const
+{
+    return QString{bytes.at(0)};
 }
 
 UnitTestConverter::UnitTestConverter():
-    ProgramObject{},
-    numeric_converter_{}
+    ProgramObject{}
 {}
 
-uint8_t UnitTestConverter::getDescriptor(const QSharedPointer<UnitTestDataPackage>& test)
+
+parser::TypeDescriptor UnitTestConverter::getDescriptor(const QSharedPointer<UnitTestDataPackage>& test)
 {
-    return static_cast<uint8_t>(test->getDescriptor().at(0));
+    return static_cast<parser::TypeDescriptor>(test->getDescriptor().at(0));
 }
 
-bool UnitTestConverter::getTestResult(const QSharedPointer<UnitTestDataPackage>& test)
+void UnitTestConverter::convertValues(UnitTest& test, const QSharedPointer<UnitTestDataPackage>& pack)
+{
+    parser::TypeDescriptor descriptor {getDescriptor(pack)};
+
+    auto& value_conveter {ValueConverters::getConverter(descriptor)};
+
+    test.current_value_ = value_conveter.getValue(pack->getCurrentValue());
+
+    if(pack->getExpectedValue().isEmpty())
+    {
+        test.lower_value_ = value_conveter.getValue(pack->getLowerValue());
+        test.upper_value_ = value_conveter.getValue(pack->getUpperValue());
+    }
+    else    test.expecteted_value_ = value_conveter.getValue(pack->getExpectedValue());
+}
+
+QString UnitTestConverter::getTestResult(const QSharedPointer<UnitTestDataPackage>& test)
 {
     uint temp{static_cast<uint>(test->getResult().at(0))};
 
     throwIf(temp > 1 , "Test result error : test_result > 1!");
 
-    return static_cast<bool>(temp);
+    if(temp == 1)
+        return "Passed";
+
+    return "Failed";
 }
-
-
 
 UnitTest UnitTestConverter::getUnitTest(const QSharedPointer<UnitTestDataPackage>& test)
 {
     UnitTest result;
 
     result.name_ = test->getName().data();
-    result.type_descriptor_ = getDescriptor(test);
     result.test_result_ = getTestResult(test);
 
+    convertValues(result , test);
 
+    return result;
 }
 
 
@@ -50,6 +117,8 @@ TestCase TestCaseConverter::getTestCase(const QSharedPointer<TestCaseDataPackage
 
     for(auto&& test : test_case->getTests())
         result.tests_.append(test_converter_.getUnitTest(test));
+
+    return result;
 }
 
 Converter::Converter(const TransactionDataPackage& pack):
@@ -62,6 +131,69 @@ Transaction Converter::getConverterTransaction()
 {
     for(auto&& test_case : pack_.getCases())
         transaction_.cases_.append(case_converter_.getTestCase(test_case));
+
+    return transaction_;
 }
 
+QMutex ValueConverters::mutex_{};
+QMap<parser::TypeDescriptor , QSharedPointer<AbstractValueConverter>> ValueConverters::value_converters_{};
+bool ValueConverters::value_converters_initialized_{false};
 
+void ValueConverters::addConverter(parser::TypeDescriptor desc, QSharedPointer<AbstractValueConverter> value_converter)
+{
+    value_converters_[desc] = value_converter;
+}
+
+void ValueConverters::initValueConverters()
+{
+    auto unsigned_numeric_conv {QSharedPointer<UnsignedNumericValueConverter>::create()};
+
+    addConverter(parser::UINT8_T  , unsigned_numeric_conv );
+    addConverter(parser::UINT16_T , unsigned_numeric_conv );
+    addConverter(parser::UINT32_T , unsigned_numeric_conv );
+    addConverter(parser::UINT64_T , unsigned_numeric_conv );
+
+    auto signed_numeric_conv {QSharedPointer<SignedNumericValueConverter>::create()};
+
+    addConverter(parser::INT8_T  , signed_numeric_conv );
+    addConverter(parser::INT16_T , signed_numeric_conv );
+    addConverter(parser::INT32_T , signed_numeric_conv );
+    addConverter(parser::INT64_T , signed_numeric_conv );
+
+    addConverter(parser::BOOL , QSharedPointer<BoolValueConverter>::create() );
+    addConverter(parser::CHAR , QSharedPointer<CharValueConverter>::create() );
+    addConverter(parser::PTR  , QSharedPointer<PtrValueConverter>::create() );
+    addConverter(parser::BIT  , QSharedPointer<BitValueConverter>::create() );
+
+    value_converters_initialized_ = true;
+}
+
+const AbstractValueConverter& ValueConverters::getConverter(parser::TypeDescriptor desc)
+{
+    QMutexLocker{&mutex_};
+    if(not value_converters_initialized_)
+        initValueConverters();
+    return *value_converters_[desc];
+}
+
+QMutex StringDescriptors::mutex_;
+QMap<parser::TypeDescriptor , QString > StringDescriptors::strings_;
+bool StringDescriptors::strings_initialized_{false};
+
+void StringDescriptors::addString(parser::TypeDescriptor desc, QString string)
+{
+
+}
+
+void StringDescriptors::initStrings()
+{
+
+}
+
+const AbstractValueConverter& StringDescriptors::getString(parser::TypeDescriptor desc)
+{
+    QMutexLocker{&mutex_};
+    if(not value_converters_initialized_)
+        initValueConverters();
+    return *value_converters_[desc];
+}

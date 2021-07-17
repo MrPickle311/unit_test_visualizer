@@ -12,7 +12,7 @@ QByteArray bytes(QList<uint8_t> byte_lits)
     return  result;
 }
 
-QSharedPointer<UnitTestDataPackage> PackageFactory::allocTest()
+QSharedPointer<UnitTestDataPackage> TestPackageFactory::allocPackage()
 {
     return QSharedPointer<UnitTestDataPackage>::create();
 }
@@ -47,9 +47,9 @@ ParserTests::ParserTests():
     unit_parser->addChild(parser::UnitTestCommand::END_SENDING_UNIT_TEST_RESULT , end);
 }
 
-QSharedPointer<UnitTestDataPackage> PackageFactory::createBoolUnitTest()
+QSharedPointer<UnitTestDataPackage> TestPackageFactory::createBoolUnitTest()
 {
-    QSharedPointer<UnitTestDataPackage> pack{allocTest()};
+    QSharedPointer<UnitTestDataPackage> pack{allocPackage()};
     pack->setDescriptor(bytes({parser::TypeDescriptor::BOOL}));
     pack->setName("xd()");
     pack->setExpectedValue(bytes({1}));
@@ -58,9 +58,9 @@ QSharedPointer<UnitTestDataPackage> PackageFactory::createBoolUnitTest()
     return pack;
 }
 
-QSharedPointer<UnitTestDataPackage> PackageFactory::createUint32UnitTest()
+QSharedPointer<UnitTestDataPackage> TestPackageFactory::createUint32UnitTest()
 {
-    QSharedPointer<UnitTestDataPackage> pack{allocTest()};
+    QSharedPointer<UnitTestDataPackage> pack{allocPackage()};
     pack->setDescriptor(bytes({parser::TypeDescriptor::UINT32_T}));
     pack->setName("xc");
     pack->setExpectedValue(bytes({177 , 1 , 0 , 0}));
@@ -69,9 +69,9 @@ QSharedPointer<UnitTestDataPackage> PackageFactory::createUint32UnitTest()
     return pack;
 }
 
-QSharedPointer<UnitTestDataPackage> PackageFactory::createBitUnitTest()
+QSharedPointer<UnitTestDataPackage> TestPackageFactory::createBitUnitTest()
 {
-    QSharedPointer<UnitTestDataPackage> pack{allocTest()};
+    QSharedPointer<UnitTestDataPackage> pack{allocPackage()};
     pack->setDescriptor(bytes({parser::TypeDescriptor::BIT}));
     pack->setName("reg");
     pack->setExpectedValue(bytes({1}));
@@ -80,9 +80,9 @@ QSharedPointer<UnitTestDataPackage> PackageFactory::createBitUnitTest()
     return pack;
 }
 
-QSharedPointer<UnitTestDataPackage> PackageFactory::createInt64UnitTest()
+QSharedPointer<UnitTestDataPackage> TestPackageFactory::createInt64UnitTest()
 {
-    QSharedPointer<UnitTestDataPackage> pack{allocTest()};
+    QSharedPointer<UnitTestDataPackage> pack{allocPackage()};
     pack->setDescriptor(bytes({parser::TypeDescriptor::INT64_T}));
     pack->setName("openmb");
     pack->setExpectedValue(bytes({177, 1, 0, 0, 0, 0, 0 ,0}));
@@ -92,9 +92,9 @@ QSharedPointer<UnitTestDataPackage> PackageFactory::createInt64UnitTest()
 
 }
 
-QSharedPointer<UnitTestDataPackage> PackageFactory::createPtrUnitTest()
+QSharedPointer<UnitTestDataPackage> TestPackageFactory::createPtrUnitTest()
 {
-    QSharedPointer<UnitTestDataPackage> pack{allocTest()};
+    QSharedPointer<UnitTestDataPackage> pack{allocPackage()};
     pack->setDescriptor(bytes({parser::TypeDescriptor::PTR}));
     pack->setName("ptr");
     pack->setExpectedValue(bytes({0}));
@@ -103,9 +103,9 @@ QSharedPointer<UnitTestDataPackage> PackageFactory::createPtrUnitTest()
     return pack;
 }
 
-QSharedPointer<UnitTestDataPackage> PackageFactory::createInt16RangeUnitTest()
+QSharedPointer<UnitTestDataPackage> TestPackageFactory::createInt16RangeUnitTest()
 {
-    QSharedPointer<UnitTestDataPackage> pack{allocTest()};
+    QSharedPointer<UnitTestDataPackage> pack{allocPackage()};
     pack->setDescriptor(bytes({parser::TypeDescriptor::INT16_T}));
     pack->setName("dfname");
     pack->setCurrentValue(bytes({67 , 0}));

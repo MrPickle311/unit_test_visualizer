@@ -70,7 +70,7 @@ void ParserComponent::setBuffer(port::ByteBuffer* newBuffer)
 
 void ParserComponent::createPackage()
 {
-    package_ = QSharedPointer<UnitTestDataPackage>::create();
+    package_ = UnitTestPackPtr::create();
 }
 
 ComplexParser::ComplexParser(Code commands_count):
@@ -123,21 +123,21 @@ bool ComplexParser::parseCommand(AcceptedTypes result)
     return true;
 }
 
-void ComplexParser::specialPreOperations(AcceptedTypes result){}
+void ComplexParser::specialPreOperations([[maybe_unused]] AcceptedTypes result){}
 
-void ComplexParser::specialPostOperations(AcceptedTypes result){}
+void ComplexParser::specialPostOperations([[maybe_unused]] AcceptedTypes result){}
 
 GlobalParser::GlobalParser():
     ComplexParser{GlobalCommand::GLOBAL_COMMAND_COUNT}{}
 
 void GlobalParser::createPackage()
 {
-    package_ = QSharedPointer<TransactionDataPackage>::create();
+    package_ = TransactionPackPtr::create();
 }
 
-QSharedPointer<TransactionDataPackage> GlobalParser::getPackage()
+TransactionPackPtr GlobalParser::getPackage()
 {
-    return std::get<QSharedPointer<TransactionDataPackage>>(package_);
+    return std::get<TransactionPackPtr>(package_);
 }
 
 void GlobalParser::startProcessing()
@@ -161,13 +161,13 @@ TestCaseParser::TestCaseParser():
 void TestCaseParser::createPackage()
 {
     //create a test case
-    package_ = QSharedPointer<TestCaseDataPackage>::create();
+    package_ = TestCasePackPtr::create();
 }
 
 void TestCaseParser::specialPreOperations(AcceptedTypes result)
 {
     //append a test case
-    std::get<QSharedPointer<TransactionDataPackage>>(result)->addTestCase(std::get<QSharedPointer<TestCaseDataPackage>>(package_));
+    std::get<TransactionPackPtr>(result)->addTestCase(std::get<TestCasePackPtr>(package_));
 
     QByteArray name_bytes;
 
@@ -178,7 +178,7 @@ void TestCaseParser::specialPreOperations(AcceptedTypes result)
         byte = buffer_->getByte();
     }
 
-    std::get<QSharedPointer<TestCaseDataPackage>>(package_)->setTestCaseName(name_bytes);
+    std::get<TestCasePackPtr>(package_)->setTestCaseName(name_bytes);
 }
 
 UnitTestParser::UnitTestParser():
@@ -187,12 +187,12 @@ UnitTestParser::UnitTestParser():
 void UnitTestParser::specialPreOperations(AcceptedTypes result)
 {
     //append a unit test
-    std::get<QSharedPointer<TestCaseDataPackage>>(result)->addUnitTest(std::get<QSharedPointer<UnitTestDataPackage>>(package_));
+    std::get<TestCasePackPtr>(result)->addUnitTest(std::get<UnitTestPackPtr>(package_));
 }
 
 bool NameParser::parseCommand(AcceptedTypes result)//unit test
 {
-    auto test_case {std::get<QSharedPointer<UnitTestDataPackage>>(result)};
+    auto test_case {std::get<UnitTestPackPtr>(result)};
 
     QByteArray name_bytes;
 
@@ -210,7 +210,7 @@ bool NameParser::parseCommand(AcceptedTypes result)//unit test
 
 bool TypeDescriptorParser::parseCommand(AcceptedTypes result)//unit test
 {
-    auto test_case {std::get<QSharedPointer<UnitTestDataPackage>>(result)};
+    auto test_case {std::get<UnitTestPackPtr>(result)};
 
     QByteArray desc_result;
 
@@ -225,7 +225,7 @@ bool TypeDescriptorParser::parseCommand(AcceptedTypes result)//unit test
 
 bool ValueParser::parseCommand(AcceptedTypes result)//unit test
 {
-    auto test_case {std::get<QSharedPointer<UnitTestDataPackage>>(result)};
+    auto test_case {std::get<UnitTestPackPtr>(result)};
 
     QByteArray value_result;
 
@@ -237,29 +237,29 @@ bool ValueParser::parseCommand(AcceptedTypes result)//unit test
     return true;
 }
 
-void CurrentValueParser::redirectValueBytes(const QByteArray& value_result, QSharedPointer<UnitTestDataPackage>& unit_test)
+void CurrentValueParser::redirectValueBytes(const QByteArray& value_result, UnitTestPackPtr& unit_test)
 {
     unit_test->setCurrentValue(value_result);
 }
 
-void ExpectedValueParser::redirectValueBytes(const QByteArray& value_result, QSharedPointer<UnitTestDataPackage>& unit_test)
+void ExpectedValueParser::redirectValueBytes(const QByteArray& value_result, UnitTestPackPtr& unit_test)
 {
     unit_test->setExpectedValue(value_result);
 }
 
-void LowerValueParser::redirectValueBytes(const QByteArray& value_result, QSharedPointer<UnitTestDataPackage>& unit_test)
+void LowerValueParser::redirectValueBytes(const QByteArray& value_result, UnitTestPackPtr& unit_test)
 {
     unit_test->setLowerValue(value_result);
 }
 
-void UpperValueParser::redirectValueBytes(const QByteArray& value_result, QSharedPointer<UnitTestDataPackage>& unit_test)
+void UpperValueParser::redirectValueBytes(const QByteArray& value_result, UnitTestPackPtr& unit_test)
 {
     unit_test->setUpperValue(value_result);
 }
 
 bool TestResultParser::parseCommand(AcceptedTypes result)//unit test
 {
-    auto test_case {std::get<QSharedPointer<UnitTestDataPackage>>(result)};
+    auto test_case {std::get<UnitTestPackPtr>(result)};
 
     QByteArray test_result;
 

@@ -96,6 +96,12 @@ using AcceptedTypes = std::variant< QSharedPointer<UnitTestDataPackage> ,
                                     QSharedPointer<TransactionDataPackage> ,
                                     std::monostate >;
 
+//aliases
+
+using UnitTestPackPtr    = QSharedPointer<UnitTestDataPackage>;
+using TestCasePackPtr    = QSharedPointer<TestCaseDataPackage>;
+using TransactionPackPtr = QSharedPointer<TransactionDataPackage>;
+
 class ParserComponent
 {
     friend class ComplexParser;
@@ -141,9 +147,9 @@ class GlobalParser:
 {
 public:
     GlobalParser();
-    virtual void createPackage() override;
-    QSharedPointer<TransactionDataPackage> getPackage();
-    void startProcessing();
+    virtual void       createPackage() override;
+    TransactionPackPtr getPackage();
+    void               startProcessing();
 };
 
 class GlobalStartParser:
@@ -200,7 +206,8 @@ class ValueParser:
 {
 protected:
     virtual bool parseCommand(AcceptedTypes result) override;
-    virtual void redirectValueBytes(const QByteArray& value_result, QSharedPointer<UnitTestDataPackage>& unit_test ) = 0;
+    virtual void redirectValueBytes(const QByteArray& value_result,
+                                    UnitTestPackPtr& unit_test ) = 0;
 };
 
 class CurrentValueParser:
@@ -208,7 +215,7 @@ class CurrentValueParser:
 {
 public:
     virtual void redirectValueBytes(const QByteArray& value_result,
-                                    QSharedPointer<UnitTestDataPackage>& unit_test) override;
+                                    UnitTestPackPtr& unit_test) override;
 };
 
 class ExpectedValueParser:
@@ -216,7 +223,7 @@ class ExpectedValueParser:
 {
 protected:
     virtual void redirectValueBytes(const QByteArray& value_result,
-                                    QSharedPointer<UnitTestDataPackage>& unit_test) override;
+                                    UnitTestPackPtr& unit_test) override;
 };
 
 class LowerValueParser:
@@ -224,7 +231,7 @@ class LowerValueParser:
 {
 protected:
     virtual void redirectValueBytes(const QByteArray& value_result,
-                                    QSharedPointer<UnitTestDataPackage>& unit_test) override;
+                                    UnitTestPackPtr& unit_test) override;
 };
 
 class UpperValueParser:
@@ -232,7 +239,7 @@ class UpperValueParser:
 {
 protected:
     virtual void redirectValueBytes(const QByteArray& value_result,
-                                    QSharedPointer<UnitTestDataPackage>& unit_test) override;
+                                    UnitTestPackPtr& unit_test) override;
 };
 
 class TestResultParser:

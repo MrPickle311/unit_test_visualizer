@@ -78,6 +78,17 @@ TEST_F(ConverterTest , ComplexLogicTest)//it fails if it throws
     test_case1->addUnitTest(factory_.createPtrUnitTest());
     test_case1->addUnitTest(factory_.createInt16RangeUnitTest());
 
+    auto unit_test {factory_.createUint32UnitTest()};
+    unit_test->setCurrentValue(bytes({149 , 142 , 69}));
+
+    test_case1->addUnitTest(unit_test);
+
+    auto another_unit_test {factory_.createUint64UnitTest()};
+    another_unit_test->setCurrentValue(bytes({225 , 143 , 255 , 255}));
+
+    test_case1->addUnitTest(another_unit_test);
+
+
     test_case2->setTestCaseName("test2");
     test_case2->addUnitTest(factory_.createBitUnitTest());
     test_case2->addUnitTest(factory_.createPtrUnitTest());
@@ -87,6 +98,8 @@ TEST_F(ConverterTest , ComplexLogicTest)//it fails if it throws
 
     run();
 
+
+
     EXPECT_STREQ(result_.cases_.at(0).tests_.at(0).current_value_.toStdString().c_str() , "433" );
     EXPECT_STREQ(result_.cases_.at(0).tests_.at(1).current_value_.toStdString().c_str() , "-343434" );
     EXPECT_STREQ(result_.cases_.at(0).tests_.at(2).current_value_.toStdString().c_str() , "-343434" );
@@ -94,6 +107,8 @@ TEST_F(ConverterTest , ComplexLogicTest)//it fails if it throws
     EXPECT_STREQ(result_.cases_.at(0).tests_.at(3).current_value_.toStdString().c_str() ,"Bit is set" );
     EXPECT_STREQ(result_.cases_.at(0).tests_.at(4).current_value_.toStdString().c_str() ,"Is null pointer" );
     EXPECT_STREQ(result_.cases_.at(0).tests_.at(5).current_value_.toStdString().c_str() ,"67" );
+    EXPECT_STREQ(result_.cases_.at(0).tests_.at(6).current_value_.toStdString().c_str() ,"4558485" );
+    EXPECT_STREQ(result_.cases_.at(0).tests_.at(7).current_value_.toStdString().c_str() ,"4294938593" );
 
     //second case
 

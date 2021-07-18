@@ -4,14 +4,6 @@
 template<typename T>
 using Ptr = QSharedPointer<T>;
 
-QByteArray bytes(QList<uint8_t> byte_lits)
-{
-    QByteArray result;
-    for(auto&& byte : byte_lits)
-        result.append(byte);
-    return  result;
-}
-
 QSharedPointer<UnitTestDataPackage> TestPackageFactory::allocPackage()
 {
     return QSharedPointer<UnitTestDataPackage>::create();
@@ -90,6 +82,17 @@ QSharedPointer<UnitTestDataPackage> TestPackageFactory::createInt64UnitTest()
     pack->setResult(bytes({FAILURE}));
     return pack;
 
+}
+
+QSharedPointer<UnitTestDataPackage> TestPackageFactory::createUint64UnitTest()
+{
+    QSharedPointer<UnitTestDataPackage> pack{allocPackage()};
+    pack->setDescriptor(bytes({parser::TypeDescriptor::UINT64_T}));
+    pack->setName("var1");
+    pack->setExpectedValue(bytes({177, 1, 0, 0, 0, 0, 0 ,0}));
+    pack->setCurrentValue(bytes({118, 194, 250, 255, 255, 255, 255, 255}));
+    pack->setResult(bytes({FAILURE}));
+    return pack;
 }
 
 QSharedPointer<UnitTestDataPackage> TestPackageFactory::createPtrUnitTest()
@@ -218,4 +221,12 @@ TEST_F(ParserTests , EmptyCase )
     transaction->addTestCase(test_case1);
 
     EXPECT_NO_FATAL_FAILURE(insertDataAndRun(transaction));
+}
+
+QByteArray bytes(QList<uint8_t> byte_lits)
+{
+    QByteArray result;
+    for(auto&& byte : byte_lits)
+        result.append(byte);
+    return  result;
 }

@@ -17,6 +17,7 @@ public:
     QSharedPointer<UnitTestDataPackage> createUint32UnitTest();
     QSharedPointer<UnitTestDataPackage> createBitUnitTest();
     QSharedPointer<UnitTestDataPackage> createInt64UnitTest();
+    QSharedPointer<UnitTestDataPackage> createUint64UnitTest();
     QSharedPointer<UnitTestDataPackage> createPtrUnitTest();
     QSharedPointer<UnitTestDataPackage> createInt16RangeUnitTest();
 };
@@ -35,3 +36,5 @@ public:
     void insertDataAndRun(QSharedPointer<TransactionDataPackage> transaction);
 };
 
+//converts lits of bytes to QByteArray
+QByteArray bytes(QList<uint8_t> byte_lits);

@@ -1,15 +1,21 @@
 #include "../Converter.hpp"
+#include <bitset>
+#include <QDataStream>
 
 #define BITS_IN_BYTE 8
 
 QString SignedNumericValueConverter::getValue(const QByteArray& bytes) const
 {
-    int64_t temp_result{0};
+    uint64_t temp_result{0};
 
     for(int i{0}; i < bytes.size() ; ++i)
-        temp_result |= static_cast<int64_t>(bytes[i]) << BITS_IN_BYTE * i;
+        temp_result |=   (uint64_t)( (uint8_t)bytes[i] )  << ( BITS_IN_BYTE * i ) ;
+    //                        ^           ^--- conversion to unsigned ( pure byte)
+    //                        | - extending type to 64-bit to proper bitwise shifting
 
-    return QString::number(temp_result);
+    int64_t converted = temp_result;
+
+    return QString::number(converted);
 }
 
 QString UnsignedNumericValueConverter::getValue(const QByteArray& bytes) const
@@ -17,7 +23,7 @@ QString UnsignedNumericValueConverter::getValue(const QByteArray& bytes) const
     uint64_t temp_result{0};
 
     for(int i{0}; i < bytes.size() ; ++i)
-        temp_result |= static_cast<uint64_t>(bytes[i]) << BITS_IN_BYTE * i;
+        temp_result |= ( static_cast<uint8_t>(bytes[i]) << ( BITS_IN_BYTE * i ) );
 
     return QString::number(temp_result);
 }

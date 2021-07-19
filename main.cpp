@@ -1,6 +1,10 @@
-#include <algorithm>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include "modules/backend/PortOperator.hpp"
+
+
+#ifdef MAIN_PROGRAM
+
 
 int main(int argc, char *argv[])
 {
@@ -22,3 +26,4 @@ int main(int argc, char *argv[])
     return app.exec();
 }
 
+#endif

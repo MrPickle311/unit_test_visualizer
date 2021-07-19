@@ -1,12 +1,4 @@
-/tests/build-backend_tests-Desktop_Qt_5_15_2_MinGW_64_bit-Debug
-.CMakeLists.txt.user
-/build
-extern/
-build/
-/build/
-build
-CMakeCache.txt
-
+# This file is used to ignore files which are generated
 # ----------------------------------------------------------------------------
 /buiild
 build/
@@ -84,5 +76,4 @@ Thumbs.db
 
 #cmake 
 *.user
-*.user.*
-*.log
+*user.*

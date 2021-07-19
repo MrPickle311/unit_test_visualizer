@@ -8,14 +8,14 @@ import "terminal/terminalWindow.js" as TerminalWindowLogic
 import "tests/testWindowLogic.js" as TestWindowLogic
 
 Common.FramelessWindow {
-
+    objectName: "sd"
     id: mainWindow
     title: "UartVisualizer"
 
     isSizeConst: true
 
     Grid {
-
+        objectName: "xd3"
         id: mainMenuGrid
         property int buttonSize: 64
         anchors.left: parent.left
@@ -34,10 +34,25 @@ Common.FramelessWindow {
         topPadding: ( mainMenuGrid.height - 2 * settingsButton.height - spacing ) / 2
         leftPadding: ( mainMenuGrid.width - 2 * settingsButton.width - spacing ) / 2
 
+        property bool isSettingsWindowCreated: false
+        property bool isTerminalWindowCreated: false
+        property bool isTestsWindowCreated: false
+        property bool isAboutWindowCreated: false
+
         Common.MenuButton{
             id: settingsButton
             iconDir: "qrc:/data/main_window/settings.png"
-            onClicked: SettingsWindowLogic.createSettignsWindow()
+            onClicked: {
+
+                if(MainWindowLogic.findChildObject("settingsWindow") === null)
+                {
+                    var obj = SettingsWindowLogic.createSettignsWindow()
+                    obj.objectName = "sdasd"
+
+                    console.log("Object name: " + obj.objectName)
+                }
+
+            }
         }
 
         Common.MenuButton{

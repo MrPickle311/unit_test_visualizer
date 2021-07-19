@@ -2,5 +2,5 @@
 
 function createSettignsWindow()
 {
-    Global.createWindow("qrc:/script/settings_window/SettingsWindow.qml")
+    return Global.createWindow("qrc:/script/settings_window/SettingsWindow.qml")
 }

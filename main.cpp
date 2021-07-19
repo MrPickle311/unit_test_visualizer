@@ -1,10 +1,10 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include "modules/backend/PortOperator.hpp"
-
+#include <modules/backend/PortOperator.hpp>
+#include <modules/bridge/Bridge.hpp>
+#include <QQuickWindow>
 
 #ifdef MAIN_PROGRAM
-
 
 int main(int argc, char *argv[])
 {
@@ -22,6 +22,37 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     engine.load(url);
+
+
+    port::PortScanner scanner;
+
+    port::ByteBuffer buffer;
+
+    qDebug() << scanner.getPortNames();
+
+    port::BufferedPortFlowOperator port_operator;
+
+    port_operator.setInputByteBuffer(&buffer);
+    port_operator.changeSettings(port::StandardSettings::getStandardSettings(port::StandardSetting::StandardSetting9600));
+    port_operator.changePort(scanner.getSelectedPort(1));
+
+    port_operator.openPort();
+
+    Printer printer;
+    printer.buf_ = &buffer;
+
+    //QObject::connect(&buffer , &port::ByteBuffer::bytesArrived , &printer, &Printer::print);
+
+    //QQuickWindow* window {qobject_cast<QQuickWindow*>(engine.rootObjects().first())};
+    //
+    //
+    //if(window)
+    //    qDebug() << "OK!";
+    //
+    //qDebug() << window->children();
+    //
+    //for(auto&& child : window->children() )
+    //    qDebug() << child->objectName();
 
     return app.exec();
 }

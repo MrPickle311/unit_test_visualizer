@@ -5,7 +5,7 @@ import "../common" as Common
 
 Common.FramelessWindow{
 
-    id: settingsWindow
+    objectName: "settingsWindow"
     visible: true
     isSizeConst: true
 

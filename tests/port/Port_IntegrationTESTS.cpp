@@ -44,7 +44,7 @@ void PortInputOperatorTEST::openPort()
 void PortInputOperatorTEST::runIntegrationTest()
 {
     EXPECT_NO_THROW(showPorts());
-    EXPECT_NO_FATAL_FAILURE(selectPort(0));
+    EXPECT_NO_FATAL_FAILURE(selectPort(1));
     EXPECT_NO_THROW(operator_.openPort());
     EXPECT_NO_THROW(waitAndShowArrivingData());
 }

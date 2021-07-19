@@ -14,6 +14,10 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
+    QScopedPointer<SingletonInterface> singleton{new SingletonInterface};
+
+    qmlRegisterSingletonInstance("Qt.singletons.firstSingleton",1,0,"SingletonInterface",singleton.get());
+
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/script/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
@@ -40,6 +44,8 @@ int main(int argc, char *argv[])
 
     Printer printer;
     printer.buf_ = &buffer;
+
+
 
     //QObject::connect(&buffer , &port::ByteBuffer::bytesArrived , &printer, &Printer::print);
 

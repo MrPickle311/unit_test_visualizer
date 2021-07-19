@@ -9,6 +9,6 @@ function createWindow(directory)
             console.debug("Error:"+ window.errorString() );
         return;
     }
-    window.createObject(mainWindow.contentItem)//parent of each window is mainWindow
-    return window
+    return window.createObject(mainWindow.contentItem)//parent of each window is mainWindow
+    //return window
 }

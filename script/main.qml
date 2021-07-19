@@ -7,12 +7,32 @@ import "settings_window/settingsWindow.js" as SettingsWindowLogic
 import "terminal/terminalWindow.js" as TerminalWindowLogic
 import "tests/testWindowLogic.js" as TestWindowLogic
 
+import Qt.singletons.firstSingleton 1.0
+
 Common.FramelessWindow {
     objectName: "sd"
     id: mainWindow
     title: "UartVisualizer"
 
+    property int val: SingletonInterface.some_property
+
+
+
+    Text{
+        y:40
+        text: val.toString()
+        z:5
+    }
+
     isSizeConst: true
+
+    property var handler: undefined
+
+    property bool isSettingsWindowCreated: false
+
+    function restoreFalse(event){
+        isSettingsWindowCreated = false
+    }
 
     Grid {
         objectName: "xd3"
@@ -34,7 +54,7 @@ Common.FramelessWindow {
         topPadding: ( mainMenuGrid.height - 2 * settingsButton.height - spacing ) / 2
         leftPadding: ( mainMenuGrid.width - 2 * settingsButton.width - spacing ) / 2
 
-        property bool isSettingsWindowCreated: false
+
         property bool isTerminalWindowCreated: false
         property bool isTestsWindowCreated: false
         property bool isAboutWindowCreated: false
@@ -43,13 +63,14 @@ Common.FramelessWindow {
             id: settingsButton
             iconDir: "qrc:/data/main_window/settings.png"
             onClicked: {
-
-                if(MainWindowLogic.findChildObject("settingsWindow") === null)
+                SingletonInterface.changeProperty()
+                if(!isSettingsWindowCreated)
                 {
-                    var obj = SettingsWindowLogic.createSettignsWindow()
-                    obj.objectName = "sdasd"
+                    handler = SettingsWindowLogic.createSettignsWindow()
 
-                    console.log("Object name: " + obj.objectName)
+                    isSettingsWindowCreated = true
+
+                    handler.closing.connect(restoreFalse)
                 }
 
             }

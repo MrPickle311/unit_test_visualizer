@@ -5,6 +5,10 @@ import "../common" as Common
 
 Common.FramelessWindow{
 
+    function prnt(){
+        console.log("hello")
+    }
+
     objectName: "settingsWindow"
     visible: true
     isSizeConst: true

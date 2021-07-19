@@ -2,11 +2,14 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import "framelessWindowLogic.js" as FramelessWindowLogic
 
-
-Window{
+Window {
     objectName: "frameless"
     id: framelessWindow
     property bool isSizeConst: false//if its true maxmimum == minimum
+
+
+
+
 
     minimumWidth: 400
     minimumHeight: 400
@@ -23,7 +26,7 @@ Window{
         id : framelessWindowMouseArea
         anchors.fill: parent
         z: 1
-        //property variant clickPos: "1,1"
+        property variant clickPos: "1,1"
         onPressed:  FramelessWindowLogic.getClickPos(framelessWindowMouseArea)
         onPositionChanged: FramelessWindowLogic.updateWindowPos(framelessWindowMouseArea, framelessWindow)
     }

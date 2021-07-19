@@ -5,6 +5,26 @@
 #include "../backend/PortOperator.hpp"
 #include <QDebug>
 
+
+class SingletonInterface:
+        public QObject
+{
+    Q_OBJECT;
+    Q_PROPERTY(int some_property READ getSomeProperty WRITE setSomeProperty NOTIFY somePropertyChanged);
+    int some_property;
+
+public:
+    explicit SingletonInterface(QObject* parent = nullptr);
+    int getSomeProperty() const;
+    void setSomeProperty(int newSomeProperty);
+
+    Q_INVOKABLE void changeProperty();
+signals:
+    void somePropertyChanged();
+};
+
+
+
 class Printer:
         public QObject
 {

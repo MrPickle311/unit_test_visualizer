@@ -39,9 +39,6 @@ Rectangle {
         onClicked: SettingsBridge.scanPorts()
     }
 
-    SerialPort{
-        id: port
-    }
 
     ComboBox {
         id: comPortComboBox

@@ -42,15 +42,24 @@ void TerminalBridge::applySettings(QSerialPortInfo port, port::PortFlowSettings 
 void TerminalBridge::openPort(QString port_name)
 {
     set_ports_[port_name]->openPort();
+
+    qDebug() << port_name + " port opened!";
 }
 
 void TerminalBridge::closeAllPorts()
 {
     for(auto&& port : set_ports_)
         port->closePort();
+
+    qDebug() << "All ports closed!";
 }
 
 QStringList TerminalBridge::restorePorts() const
 {
     return set_ports_.keys();
+}
+
+void TerminalBridge::sendData(QString port_name, QByteArray data)
+{
+
 }

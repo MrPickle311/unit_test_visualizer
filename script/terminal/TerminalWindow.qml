@@ -18,7 +18,7 @@ Common.FramelessWindow{
         var page = GlobalFUnctions.createComponent("qrc:/script/terminal/TerminalPage.qml")
         page.portName = port_name
         swipeView.addItem(page)
-        page.openPortRequest.connect(log)
+        page.openPortRequest.connect(TerminalBridge.openPort)
     }
 
     function addPortPage(port_name){
@@ -36,6 +36,10 @@ Common.FramelessWindow{
 
     function log(port_name){
         console.log(port_name)
+    }
+
+    function receiceData(port_name , data){
+        console.log(port_name + " " + data)
     }
 
     property var portNames: []
@@ -76,9 +80,10 @@ Common.FramelessWindow{
 
     Component.onCompleted: {
         TerminalBridge.newPortIsSet.connect(addPortPage)
+        TerminalBridge.dataArrived.connect(receiceData)
         tryRestore()
-
-
     }
+
+    onClosing: TerminalBridge.closeAllPorts()
 
 }

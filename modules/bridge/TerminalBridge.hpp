@@ -7,7 +7,7 @@
 class TerminalBridge
         : public QObject
 {
-    Q_OBJECT
+    Q_OBJECT;
 
     using BufferPtr = QSharedPointer< port::ByteBuffer >;
     using PortOperatorPtr = QSharedPointer<port::BufferedPortFlowOperator>;
@@ -24,11 +24,13 @@ private:
 
 public slots:
     void applySettings(QSerialPortInfo port , port::PortFlowSettings settings);
-    void openPort(QString port_name);
-    void closeAllPorts();
+    Q_INVOKABLE void openPort(QString port_name);
+    Q_INVOKABLE void closeAllPorts();
     Q_INVOKABLE QStringList restorePorts() const;
 
+    Q_INVOKABLE void sendData(QString port_name , QByteArray data);
 signals:
     void newPortIsSet(QString port_name);
+    void dataArrived(QString port_name ,  QByteArray data);
 };
 

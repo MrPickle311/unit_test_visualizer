@@ -21,7 +21,9 @@ Rectangle {
         anchors.topMargin: 20
     }
 
-
+    function appendTextToOutput(data){
+        outputTextArea.appendText(data)
+    }
 
     TerminalTextArea{
         id: inputTextArea

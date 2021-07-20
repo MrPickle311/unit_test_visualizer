@@ -5,7 +5,11 @@ import "../common" as Common
 Common.FrameRectangle{
     id: textInputRectangle
     TextInput{
+        id: textInput
         anchors.fill: parent
         readOnly: false
+    }
+    function getText(){
+        return textInput.text
     }
 }

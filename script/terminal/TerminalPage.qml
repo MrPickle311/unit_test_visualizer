@@ -21,6 +21,8 @@ Rectangle {
         anchors.topMargin: 20
     }
 
+
+
     TerminalTextArea{
         id: inputTextArea
         width: outputTextArea.width
@@ -52,6 +54,8 @@ Rectangle {
         anchors.verticalCenter: textStreamField.verticalCenter
         anchors.left: textStreamField.right
         anchors.leftMargin: 20
+
+        onClicked: inputTextArea.appendText(textStreamField.getText())
     }
 
     Common.MenuComboBox{

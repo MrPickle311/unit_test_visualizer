@@ -5,12 +5,24 @@ import "../common" as Common
 
 import "../common/globalFunctions.js" as GlobalFUnctions
 
+import Qt.singletons.bridge 1.0
+
 Common.FramelessWindow{
     id: terminalWindow
     maximumHeight: 800
     maximumWidth: 800
     minimumHeight: 400
     minimumWidth: 800
+
+    function addPortPage(port_name){
+        var page = GlobalFUnctions.createComponent("qrc:/script/terminal/TerminalPage.qml")
+        page.portName = port_name
+        swipeView.addItem(page)
+        portNames.push(port_name)
+        repeater.model = portNames//repeater does not refresh itself automatically
+    }
+
+    property var portNames: []
 
     TabBar {
         z: 2
@@ -19,16 +31,16 @@ Common.FramelessWindow{
         anchors.verticalCenter: terminalWindow.closeButton.verticalCenter
 
         Repeater{
-
-            model: ["COM1" , "COM4", "COMX"]
+            id: repeater
+            model: portNames
 
             TerminalTabButton {
                 text: modelData
             }
+
+            onItemAdded: console.log("added!")
         }
     }
-
-    property var pages: []
 
     SwipeView {
         id: swipeView
@@ -48,10 +60,8 @@ Common.FramelessWindow{
 
     Component.onCompleted: {
 
-        pages.push(GlobalFUnctions.createComponent("qrc:/script/terminal/TerminalPage.qml"))
+        TerminalBridge.newPortIsSet.connect(addPortPage)
 
-        for(var i = 0 ; i < pages.length; i++)
-            swipeView.addItem(pages[i])
     }
 
 }

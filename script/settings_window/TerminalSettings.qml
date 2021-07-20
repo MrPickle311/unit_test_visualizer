@@ -13,6 +13,8 @@ Rectangle {
     color: "white"
     property int comNumber: 0
 
+    signal applyButtonClicked(string port_name)
+
     Text{
         text: Number(SJ.bauds.get(baudSlider.text))
     }

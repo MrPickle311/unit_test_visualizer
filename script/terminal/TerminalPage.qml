@@ -6,7 +6,7 @@ Rectangle {
     id: rectangle
     color: "white"
 
-    objectName: "none"
+    property string portName: "none"
 
     TerminalTextArea{
         id: outputTextArea

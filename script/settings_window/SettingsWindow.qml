@@ -6,6 +6,8 @@ import "../common" as Common
 
 Common.FramelessWindow{
 
+    id: settingsWindow
+
     function prnt(){
         console.log("hello")
     }
@@ -49,6 +51,8 @@ Common.FramelessWindow{
             }
     }
 
+    signal applyButtonClicked(string port_name)
+
 
     SwipeView{
         id: swipeView
@@ -66,6 +70,7 @@ Common.FramelessWindow{
 
         TerminalSettings{
             id: terminalSettings
+            onApplyButtonClicked: settingsWindow.applyButtonClicked(port_name)
         }
 
         TestsSettings{

@@ -7,9 +7,7 @@ Window {
     id: framelessWindow
     property bool isSizeConst: false//if its true maxmimum == minimum
 
-
-
-
+    signal closing()
 
     minimumWidth: 400
     minimumHeight: 400
@@ -36,7 +34,10 @@ Window {
     ExitButton{
         objectName: "xd2"
         id : closeButton
-        onClicked: framelessWindow.close()
+        onClicked: {
+            closing()
+            framelessWindow.close()
+        }
     }
 
 }

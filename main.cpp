@@ -3,6 +3,7 @@
 #include <modules/backend/PortOperator.hpp>
 #include <modules/bridge/Bridge.hpp>
 #include <modules/bridge/SettingsBridge.hpp>
+#include <modules/bridge/TerminalBridge.hpp>
 #include <QQuickWindow>
 
 #ifdef MAIN_PROGRAM
@@ -19,7 +20,13 @@ int main(int argc, char *argv[])
 
     QScopedPointer<SettingsBridge> bridge{new SettingsBridge};
 
+    QScopedPointer<TerminalBridge> term_bridge{new TerminalBridge};
+
+    QObject::connect(bridge.get(), &SettingsBridge::settingsApplied , term_bridge.get(), &TerminalBridge::applySettings );
+
     qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"SettingsBridge",bridge.get());
+    qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"TerminalBridge",term_bridge.get());
+
     qmlRegisterSingletonInstance("Qt.singletons.firstSingleton",1,0,"SingletonInterface",singleton.get());
 
     qmlRegisterType<QSerialPort>("com.myProject", 1, 0, "SerialPort");

@@ -9,8 +9,8 @@ class TerminalBridge
 {
     Q_OBJECT
 
-    using BufferPtr = QScopedPointer< port::ByteBuffer >;
-    using PortOperatorPtr = QScopedPointer<port::BufferedPortFlowOperator>;
+    using BufferPtr = QSharedPointer< port::ByteBuffer >;
+    using PortOperatorPtr = QSharedPointer<port::BufferedPortFlowOperator>;
 
 public:
 
@@ -23,10 +23,11 @@ private:
     void setupNewPort( const QSerialPortInfo& port , const port::PortFlowSettings& settings);
 
 public slots:
-
-
     void applySettings(QSerialPortInfo port , port::PortFlowSettings settings);
-signals:
+    void openPort(QString port_name);
+    void closeAllPorts();
 
+signals:
+    void newPortIsSet(QString port_name);
 };
 

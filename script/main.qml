@@ -10,28 +10,21 @@ import "tests/testWindowLogic.js" as TestWindowLogic
 import Qt.singletons.firstSingleton 1.0
 
 Common.FramelessWindow {
-    objectName: "sd"
     id: mainWindow
     title: "UartVisualizer"
 
-    property int val: SingletonInterface.some_property
-
-
-
-    Text{
-        y:40
-        text: val.toString()
-        z:5
-    }
-
     isSizeConst: true
 
-    property var handler: undefined
-
+    property var settingsWindowHandler: undefined
     property bool isSettingsWindowCreated: false
-
-    function restoreFalse(event){
+    function restoreSettingsWindowFalse(event){
         isSettingsWindowCreated = false
+    }
+
+    property var terminalWindowHandler: undefined
+    property bool isTerminalWindowCreated: false
+    function restoreTerminalWindowFalse(event){
+        isTerminalWindowCreated = false
     }
 
     Grid {
@@ -54,32 +47,35 @@ Common.FramelessWindow {
         topPadding: ( mainMenuGrid.height - 2 * settingsButton.height - spacing ) / 2
         leftPadding: ( mainMenuGrid.width - 2 * settingsButton.width - spacing ) / 2
 
-
-        property bool isTerminalWindowCreated: false
-        property bool isTestsWindowCreated: false
-        property bool isAboutWindowCreated: false
-
         Common.MenuButton{
             id: settingsButton
             iconDir: "qrc:/data/main_window/settings.png"
             onClicked: {
-                SingletonInterface.changeProperty()
                 if(!isSettingsWindowCreated)
                 {
-                    handler = SettingsWindowLogic.createSettignsWindow()
+                    settingsWindowHandler = SettingsWindowLogic.createSettignsWindow()
 
                     isSettingsWindowCreated = true
 
-                    handler.closing.connect(restoreFalse)
+                    settingsWindowHandler.closing.connect(restoreSettingsWindowFalse)
                 }
-
             }
         }
 
         Common.MenuButton{
             id: terminalButton
             iconDir: "qrc:/data/main_window/terminal.png"
-            onClicked: TerminalWindowLogic.createTerminalWindow()
+            onClicked: {
+                if(!isTerminalWindowCreated)
+                {
+                    terminalWindowHandler = TerminalWindowLogic.createTerminalWindow()
+
+                    isTerminalWindowCreated = true
+
+                    terminalWindowHandler.closing.connect(restoreTerminalWindowFalse)
+                }
+
+            }
         }
 
         Common.MenuButton{

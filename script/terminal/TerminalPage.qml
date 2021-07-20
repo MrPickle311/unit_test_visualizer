@@ -3,10 +3,12 @@ import QtQuick.Controls 2.12
 import "../common" as Common
 
 Rectangle {
-    id: rectangle
+    id: pageRectangle
     color: "white"
 
     property string portName: "none"
+
+    signal openPortRequest(string port_name)
 
     TerminalTextArea{
         id: outputTextArea
@@ -124,6 +126,18 @@ Rectangle {
         anchors.bottomMargin: 35
         anchors.rightMargin: 40
         buttonText: "Choose file..."
+    }
+
+    Common.MenuTextButton{
+        id: openPortButton
+        x: 101
+        y: 298
+        anchors.verticalCenter: freezeOutputButton.verticalCenter
+        anchors.right: freezeOutputButton.left
+        anchors.rightMargin: 10
+        buttonText: "Open port"
+
+        onClicked: openPortRequest(portName)
     }
 
     Common.MenuTextButton{

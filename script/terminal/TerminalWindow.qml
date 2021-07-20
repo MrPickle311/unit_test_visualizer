@@ -18,6 +18,7 @@ Common.FramelessWindow{
         var page = GlobalFUnctions.createComponent("qrc:/script/terminal/TerminalPage.qml")
         page.portName = port_name
         swipeView.addItem(page)
+        page.openPortRequest.connect(log)
     }
 
     function addPortPage(port_name){
@@ -31,6 +32,10 @@ Common.FramelessWindow{
         repeater.model = portNames
         for(var i = 0 ; i < portNames.length ; i++)
             createPage(portNames[i])
+    }
+
+    function log(port_name){
+        console.log(port_name)
     }
 
     property var portNames: []

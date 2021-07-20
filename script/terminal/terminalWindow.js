@@ -2,5 +2,5 @@
 
 function createTerminalWindow()
 {
-    Global.createWindow("qrc:/script/terminal/TerminalWindow.qml")
+    return Global.createWindow("qrc:/script/terminal/TerminalWindow.qml")
 }

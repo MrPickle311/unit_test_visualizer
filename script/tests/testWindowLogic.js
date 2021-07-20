@@ -2,5 +2,5 @@
 
 function createTestsWindow()
 {
-    Global.createWindow("qrc:/script/tests/TestWindow.qml")
+    return Global.createWindow("qrc:/script/tests/TestWindow.qml")
 }

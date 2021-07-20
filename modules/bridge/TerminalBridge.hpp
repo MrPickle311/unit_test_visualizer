@@ -26,6 +26,7 @@ public slots:
     void applySettings(QSerialPortInfo port , port::PortFlowSettings settings);
     void openPort(QString port_name);
     void closeAllPorts();
+    Q_INVOKABLE QStringList restorePorts() const;
 
 signals:
     void newPortIsSet(QString port_name);

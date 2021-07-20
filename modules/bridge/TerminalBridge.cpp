@@ -6,6 +6,8 @@ void TerminalBridge::changePortSettings(const QString& port_name, const port::Po
     if(set_ports_[port_name]->isOpen())
         set_ports_[port_name]->closePort();
     set_ports_[port_name]->changeSettings(settings);
+
+    qDebug() << "Settings changed!";
 }
 
 void TerminalBridge::setupNewPort(const QSerialPortInfo& port, const port::PortFlowSettings& settings)
@@ -41,4 +43,9 @@ void TerminalBridge::openPort(QString port_name)
 void TerminalBridge::closeAllPorts()
 {
 
+}
+
+QStringList TerminalBridge::restorePorts() const
+{
+    return set_ports_.keys();
 }

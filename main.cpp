@@ -41,22 +41,22 @@ int main(int argc, char *argv[])
     engine.load(url);
 
 
-    port::PortScanner scanner;
+    //port::PortScanner scanner;
 
     port::ByteBuffer buffer;
 
-    qDebug() << scanner.getPortNames();
+    //qDebug() << scanner.getPortNames();
 
-    port::BufferedPortFlowOperator port_operator;
+    //port::BufferedPortFlowOperator port_operator;
 
-    port_operator.setInputByteBuffer(&buffer);
-    port_operator.changeSettings(port::StandardSettings::getStandardSettings(port::StandardSetting::StandardSetting9600));
-    port_operator.changePort(scanner.getSelectedPort(1));
+    //port_operator.setInputByteBuffer(&buffer);
+    //port_operator.changeSettings(port::StandardSettings::getStandardSettings(port::StandardSetting::StandardSetting9600));
+    //port_operator.changePort(scanner.getSelectedPort(1));
+    //
+    //port_operator.openPort();
 
-    port_operator.openPort();
-
-    Printer printer;
-    printer.buf_ = &buffer;
+    //Printer printer;
+    //printer.buf_ = &buffer;
 
     //QObject::connect(&buffer , &port::ByteBuffer::bytesArrived , &printer, &Printer::print);
 

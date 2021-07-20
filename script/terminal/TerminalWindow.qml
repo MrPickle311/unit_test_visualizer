@@ -14,12 +14,23 @@ Common.FramelessWindow{
     minimumHeight: 400
     minimumWidth: 800
 
-    function addPortPage(port_name){
+    function createPage(port_name){
         var page = GlobalFUnctions.createComponent("qrc:/script/terminal/TerminalPage.qml")
         page.portName = port_name
         swipeView.addItem(page)
+    }
+
+    function addPortPage(port_name){
+        createPage(port_name)
         portNames.push(port_name)
         repeater.model = portNames//repeater does not refresh itself automatically
+    }
+
+    function tryRestore(){
+        portNames = TerminalBridge.restorePorts()
+        repeater.model = portNames
+        for(var i = 0 ; i < portNames.length ; i++)
+            createPage(portNames[i])
     }
 
     property var portNames: []
@@ -59,8 +70,9 @@ Common.FramelessWindow{
     }
 
     Component.onCompleted: {
-
         TerminalBridge.newPortIsSet.connect(addPortPage)
+        tryRestore()
+
 
     }
 

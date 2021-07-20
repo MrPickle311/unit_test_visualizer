@@ -6,6 +6,8 @@ Rectangle {
     id: rectangle
     color: "white"
 
+    objectName: "none"
+
     TerminalTextArea{
         id: outputTextArea
         width: ( parent.width - anchors.leftMargin.valueOf() * 3 ) / 2//every margin has 20 ,so i just taken only one and multiplied by 3

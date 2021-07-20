@@ -97,7 +97,7 @@ void SettingsBridge::sendSettings(QString port_name)
     new_settings.setParity(parity);
     new_settings.setStopBits(stopBits);
 
-    qDebug() << "settingsApplied() " << port_name;
+    qDebug() << "settingsApplied() " << scanner_.getPortByName(port_name).portName();
 
-    emit settingsApplied(port_name, new_settings);
+    emit settingsApplied(scanner_.getPortByName(port_name), new_settings);
 }

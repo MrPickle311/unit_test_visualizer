@@ -3,6 +3,8 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import "../common" as Common
 
+import "../common/globalFunctions.js" as GlobalFUnctions
+
 Common.FramelessWindow{
     id: terminalWindow
     maximumHeight: 800
@@ -16,21 +18,17 @@ Common.FramelessWindow{
         width: TerminalTabButton.width * bar.count
         anchors.verticalCenter: terminalWindow.closeButton.verticalCenter
 
-        TerminalTabButton {
-            text: qsTr("COM1")
-        }
-        TerminalTabButton {
-            text: qsTr("COM2")
-        }
-        TerminalTabButton {
-            text: qsTr("COM3")
+        Repeater{
+
+            model: ["COM1" , "COM4", "COMX"]
+
+            TerminalTabButton {
+                text: modelData
+            }
         }
     }
 
-    property list<TerminalPage> pages: [
-            TerminalPage{ },
-            TerminalPage{}
-    ]
+    property var pages: []
 
     SwipeView {
         id: swipeView
@@ -49,6 +47,9 @@ Common.FramelessWindow{
     }
 
     Component.onCompleted: {
+
+        pages.push(GlobalFUnctions.createComponent("qrc:/script/terminal/TerminalPage.qml"))
+
         for(var i = 0 ; i < pages.length; i++)
             swipeView.addItem(pages[i])
     }

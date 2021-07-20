@@ -27,6 +27,7 @@ private:
 public:
     PortScanner(QObject* parent = nullptr);
     QSerialPortInfo getSelectedPort(uint port_nmbr) const;
+    QSerialPortInfo getPortByName(QString port_name) const;
     QList<int>      getProductIndetifiers() const;
     QStringList     getPortNames() const;
     QStringList     getPortDescriptions() const;

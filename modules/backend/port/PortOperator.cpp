@@ -115,6 +115,11 @@ bool PortStateOperator::openPort()
     return current_port_.open(QSerialPort::ReadWrite);
 }
 
+bool PortStateOperator::isOpen() const
+{
+    return current_port_.isOpen();
+}
+
 ///
 
 PortFlowOperator::PortFlowOperator(QObject* parent):

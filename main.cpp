@@ -51,20 +51,9 @@ int main(int argc, char *argv[])
     Printer printer;
     printer.buf_ = &buffer;
 
-
-
     //QObject::connect(&buffer , &port::ByteBuffer::bytesArrived , &printer, &Printer::print);
 
-    //QQuickWindow* window {qobject_cast<QQuickWindow*>(engine.rootObjects().first())};
-    //
-    //
-    //if(window)
-    //    qDebug() << "OK!";
-    //
-    //qDebug() << window->children();
-    //
-    //for(auto&& child : window->children() )
-    //    qDebug() << child->objectName();
+
 
     return app.exec();
 }

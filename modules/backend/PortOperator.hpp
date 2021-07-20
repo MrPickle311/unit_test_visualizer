@@ -48,6 +48,7 @@ public slots:
     void changeSettings(PortFlowSettings settings);//only copy ,so nothing unexpected will happen
     void closePort();
     bool openPort();
+    bool isOpen() const;
 };
 
 class PortFlowOperator:

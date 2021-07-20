@@ -55,5 +55,5 @@ signals:
     void baudRateChanged();
     void portNamesChanged();
 
-    void settingsApplied(QString port_name , port::PortFlowSettings settings);
+    void settingsApplied(QSerialPortInfo port , port::PortFlowSettings settings);
 };

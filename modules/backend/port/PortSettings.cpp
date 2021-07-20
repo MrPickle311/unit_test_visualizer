@@ -30,6 +30,14 @@ QSerialPortInfo PortScanner::getSelectedPort(uint port_nmbr) const
     return avalaible_ports_[port_nmbr];
 }
 
+QSerialPortInfo PortScanner::getPortByName(QString port_name) const
+{
+    for(auto&& port : avalaible_ports_)
+        if(port.portName().contains(port_name))
+            return port;
+    return QSerialPortInfo{};
+}
+
 QList<int> PortScanner::getProductIndetifiers() const
 {
     return getSerialInfoList<int>(&QSerialPortInfo::productIdentifier);

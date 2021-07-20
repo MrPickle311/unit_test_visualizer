@@ -2,16 +2,28 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import "../common" as Common
 
+import com.myProject 1.0
+
+import "settingsWindow.js" as SJ
+
+import Qt.singletons.bridge 1.0
+
 Rectangle {
     id: rectangle
     color: "white"
     property int comNumber: 0
+
+    Text{
+        text: Number(SJ.bauds.get(baudSlider.text))
+    }
 
     Common.ApplyButton{
         id: applyButton
         anchors.verticalCenter: refreshButton.verticalCenter
         anchors.right: refreshButton.left
         anchors.rightMargin: 20
+
+        onClicked: SettingsBridge.sendSettings(comPortComboBox.currentValue)
     }
 
     Common.RefreshButton{
@@ -21,6 +33,12 @@ Rectangle {
         anchors.verticalCenter: comPortComboBox.verticalCenter
         anchors.right: comPortComboBox.left
         anchors.rightMargin: 20
+
+        onClicked: SettingsBridge.scanPorts()
+    }
+
+    SerialPort{
+        id: port
     }
 
     ComboBox {
@@ -31,11 +49,8 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: 10
 
-        //here C++ injects every found COM
-        model: ListModel{
-            id: comPortListModel
-            ListElement{name: "COM"}
-        }
+        //here C++ injects each found COM
+        model: SettingsBridge.portNames
     }
 
     BaudSlider{
@@ -44,6 +59,8 @@ Rectangle {
         anchors.horizontalCenterOffset: -60
         anchors.topMargin: 80
         anchors.horizontalCenter: parent.horizontalCenter
+
+        onPositionChanged: SettingsBridge.setBaudRate(SJ.bauds.get(value))
     }
 
    Common.MenuComboBox{
@@ -55,6 +72,8 @@ Rectangle {
 
        prefixText: "Parity"
        elements: ["None","Odd","Even","Space","Mark"]
+
+       body.onActivated: SettingsBridge.setParity(SJ.parity.get(elements[body.currentIndex]))
    }
 
    Common.MenuComboBox{
@@ -67,6 +86,8 @@ Rectangle {
 
        prefixText: "Data bits"
        elements: ["5","6","7","8"]
+
+       body.onActivated: SettingsBridge.setDataBits(SJ.dataBits.get(elements[body.currentIndex]))
    }
 
    Common.MenuComboBox{
@@ -79,6 +100,8 @@ Rectangle {
 
        prefixText: "Stop bits"
        elements: ["1","1.5","2"]
+
+       body.onActivated: SettingsBridge.setStopBits(SJ.stopBits.get(elements[body.currentIndex]))
    }
 
 

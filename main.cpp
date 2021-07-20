@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <modules/backend/PortOperator.hpp>
 #include <modules/bridge/Bridge.hpp>
+#include <modules/bridge/SettingsBridge.hpp>
 #include <QQuickWindow>
 
 #ifdef MAIN_PROGRAM
@@ -16,7 +17,12 @@ int main(int argc, char *argv[])
 
     QScopedPointer<SingletonInterface> singleton{new SingletonInterface};
 
+    QScopedPointer<SettingsBridge> bridge{new SettingsBridge};
+
+    qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"SettingsBridge",bridge.get());
     qmlRegisterSingletonInstance("Qt.singletons.firstSingleton",1,0,"SingletonInterface",singleton.get());
+
+    qmlRegisterType<QSerialPort>("com.myProject", 1, 0, "SerialPort");
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/script/main.qml"));

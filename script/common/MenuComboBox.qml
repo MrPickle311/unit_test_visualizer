@@ -22,6 +22,9 @@ Item {
     ComboBox{
         id: comboBox
         model: listModel
+        currentIndex: 0
+
+
     }
 
     Component.onCompleted: {
@@ -29,4 +32,5 @@ Item {
             listModel.append({ name: elements[i] })
     }
 
+    property alias body: comboBox
 }

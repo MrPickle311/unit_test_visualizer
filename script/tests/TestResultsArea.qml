@@ -4,54 +4,32 @@ import "../common" as Common
 
 Common.FrameRectangle {
 
+    Component.onCompleted: {
+        testCasesModel.append({"categoryName" : "fruits" , "collapsed" : true ,"subItems" : [ { "itemName": "Orange"} ]  })
+    }
+
     ScrollView {
         anchors.fill: parent
         clip: true
 
         ListView {
                 anchors.fill: parent
-                model: nestedModel
+                model: testCasesModel
                 delegate: categoryDelegate
             }
 
             ListModel {
-                id: nestedModel
-                ListElement {
-                    categoryName: "Veggies"
-                    collapsed: true
+                id: testCasesModel
 
-                    // A ListElement can't contain child elements, but it can contain
-                    // a list of elements. A list of ListElements can be used as a model
-                    // just like any other model type.
-                    subItems: [
-                        ListElement { itemName: "Tomato" },
-                        ListElement { itemName: "Cucumber" },
-                        ListElement { itemName: "Onion" },
-                        ListElement { itemName: "Brains" }
-                    ]
-                }
+                    ListElement {
+                        categoryName: ""
+                        collapsed: true
 
-                ListElement {
-                    categoryName: "Fruits"
-                    collapsed: true
-                    subItems: [
-                        ListElement { itemName: "Orange" },
-                        ListElement { itemName: "Apple" },
-                        ListElement { itemName: "Pear" },
-                        ListElement { itemName: "Lemon" }
-                    ]
-                }
-
-                ListElement {
-                    categoryName: "Cars"
-                    collapsed: true
-                    subItems: [
-                        ListElement { itemName: "Nissan" },
-                        ListElement { itemName: "Toyota" },
-                        ListElement { itemName: "Chevy" },
-                        ListElement { itemName: "Audi" }
-                    ]
-                }
+                        // A ListElement can't contain child elements, but it can contain
+                        // a list of elements. A list of ListElements can be used as a model
+                        // just like any other model type.
+                        subItems: []
+                    }
             }
 
             Component {
@@ -89,7 +67,7 @@ Common.FrameRectangle {
                                 anchors.fill: parent
 
                                 // Toggle the 'collapsed' property
-                                onClicked: nestedModel.setProperty(index, "collapsed", !collapsed)
+                                onClicked: testCasesModel.setProperty(index, "collapsed", !collapsed)
                                 z:3
                             }
                         }

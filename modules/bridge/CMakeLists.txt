@@ -1,12 +1,14 @@
 set(bridge_public_headers
     Bridge.hpp
     SettingsBridge.hpp
-    TerminalBridge.hpp )
+    TerminalBridge.hpp
+    TestsBridge.hpp )
 
 set(bridge_sources
     Bridge.cpp
      SettingsBridge.cpp
-     TerminalBridge.cpp)
+     TerminalBridge.cpp
+     TestsBridge.cpp)
 
 add_library(BRIDGE_LIBRARIES STATIC
             ${bridge_public_headers}

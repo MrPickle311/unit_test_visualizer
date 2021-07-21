@@ -8,7 +8,7 @@ Rectangle {
 
     property string portName: "none"
 
-    signal openPortRequest(string port_name)
+    signal openPortRequest()
 
     TerminalTextArea{
         id: outputTextArea
@@ -21,10 +21,6 @@ Rectangle {
         anchors.topMargin: 20
     }
 
-    function appendTextToOutput(data){
-        outputTextArea.appendText(data)
-    }
-
     TerminalTextArea{
         id: inputTextArea
         width: outputTextArea.width
@@ -35,6 +31,14 @@ Rectangle {
         anchors.rightMargin: 20
         anchors.leftMargin: 20
         anchors.topMargin: 20
+    }
+
+    function appendTextToOutput(data){
+        outputTextArea.appendText(data)
+    }
+
+    function replaceOutputText(data){
+        outputTextArea.setText(data)
     }
 
     TextStreamField{
@@ -143,7 +147,7 @@ Rectangle {
         anchors.rightMargin: 10
         buttonText: "Open port"
 
-        onClicked: openPortRequest(portName)
+        onClicked: openPortRequest()
     }
 
     Common.MenuTextButton{

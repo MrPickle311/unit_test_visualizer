@@ -18,34 +18,37 @@ Common.FramelessWindow{
 
     function createPage(port_name){
         var page = GlobalFUnctions.createComponent("qrc:/script/terminal/TerminalPage.qml")
-        page.portName = port_name
         swipeView.addItem(page)
+        page.portName = port_name
         page.openPortRequest.connect(TerminalBridge.openPort)
+        listModel.append({page})
     }
 
     function addPortPage(port_name){
+        pagesId[port_name] = swipeView.count
         createPage(port_name)
-        portNames.push(port_name)
-        repeater.model = portNames//repeater does not refresh itself automatically
+        var array = Object.keys(pagesId) //repeater does not refresh itself automatically
+        repeater.model = array
     }
 
     function tryRestore(){
-        portNames = TerminalBridge.restorePorts()
-        repeater.model = portNames
-        for(var i = 0 ; i < portNames.length ; i++)
-            createPage(portNames[i])
-    }
-
-    function log(port_name){
-        console.log(port_name)
+        var port_names = TerminalBridge.restorePorts()
+        repeater.model = port_names
+        for(var i = 0 ; i < port_names.length ; i++){
+            pagesId.set(port_names[i] , swipeView.count )
+            createPage(port_names[i])
+        }
     }
 
     function receiceData(port_name , data){
-
-        console.log(port_name + " " + data)
+        swipeView.itemAt(pagesId[port_name]).appendTextToOutput(data)
     }
 
-    property var portNames: []
+    ListModel{
+        id : listModel
+    }
+
+    property var pagesId: new Map();
 
     TabBar {
         z: 2
@@ -55,14 +58,18 @@ Common.FramelessWindow{
 
         Repeater{
             id: repeater
-            model: portNames
+            model: []
 
             TerminalTabButton {
                 text: modelData
             }
 
             onItemAdded: console.log("added!")
+
         }
+
+        onCurrentIndexChanged: swipeView.setCurrentIndex(bar.currentIndex)
+
     }
 
     SwipeView {
@@ -78,7 +85,9 @@ Common.FramelessWindow{
         anchors.topMargin: 5
         z: 2
 
-        currentIndex: bar.currentIndex
+        //currentIndex: bar.currentIndex
+
+        onCurrentIndexChanged: console.log(currentIndex + " items : " + listModel.count)
     }
 
     Component.onCompleted: {

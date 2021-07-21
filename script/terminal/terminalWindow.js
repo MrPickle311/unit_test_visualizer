@@ -4,5 +4,3 @@ function createTerminalWindow()
 {
     return Global.createWindow("qrc:/script/terminal/TerminalWindow.qml")
 }
-
-var pagesId = new Map();

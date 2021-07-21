@@ -10,10 +10,8 @@ Common.FrameRectangle {
         id: scrollView
         anchors.fill: parent
         anchors.margins: 7
-        clip: true
         TextArea{
             id: textArea
-            anchors.fill: parent
             readOnly: true
             antialiasing: true
             wrapMode: TextEdit.Wrap

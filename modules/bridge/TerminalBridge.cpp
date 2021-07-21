@@ -25,12 +25,18 @@ void TerminalBridge::setupNewPort(const QSerialPortInfo& port, const port::PortF
     set_ports_[port_name]->setOutputByteBuffer(output_buffers_[port_name].get());
     set_ports_[port_name]->setInputByteBuffer(input_buffers_[port_name].get());
 
+    QObject::connect(input_buffers_[port_name].get() , &port::ByteBuffer::bytesArrived , [this , port_name](size_t count) {
+        emit dataArrived(port_name , input_buffers_[port_name]->getAllBytes() );
+    } );
+
     qDebug() << "New port is set!";
     emit newPortIsSet(port_name);
 }
 
 void TerminalBridge::applySettings(QSerialPortInfo port, port::PortFlowSettings settings)
 {
+    qDebug() << " QSerialPortInfo name : " << port.portName();
+
     QString port_name{port.portName()};
 
     if(set_ports_.contains(port_name))
@@ -41,9 +47,11 @@ void TerminalBridge::applySettings(QSerialPortInfo port, port::PortFlowSettings 
 
 void TerminalBridge::openPort(QString port_name)
 {
-    set_ports_[port_name]->openPort();
-
-    qDebug() << port_name + " port opened!";
+    qDebug() << port_name;
+    if(set_ports_[port_name]->openPort())
+        qDebug() << port_name + " port opened!";
+    else qDebug() << set_ports_[port_name]->getError();
+    qDebug() << set_ports_.size();
 }
 
 void TerminalBridge::closeAllPorts()
@@ -63,3 +71,5 @@ void TerminalBridge::sendData(QString port_name, QByteArray data)
 {
 
 }
+
+

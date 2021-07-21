@@ -19,7 +19,7 @@ void ByteBuffer::appendByte(char byte)
 {
     received_bytes_.append(byte);
 
-    emit bytesArrived(1);
+    emit bytesArrived(1);//one byte
 }
 
 QByteArray ByteBuffer::splitByteArray(size_t count)
@@ -84,6 +84,7 @@ PortStateOperator::PortStateOperator(PortFlowSettings settings,
     current_port_info_{port}
 {
     changeSettings(settings);
+    current_port_.setPort(port);
 }
 
 void PortStateOperator::changePort(QSerialPortInfo port)
@@ -118,6 +119,11 @@ bool PortStateOperator::openPort()
 bool PortStateOperator::isOpen() const
 {
     return current_port_.isOpen();
+}
+
+QSerialPort::SerialPortError PortStateOperator::getError() const
+{
+    return current_port_.error();
 }
 
 ///

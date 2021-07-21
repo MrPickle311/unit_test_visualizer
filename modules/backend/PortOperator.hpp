@@ -17,6 +17,7 @@ private:
     QByteArray splitByteArray(size_t position);
 public:
     ByteBuffer(QObject *parent = nullptr);
+    virtual ~ByteBuffer(){}
     void       appendBytes(const QByteArray& array);
     void       appendByte(char byte);
     QByteArray getAllBytes() noexcept;
@@ -43,12 +44,14 @@ public:
     PortStateOperator(PortFlowSettings settings,
                       QSerialPortInfo port ,
                       QObject* parent = nullptr);
+    virtual ~PortStateOperator(){}
 public slots:
     void changePort(QSerialPortInfo port);
     void changeSettings(PortFlowSettings settings);//only copy ,so nothing unexpected will happen
     void closePort();
     bool openPort();
     bool isOpen() const;
+    QSerialPort::SerialPortError getError() const;
 };
 
 class PortFlowOperator:
@@ -62,6 +65,7 @@ public:
     PortFlowOperator( PortFlowSettings settings ,
                       QSerialPortInfo  port     ,
                       QObject* parent = nullptr);
+    virtual ~PortFlowOperator(){}
 public:
     void sendBytesToPort(const QByteArray& array);
     QByteArray getAllBytesFromPort();
@@ -86,6 +90,7 @@ public:
     BufferedPortFlowOperator( PortFlowSettings settings ,
                               QSerialPortInfo  port     ,
                               QObject* parent = nullptr);
+    virtual ~BufferedPortFlowOperator(){}
 protected slots:
     void sendDataFromPortToBuffer(); //invoked automatically
     void sendDataFromBufferToPort(); //invoked automatically

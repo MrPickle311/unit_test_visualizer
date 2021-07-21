@@ -26,6 +26,7 @@ private:
     QList<DataType> getSerialInfoList(SerialPortInfoMethod<DataType> method_to_call) const;
 public:
     PortScanner(QObject* parent = nullptr);
+    virtual ~PortScanner(){}
     QSerialPortInfo getSelectedPort(uint port_nmbr) const;
     QSerialPortInfo getPortByName(QString port_name) const;
     QList<int>      getProductIndetifiers() const;

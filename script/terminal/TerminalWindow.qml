@@ -7,6 +7,8 @@ import "../common/globalFunctions.js" as GlobalFUnctions
 
 import Qt.singletons.bridge 1.0
 
+import "terminalWindow.js" as TWLogic // TerminalWindowLogic
+
 Common.FramelessWindow{
     id: terminalWindow
     maximumHeight: 800
@@ -39,6 +41,7 @@ Common.FramelessWindow{
     }
 
     function receiceData(port_name , data){
+
         console.log(port_name + " " + data)
     }
 

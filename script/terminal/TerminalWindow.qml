@@ -16,18 +16,9 @@ Common.FramelessWindow{
     minimumHeight: 400
     minimumWidth: 800
 
-    function createPage(port_name){
-        //var page = GlobalFUnctions.createComponent("qrc:/script/terminal/TerminalPage.qml")
-        //swipeView.addItem(page)
-        //page.portName = port_name
-        //page.openPortRequest.connect(TerminalBridge.openPort)
-        //listModel.append({page})
-    }
-
     function addPortPage(port_name){
         pagesId[port_name] = repeater.count
-        stringList.push("")
-        //createPage(port_name)
+        outputDataTextList.push("")
         var array = Object.keys(pagesId) //repeater does not refresh itself automatically
         repeater.model = array
     }
@@ -36,26 +27,24 @@ Common.FramelessWindow{
 
     function tryRestore(){
         var port_names = TerminalBridge.restorePorts()
-        repeater.model = port_names
         for(var i = 0 ; i < port_names.length ; i++){
-            pagesId[ port_names[i] ] = repeater.count
-            stringList.push("")
-            //createPage(port_names[i])
+            pagesId[ port_names[i] ] = i
+            outputDataTextList.push("")
         }
+        repeater.model = port_names
     }
 
     function refresh(){
-        swipeView.replaceOutputText(stringList[bar.currentIndex])
+        terminalPage.replaceOutputText(outputDataTextList[bar.currentIndex])
     }
 
     function receiceData(port_name , data){
-        stringList[pagesId[port_name]] += data
+        outputDataTextList[pagesId[port_name]] += data
         console.log("arrived current data : " + bar.currentIndex + " " + pagesId[port_name])
         refresh()
-        //swipeView.appendTextToOutput(data)
     }
 
-    property var stringList: []
+    property var outputDataTextList: []
 
     property var pagesId: new Map();
 
@@ -77,15 +66,11 @@ Common.FramelessWindow{
 
         }
 
-        onCurrentIndexChanged: swipeView.replaceOutputText(stringList[currentIndex])
-
+        onCurrentIndexChanged: terminalPage.replaceOutputText(outputDataTextList[currentIndex])
     }
 
-
-
     TerminalPage {
-        id: swipeView
-        //interactive: false
+        id: terminalPage
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: terminalWindow.closeButton.bottom
@@ -100,10 +85,6 @@ Common.FramelessWindow{
             var port_names = Object.keys(pagesId)
             TerminalBridge.openPort(port_names[bar.currentIndex])
         }
-
-        //currentIndex: bar.currentIndex
-
-        //onCurrentIndexChanged: console.log(currentIndex + " items : " + listModel.count)
     }
 
     Component.onCompleted: {

@@ -30,7 +30,7 @@ protected:
     QSharedPointer<parser::GlobalParser>   root_;
     QSharedPointer<port::ByteBuffer>       buffer_;
     TransactionInjecter                    injecter_;
-    TestPackageFactory                         factory_;
+    TestPackageFactory                     factory_;
 public:
     ParserTests();
     void insertDataAndRun(QSharedPointer<TransactionDataPackage> transaction);

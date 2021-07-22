@@ -160,5 +160,5 @@ private:
     TestCaseConverter case_converter_;
 public:
     Converter(const TransactionDataPackage& pack);
-    Transaction getConverterTransaction();
+    Transaction getConvertedTransaction();
 };

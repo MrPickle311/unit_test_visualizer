@@ -2,6 +2,13 @@
 #include <port/Port_UnitTests.hpp>
 #include <QCoreApplication>
 #include <parser/Parser_UnitTests.hpp>
+#include <converter/Converter_IntegrationTests.hpp>
+
+#define ON 1
+#define OFF 0
+
+#define PORT_INTEGRATION_TESTS OFF
+#define CONVERTER_INTEGRATION_TESTS ON
 
 void runAllUnitTests(int argc, char *argv[])
 {
@@ -21,7 +28,14 @@ int main(int argc, char* argv[])
 
     runAllUnitTests(argc, argv);
 
+#if PORT_INTEGRATION_TESTS
     PortIntegrationTests();
+#endif
+
+#if CONVERTER_INTEGRATION_TESTS
+    Converter_IntegrationTests tests;//plug and play
+    tests.run();
+#endif
 
     qDebug() << "Test done , now you can exit...";
 

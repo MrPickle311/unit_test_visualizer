@@ -148,7 +148,7 @@ Converter::Converter(const TransactionDataPackage& pack):
     case_converter_{}
 {}
 
-Transaction Converter::getConverterTransaction()
+Transaction Converter::getConvertedTransaction()
 {
     for(auto&& test_case : pack_.getCases())
         transaction_.cases_.append(case_converter_.getTestCase(test_case));

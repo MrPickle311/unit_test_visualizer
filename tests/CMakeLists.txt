@@ -96,7 +96,9 @@ set(ParserTest_files
 
 set(ConverterTest_files
     converter/Converter_UnitTests.cpp
-    converter/Converter_UnitTests.hpp)
+    converter/Converter_UnitTests.hpp
+    converter/Converter_IntegrationTests.hpp
+    converter/Converter_IntegrationTests.cpp)
 
 set(Tests_files
     main.cpp

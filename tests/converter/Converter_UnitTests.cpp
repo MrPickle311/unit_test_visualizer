@@ -6,7 +6,7 @@
 
 void ConverterTest::run()
 {
-    result_ = converter_.getConverterTransaction();
+    result_ = converter_.getConvertedTransaction();
 }
 
 

@@ -29,8 +29,6 @@ public slots:
     Q_INVOKABLE void closeAllPorts();
     Q_INVOKABLE QStringList restorePorts() const;
 
-    Q_INVOKABLE void resendTest();
-
     Q_INVOKABLE void sendData(QString port_name , QByteArray data);
 signals:
     void newPortIsSet(QString port_name);

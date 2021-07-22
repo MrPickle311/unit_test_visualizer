@@ -7,20 +7,8 @@ import Qt.singletons.bridge 1.0
 Common.FrameRectangle {
 
     Component.onCompleted: {
-        TerminalBridge.unitTestCaseSent.connect(appendUnitTest)
-        //testCasesModel.append({"testCaseName" : "fruits" , "collapsed" : true ,"unitTests" : [ { "itemName": "Orange"} ]  })
-        //testCasesModel.get(0).categoryName = "sds"
-        //testCasesModel.get(0).unitTests = [{ "expressionName": "Orange"}]
-        //testCasesModel.get(0).unitTests.append({ "expressionName": "Apple"})
-        //testCasesModel.get(0).unitTests.append({ "expressionName": "Strawberry"})
-        //testCasesModel.append({"testCaseName" : "fruits" , "collapsed" : true ,"unitTests" : []})
-        //appendTestCase("sd")
-        //appendTestCase("sd")
-        //appendTestCase("sd")
-        //appendTestCase("sd")
-        appendTestCase("XDXXXDXXXD")
-        TerminalBridge.resendTest()
-        //testCasesModel.get(1).unitTests.append({ "expressionName": "Strawberry"})
+        TestsBridge.sendTestCase.connect(appendTestCase)
+        TestsBridge.sendUnitTest.connect(appendUnitTest)
     }
 
     function appendTestCase(test_case_name){
@@ -44,6 +32,8 @@ Common.FrameRectangle {
     ListModel {
         id: testCasesModel
     }
+
+    property alias model: testCasesModel
 
     Component {
         id: categoryDelegate

@@ -163,6 +163,11 @@ bool TransactionDataPackage::operator==(const TransactionDataPackage& other)
     return true;
 }
 
+void TransactionDataPackage::clear()
+{
+    cases_.clear();
+}
+
 void TransactionDataPackage::addTestCase(QSharedPointer<TestCaseDataPackage> test_case)
 {
     cases_.append(test_case);

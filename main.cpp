@@ -6,6 +6,7 @@
 #include <modules/bridge/TerminalBridge.hpp>
 #include <QQuickWindow>
 #include <modules/backend/Converter.hpp>
+#include <modules/bridge/TestsBridge.hpp>
 
 #ifdef MAIN_PROGRAM
 
@@ -27,10 +28,24 @@ int main(int argc, char *argv[])
 
     QObject::connect(bridge.get(), &SettingsBridge::settingsApplied , term_bridge.get(), &TerminalBridge::applySettings );
 
+
+
     qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"SettingsBridge",bridge.get());
     qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"TerminalBridge",term_bridge.get());
 
-    qmlRegisterSingletonInstance("Qt.singletons.firstSingleton",1,0,"SingletonInterface",singleton.get());
+    QScopedPointer<TestsSettingsBridge> tests_settings_bridge{new TestsSettingsBridge};
+
+    qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"TestsSettingsBridge",tests_settings_bridge.get());
+
+
+
+    QScopedPointer<TestsBridge> tests_bridge {new TestsBridge};
+
+    qmlRegisterSingletonInstance<TestsBridge>("Qt.singletons.bridge",1,0,"TestsBridge",tests_bridge.get());
+
+    QObject::connect(tests_settings_bridge.get(), &TestsSettingsBridge::settingsApplied ,
+                     tests_bridge.get(), &TestsBridge::applySettings );
+
 
     qmlRegisterType<QSerialPort>("com.myProject", 1, 0, "SerialPort");
 

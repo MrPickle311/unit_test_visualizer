@@ -3,6 +3,8 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import "../common" as Common
 
+import Qt.singletons.bridge 1.0
+
 Common.FramelessWindow{
     id: testWindow
 
@@ -30,6 +32,11 @@ Common.FramelessWindow{
         anchors.top: parent.top
         anchors.topMargin: 5
         z:2
+
+        onClicked: {
+            testResultsArea.model.clear()
+            TestsBridge.run()
+        }
     }
 
     Common.SaveButton{
@@ -38,6 +45,7 @@ Common.FramelessWindow{
         anchors.left: refreshButton.right
         anchors.leftMargin: 10
         z: 2
+
     }
 
 }

@@ -67,19 +67,6 @@ QStringList TerminalBridge::restorePorts() const
     return set_ports_.keys();
 }
 
-void TerminalBridge::resendTest()
-{
-    UnitTest test;
-
-    test.current_value_ = "434";
-    test.type_descriptor_ = "unit8_t";
-    test.expecteted_value_ = "434";
-    test.name_ = "xd()";
-    test.test_result_ = "Passed";
-
-    emit unitTestCaseSent(0,  test , false);
-}
-
 void TerminalBridge::sendData(QString port_name, QByteArray data)
 {
 

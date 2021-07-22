@@ -7,7 +7,6 @@ import "settings_window/settingsWindow.js" as SettingsWindowLogic
 import "terminal/terminalWindow.js" as TerminalWindowLogic
 import "tests/testWindowLogic.js" as TestWindowLogic
 
-import Qt.singletons.firstSingleton 1.0
 
 Common.FramelessWindow {
     id: mainWindow

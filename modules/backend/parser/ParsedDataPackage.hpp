@@ -61,4 +61,5 @@ public:
     QSharedPointer<TestCaseDataPackage> getTestCase(int idx);
     const QList<QSharedPointer<TestCaseDataPackage> >& getCases() const;
     bool operator==(const TransactionDataPackage& other);
+    void clear();
 };

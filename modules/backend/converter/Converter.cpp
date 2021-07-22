@@ -156,6 +156,11 @@ Transaction Converter::getConvertedTransaction()
     return transaction_;
 }
 
+void Converter::reset()
+{
+    transaction_.cases_.clear();
+}
+
 template<>
 void Generator<QSharedPointer<AbstractValueConverter>>::initValues()
 {

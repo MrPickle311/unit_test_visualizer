@@ -161,4 +161,5 @@ private:
 public:
     Converter(const TransactionDataPackage& pack);
     Transaction getConvertedTransaction();
+    void reset();
 };

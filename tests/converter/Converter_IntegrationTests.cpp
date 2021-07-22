@@ -3,11 +3,11 @@
 
 Converter_IntegrationTests::Converter_IntegrationTests():
     parser_connection_{new QMetaObject::Connection},
-    converter_{*data_result_}
+    converter_{data_result_}
 {
     operator_.setInputByteBuffer(&input_buffer_);
     operator_.setOutputByteBuffer(&output_buffer_);
-    operator_.changeSettings(port::StandardSettings::getStandardSettings(port::StandardSetting::StandardSetting9600));
+    operator_.changeSettings(port::StandardSettings::getStandardSettings(port::StandardSetting::StandardSetting57600));
 
     operator_.changePort(scanner_.getPortByName("COM4"));//in my PC its COM4
 
@@ -52,12 +52,13 @@ void Converter_IntegrationTests::makeConnections()
         QObject::disconnect(*parser_connection_);
         qDebug() << "Invoked!";
         parser_.startProcessing();
-        //showResults();
+        showResults();
     } );
 }
 
 void Converter_IntegrationTests::showResults()
 {
+    data_result_ = *parser_.getPackage();
     result_ = converter_.getConvertedTransaction();
     printTests(result_);
 }
@@ -71,8 +72,6 @@ void Converter_IntegrationTests::run()
     }
 }
 
-
-
 void printTests(Transaction transaction)
 {
     for(auto&& test_case : transaction.cases_)
@@ -80,17 +79,17 @@ void printTests(Transaction transaction)
         qDebug() << test_case.test_case_name_;
         for(auto&& unit_test : test_case.tests_)
         {
-            qDebug() << "-- " << unit_test.name_;
-            qDebug() << "--- " << unit_test.type_descriptor_;
-            qDebug() << "--- " << unit_test.current_value_;
+            qDebug() << "--- " << unit_test.name_;
+            qDebug() << "-------- " << unit_test.type_descriptor_;
+            qDebug() << "-------- " << unit_test.current_value_;
             if(unit_test.expecteted_value_.isEmpty())
             {
-                qDebug() << "--- " << unit_test.lower_value_;
-                qDebug() << "--- " << unit_test.upper_value_;
+                qDebug() << "-------- " << unit_test.lower_value_;
+                qDebug() << "-------- " << unit_test.upper_value_;
             }
-            else qDebug() << "--- " << unit_test.expecteted_value_;
+            else qDebug() << "-------- " << unit_test.expecteted_value_;
 
-            qDebug() << "--- " << unit_test.test_result_;
+            qDebug() << "-------- " << unit_test.test_result_;
         }
     }
 }

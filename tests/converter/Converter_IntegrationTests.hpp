@@ -15,7 +15,7 @@ protected:
     port::ByteBuffer                       input_buffer_;
     port::ByteBuffer                       output_buffer_;
     port::BufferedPortFlowOperator         operator_;
-    QSharedPointer<TransactionDataPackage> data_result_;
+    TransactionDataPackage                 data_result_;
     parser::GlobalParser                   parser_;
     Converter                              converter_;
     Transaction                            result_;

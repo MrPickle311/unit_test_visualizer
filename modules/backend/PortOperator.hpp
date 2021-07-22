@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PortSettings.hpp"
+#include <QEventLoop>
 
 namespace port
 {
@@ -13,8 +14,10 @@ class ByteBuffer :
 private:
     QByteArray received_bytes_;
     QMutex     data_mutex_;
+    QEventLoop loop_;
 private:
     QByteArray splitByteArray(size_t position);
+    void       waitForData();
 public:
     ByteBuffer(QObject *parent = nullptr);
     virtual ~ByteBuffer(){}

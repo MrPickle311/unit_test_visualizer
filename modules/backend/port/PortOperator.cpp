@@ -1,5 +1,6 @@
 #include "../PortOperator.hpp"
 #include <QDebug>
+#include <QTimer>
 
 namespace port
 {
@@ -12,12 +13,16 @@ void ByteBuffer::appendBytes(const QByteArray& array)
     received_bytes_.append(array);
     lock.unlock();
 
+    //qDebug() << "appended : " << array;
+
     emit bytesArrived(array.size());
 }
 
 void ByteBuffer::appendByte(char byte)
 {
     received_bytes_.append(byte);
+
+    //qDebug() << "appended : " << byte;
 
     emit bytesArrived(1);//one byte
 }
@@ -26,13 +31,16 @@ QByteArray ByteBuffer::splitByteArray(size_t count)
 {
     QMutexLocker lock{&data_mutex_};
 
-    throwIf(static_cast<int>(count) > received_bytes_.size(),
-            "requested count of bytes > received_bytes_.size()!\n");
+    throwIf(count > size(),
+            "requested count of bytes : " + std::to_string(count) +
+            " > current count bytes in buffer : " + std::to_string(size()) + "!\n");
 
     QByteArray temp {received_bytes_.left(count)};
     received_bytes_ = received_bytes_.right( received_bytes_.size() - count );
 
     lock.unlock();
+
+    //qDebug() << "byte dropped : " << temp;
 
     emit bytesExtracted(count );
     return temp;
@@ -52,11 +60,15 @@ QByteArray ByteBuffer::getAllBytes() noexcept
 
 QByteArray ByteBuffer::getBytes(size_t count)
 {
+    //or wait for count * bytes
     return splitByteArray(count);
 }
 
 char ByteBuffer::getByte()
 {
+    if(this->isEmpty())
+        waitForData();
+
     return getBytes(1).front();
 }
 
@@ -68,6 +80,17 @@ bool ByteBuffer::isEmpty() const
 size_t ByteBuffer::size() const
 {
     return received_bytes_.size();
+}
+
+#define TEN_MSEC 10
+
+void ByteBuffer::waitForData()
+{
+    qDebug() << "Start waiting...";
+    //i will have to correct it by including different baud rates
+    QTimer::singleShot(TEN_MSEC , &loop_ , &QEventLoop::quit);
+    loop_.exec();
+    //qDebug() << "Exit waiting...";
 }
 
 PortStateOperator::PortStateOperator(QObject* parent):
@@ -179,12 +202,16 @@ void BufferedPortFlowOperator::sendDataFromPortToBuffer()
 {
     checkBuffer(input_byte_buffer_);
 
+   // qDebug() << "to input sent";
+
     input_byte_buffer_->appendBytes(std::move(current_port_.readAll()));
     emit dataArrived();
 }
 
 void BufferedPortFlowOperator::sendDataFromBufferToPort()
 {
+   // qDebug() << "to output sent!";
+
     checkBuffer(output_byte_buffer_);
 
     if(current_port_.isWritable())

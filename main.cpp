@@ -5,6 +5,7 @@
 #include <modules/bridge/SettingsBridge.hpp>
 #include <modules/bridge/TerminalBridge.hpp>
 #include <QQuickWindow>
+#include <modules/backend/Converter.hpp>
 
 #ifdef MAIN_PROGRAM
 
@@ -21,6 +22,8 @@ int main(int argc, char *argv[])
     QScopedPointer<SettingsBridge> bridge{new SettingsBridge};
 
     QScopedPointer<TerminalBridge> term_bridge{new TerminalBridge};
+
+    qRegisterMetaType<UnitTest>();
 
     QObject::connect(bridge.get(), &SettingsBridge::settingsApplied , term_bridge.get(), &TerminalBridge::applySettings );
 

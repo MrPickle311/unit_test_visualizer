@@ -8,6 +8,15 @@
 
 struct UnitTest
 {
+    Q_GADGET;
+    Q_PROPERTY(QString typeDescriptor   MEMBER  type_descriptor_ )
+    Q_PROPERTY(QString name             MEMBER  name_            )
+    Q_PROPERTY(QString expectetedValue  MEMBER  expecteted_value_)
+    Q_PROPERTY(QString currentValue     MEMBER  current_value_   )
+    Q_PROPERTY(QString lowerValue       MEMBER  lower_value_     )
+    Q_PROPERTY(QString upperValue       MEMBER  upper_value_     )
+    Q_PROPERTY(QString testResult       MEMBER  test_result_     )
+public:
     QString   type_descriptor_;
     QString   name_;
     QString   expecteted_value_;
@@ -16,6 +25,8 @@ struct UnitTest
     QString   upper_value_;
     QString   test_result_;
 };
+
+Q_DECLARE_METATYPE(UnitTest);
 
 struct TestCase
 {

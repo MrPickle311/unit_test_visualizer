@@ -2,21 +2,25 @@ import QtQuick 2.15
 import QtQuick.Controls 2.12
 import "../common" as Common
 
+import Qt.singletons.bridge 1.0
+
 Common.FrameRectangle {
 
     Component.onCompleted: {
-        testCasesModel.append({"testCaseName" : "fruits" , "collapsed" : true ,"unitTests" : [ { "itemName": "Orange"} ]  })
-        testCasesModel.get(0).categoryName = "sds"
-        testCasesModel.get(0).unitTests = [{ "expressionName": "Orange"}]
-        testCasesModel.get(0).unitTests.append({ "expressionName": "Apple"})
-        testCasesModel.get(0).unitTests.append({ "expressionName": "Strawberry"})
-        testCasesModel.append({"testCaseName" : "fruits" , "collapsed" : true ,"unitTests" : []})
-        appendTestCase("sd")
-        appendTestCase("sd")
-        appendTestCase("sd")
-        appendTestCase("sd")
-        appendTestCase("sd")
-        testCasesModel.get(1).unitTests.append({ "expressionName": "Strawberry"})
+        TerminalBridge.unitTestCaseSent.connect(appendUnitTest)
+        //testCasesModel.append({"testCaseName" : "fruits" , "collapsed" : true ,"unitTests" : [ { "itemName": "Orange"} ]  })
+        //testCasesModel.get(0).categoryName = "sds"
+        //testCasesModel.get(0).unitTests = [{ "expressionName": "Orange"}]
+        //testCasesModel.get(0).unitTests.append({ "expressionName": "Apple"})
+        //testCasesModel.get(0).unitTests.append({ "expressionName": "Strawberry"})
+        //testCasesModel.append({"testCaseName" : "fruits" , "collapsed" : true ,"unitTests" : []})
+        //appendTestCase("sd")
+        //appendTestCase("sd")
+        //appendTestCase("sd")
+        //appendTestCase("sd")
+        appendTestCase("XDXXXDXXXD")
+        TerminalBridge.resendTest()
+        //testCasesModel.get(1).unitTests.append({ "expressionName": "Strawberry"})
     }
 
     function appendTestCase(test_case_name){

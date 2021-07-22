@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include "../backend/PortOperator.hpp"
+#include "../backend/Converter.hpp"
 #include <utility>
 
 class TerminalBridge
@@ -28,9 +29,13 @@ public slots:
     Q_INVOKABLE void closeAllPorts();
     Q_INVOKABLE QStringList restorePorts() const;
 
+    Q_INVOKABLE void resendTest();
+
     Q_INVOKABLE void sendData(QString port_name , QByteArray data);
 signals:
     void newPortIsSet(QString port_name);
     void dataArrived(QString port_name ,  QByteArray data);
+
+    void unitTestCaseSent(int nmbr, UnitTest test , bool is_range);
 };
 

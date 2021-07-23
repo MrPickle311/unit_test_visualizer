@@ -10,13 +10,9 @@
 
 #ifdef MAIN_PROGRAM
 
-using TestsProgram = bridge::Tests<port::ByteBuffer, port::BufferedPortFlowOperator ,
+using MainProgram = bridge::Program<port::ByteBuffer, port::BufferedPortFlowOperator ,
                                    TransactionDataPackage , parser::GlobalParser , Converter>;
 
-void registerQmlTypes()
-{
-
-}
 
 int main(int argc, char *argv[])
 {
@@ -29,47 +25,7 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    qRegisterMetaType<UnitTest>();
-    qmlRegisterType<QSerialPort>("com.myProject", 1, 0, "SerialPort");
-
-    auto term_bridge{QSharedPointer<Terminal<port::ByteBuffer, port::BufferedPortFlowOperator>>::create()};
-    qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"TerminalBridge",term_bridge.get());
-
-    auto tests_bridge {QSharedPointer<TestsProgram>::create()};
-    qmlRegisterSingletonInstance<TestsProgram>("Qt.singletons.bridge",1,0,"TestsBridge",tests_bridge.get());
-
-    ///settings binding
-
-    auto terminal_settings{QSharedPointer<bridge::TerminalSettings>::create()};
-    qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"TerminalSettingsBridge",terminal_settings.get());
-
-    auto tests_settings{QSharedPointer<bridge::TestsSettings>::create()};
-    qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"TestsSettingsBridge",tests_settings.get());
-
-    bridge::Scanner scanner{QSharedPointer<port::PortScanner>::create()};
-    qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"Scanner", &scanner);
-
-
-    QObject::connect(&scanner , &bridge::Scanner::portsScanned , terminal_settings.get() , &bridge::Settings::setPortNames );
-    QObject::connect(&scanner , &bridge::Scanner::portsScanned , tests_settings.get() , &bridge::Settings::setPortNames );
-
-    QObject::connect(terminal_settings.get() , &bridge::Settings::portRequest , &scanner , &bridge::Scanner::getPortByName );
-    QObject::connect(tests_settings.get() , &bridge::Settings::portRequest , &scanner , &bridge::Scanner::getPortByName );
-
-
-
-
-    QObject::connect(terminal_settings.get(), &bridge::Settings::settingsApplied ,
-                     term_bridge.get(), &TerminalBase::applySettings );
-
-
-    QObject::connect(tests_settings.get(), &bridge::TestsSettings::settingsApplied ,
-                     tests_bridge.get(), &TestsBody::applySettings );
-
-    ///END settings binding
-
-
-
+    MainProgram program;
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/script/main.qml"));

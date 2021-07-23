@@ -3,50 +3,44 @@
 namespace bridge
 {
 
-SettingsBridge::SettingsBridge(QObject *parent) : QObject(parent)
+Settings::Settings(QObject *parent) : QObject(parent)
 {
 
 }
 
-const QSerialPort::Parity& SettingsBridge::getParity() const
+const QSerialPort::Parity& Settings::getParity() const
 {
     return parity;
 }
 
-void SettingsBridge::setParity(const QSerialPort::Parity& newParity)
+void Settings::setParity(const QSerialPort::Parity& newParity)
 {
-    qDebug() << newParity;
-
     if (parity == newParity)
         return;
     parity = newParity;
     emit parityChanged();
 }
 
-const QSerialPort::StopBits& SettingsBridge::getStopBits() const
+const QSerialPort::StopBits& Settings::getStopBits() const
 {
     return stopBits;
 }
 
-void SettingsBridge::setStopBits(const QSerialPort::StopBits& newStopBits)
+void Settings::setStopBits(const QSerialPort::StopBits& newStopBits)
 {
-    qDebug() << newStopBits;
-
     if (stopBits == newStopBits)
         return;
     stopBits = newStopBits;
     emit stopBitsChanged();
 }
 
-const QSerialPort::BaudRate& SettingsBridge::getBaudRate() const
+const QSerialPort::BaudRate& Settings::getBaudRate() const
 {
     return baudRate;
 }
 
-void SettingsBridge::setBaudRate(const QSerialPort::BaudRate& newBaudRate)
+void Settings::setBaudRate(const QSerialPort::BaudRate& newBaudRate)
 {
-    qDebug() << newBaudRate;
-
     if (baudRate == newBaudRate)
         return;
     baudRate = newBaudRate;
@@ -64,8 +58,6 @@ void Scanner::scanPorts()
 {
     scanner_impl_->rescan();
 
-    qDebug() << scanner_impl_->getPortNames();
-
     emit  portsScanned(scanner_impl_->getPortNames());
 }
 
@@ -74,12 +66,12 @@ QSerialPortInfo Scanner::getPortByName(QString port_name)
     return scanner_impl_->getPortByName(port_name);
 }
 
-const QStringList& SettingsBridge::getPortNames() const
+const QStringList& Settings::getPortNames() const
 {
     return portNames;
 }
 
-void SettingsBridge::setPortNames(const QStringList& newPortNames)
+void Settings::setPortNames(const QStringList& newPortNames)
 {
     if (portNames == newPortNames)
         return;
@@ -87,26 +79,22 @@ void SettingsBridge::setPortNames(const QStringList& newPortNames)
     emit portNamesChanged();
 }
 
-void SettingsBridge::sendSettings(QString port_name)
+void Settings::sendSettings(QString port_name)
 {
     port::PortFlowSettings new_settings{prepareSettings()};
-
-    qDebug() << "settingsApplied() " <<  ( emit portRequest(port_name) ).portName() ;
 
     emit settingsApplied( emit portRequest(port_name), new_settings);
 }
 
 ///terminal settings
 
-const QSerialPort::DataBits& TerminalSettingsBridge::getDataBits() const
+const QSerialPort::DataBits& TerminalSettings::getDataBits() const
 {
     return dataBits;
 }
 
-void TerminalSettingsBridge::setDataBits(const QSerialPort::DataBits& newDataBits)
+void TerminalSettings::setDataBits(const QSerialPort::DataBits& newDataBits)
 {
-    qDebug() << newDataBits;
-
     if (dataBits == newDataBits)
         return;
     dataBits = newDataBits;
@@ -114,7 +102,7 @@ void TerminalSettingsBridge::setDataBits(const QSerialPort::DataBits& newDataBit
 }
 
 
-port::PortFlowSettings TerminalSettingsBridge::prepareSettings() const
+port::PortFlowSettings TerminalSettings::prepareSettings() const
 {
     port::PortFlowSettings new_settings;
 
@@ -127,7 +115,7 @@ port::PortFlowSettings TerminalSettingsBridge::prepareSettings() const
     return new_settings;
 }
 
-port::PortFlowSettings TestsSettingsBridge::prepareSettings() const
+port::PortFlowSettings TestsSettings::prepareSettings() const
 {
     port::PortFlowSettings new_settings;
 

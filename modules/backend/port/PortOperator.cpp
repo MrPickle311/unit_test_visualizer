@@ -47,7 +47,6 @@ QByteArray ByteBuffer::splitByteArray(size_t count)
 }
 
 ByteBuffer::ByteBuffer(QObject *parent) :
-    QObject{parent},
     received_bytes_{}
 {}
 

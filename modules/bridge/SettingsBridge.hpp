@@ -27,7 +27,7 @@ signals:
 };
 
 //common base for other settings
-class SettingsBridge:
+class Settings:
         public QObject
 {
     Q_OBJECT
@@ -47,7 +47,7 @@ protected:
     virtual port::PortFlowSettings prepareSettings() const = 0;
 
 public :
-    explicit SettingsBridge(QObject *parent = nullptr);
+    explicit Settings(QObject *parent = nullptr);
 
 public slots:
     const QSerialPort::Parity& getParity() const;
@@ -78,8 +78,8 @@ signals:
 
 
 
-class TerminalSettingsBridge:
-        public SettingsBridge
+class TerminalSettings:
+        public Settings
 {
     Q_OBJECT;
 
@@ -93,15 +93,14 @@ public slots:
     void setDataBits(const QSerialPort::DataBits& newDataBits);
 
 signals :
-
     void dataBitsChanged();
 
 protected:
     virtual port::PortFlowSettings prepareSettings() const override;
 };
 
-class TestsSettingsBridge:
-        public SettingsBridge
+class TestsSettings:
+        public Settings
 {
     Q_OBJECT;
 protected:

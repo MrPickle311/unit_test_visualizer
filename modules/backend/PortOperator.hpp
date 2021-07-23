@@ -6,8 +6,26 @@
 namespace port
 {
 
+class ByteBufferInterface:
+        public QObject
+{
+    Q_OBJECT;
+public:
+    virtual ~ByteBufferInterface(){}
+    virtual void       appendBytes(const QByteArray& array) = 0;
+    virtual void       appendByte(char byte) = 0;
+    virtual QByteArray getAllBytes() noexcept = 0;
+    virtual QByteArray getBytes(size_t count) = 0;
+    virtual char       getByte() = 0;
+    virtual bool       isEmpty() const = 0;
+    virtual size_t     size()    const = 0;
+signals:
+   void bytesArrived(size_t count);
+   void bytesExtracted(size_t count);
+};
+
 class ByteBuffer :
-        public QObject,
+        public ByteBufferInterface,
         public ProgramObject
 {
     Q_OBJECT;
@@ -28,9 +46,6 @@ public:
     char       getByte();
     bool       isEmpty() const;
     size_t     size()    const;
-signals:
-   void bytesArrived(size_t count);
-   void bytesExtracted(size_t count);
 };
 
 //one operator per one port

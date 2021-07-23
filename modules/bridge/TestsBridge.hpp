@@ -5,36 +5,7 @@
 #include "../backend/Converter.hpp"
 #include <QDebug>
 
-class TestsSettingsBridge:
-        public QObject
-{
-    Q_OBJECT;
 
-    Q_PROPERTY(QSerialPort::BaudRate baudRate READ getBaudRate WRITE setBaudRate NOTIFY baudRateChanged);
-    Q_PROPERTY(QStringList portNames READ getPortNames  WRITE setPortNames  NOTIFY portNamesChanged);
-
-private:
-    QSerialPort::BaudRate baudRate;
-    port::PortScanner     scanner_;
-public:
-    QStringList portNames;
-
-public:
-    Q_INVOKABLE void sendSettings(QString port_name);
-
-    const QSerialPort::BaudRate& getBaudRate() const;
-    Q_INVOKABLE void setBaudRate(const QSerialPort::BaudRate& newBaudRate);
-
-    const QStringList& getPortNames() const;
-    void setPortNames(const QStringList& newPortNames);
-
-    Q_INVOKABLE void scanPorts();
-
-signals:
-    void settingsApplied(QSerialPortInfo port , port::PortFlowSettings settings);
-    void baudRateChanged();
-    void portNamesChanged();
-};
 
 class TestsBridge : public QObject
 {

@@ -8,10 +8,6 @@ Common.FramelessWindow{
 
     id: settingsWindow
 
-    function prnt(){
-        console.log("hello")
-    }
-
     objectName: "settingsWindow"
     visible: true
     isSizeConst: true

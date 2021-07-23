@@ -25,7 +25,7 @@ Rectangle {
         anchors.right: refreshButton.left
         anchors.rightMargin: 20
 
-        onClicked: SettingsBridge.sendSettings(comPortComboBox.currentValue)
+        onClicked: TerminalSettingsBridge.sendSettings(comPortComboBox.currentValue)
     }
 
     Common.RefreshButton{
@@ -36,7 +36,7 @@ Rectangle {
         anchors.right: comPortComboBox.left
         anchors.rightMargin: 20
 
-        onClicked: SettingsBridge.scanPorts()
+        onClicked: Scanner.scanPorts()
     }
 
 
@@ -49,7 +49,7 @@ Rectangle {
         anchors.topMargin: 10
 
         //here C++ injects each found COM
-        model: SettingsBridge.portNames
+        model: TerminalSettingsBridge.portNames
     }
 
     BaudSlider{
@@ -59,7 +59,7 @@ Rectangle {
         anchors.topMargin: 80
         anchors.horizontalCenter: parent.horizontalCenter
 
-        onPositionChanged: SettingsBridge.setBaudRate(SJ.bauds.get(value))
+        onPositionChanged: TerminalSettingsBridge.setBaudRate(SJ.bauds.get(value))
     }
 
    Common.MenuComboBox{
@@ -72,7 +72,7 @@ Rectangle {
        prefixText: "Parity"
        elements: ["None","Odd","Even","Space","Mark"]
 
-       body.onActivated: SettingsBridge.setParity(SJ.parity.get(elements[body.currentIndex]))
+       body.onActivated: TerminalSettingsBridge.setParity(SJ.parity.get(elements[body.currentIndex]))
    }
 
    Common.MenuComboBox{
@@ -86,7 +86,7 @@ Rectangle {
        prefixText: "Data bits"
        elements: ["5","6","7","8"]
 
-       body.onActivated: SettingsBridge.setDataBits(SJ.dataBits.get(elements[body.currentIndex]))
+       body.onActivated: TerminalSettingsBridge.setDataBits(SJ.dataBits.get(elements[body.currentIndex]))
    }
 
    Common.MenuComboBox{
@@ -100,7 +100,7 @@ Rectangle {
        prefixText: "Stop bits"
        elements: ["1","1.5","2"]
 
-       body.onActivated: SettingsBridge.setStopBits(SJ.stopBits.get(elements[body.currentIndex]))
+       body.onActivated: TerminalSettingsBridge.setStopBits(SJ.stopBits.get(elements[body.currentIndex]))
    }
 
 

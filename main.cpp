@@ -18,36 +18,48 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    QScopedPointer<SingletonInterface> singleton{new SingletonInterface};
-
-    QScopedPointer<SettingsBridge> bridge{new SettingsBridge};
-
-    QScopedPointer<TerminalBridge> term_bridge{new TerminalBridge};
-
     qRegisterMetaType<UnitTest>();
-
-    QObject::connect(bridge.get(), &SettingsBridge::settingsApplied , term_bridge.get(), &TerminalBridge::applySettings );
-
+    qmlRegisterType<QSerialPort>("com.myProject", 1, 0, "SerialPort");
 
 
-    qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"SettingsBridge",bridge.get());
+    auto term_bridge{QSharedPointer<TerminalBridge>::create()};
     qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"TerminalBridge",term_bridge.get());
 
-    QScopedPointer<TestsSettingsBridge> tests_settings_bridge{new TestsSettingsBridge};
-
-    qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"TestsSettingsBridge",tests_settings_bridge.get());
-
-
-
-    QScopedPointer<TestsBridge> tests_bridge {new TestsBridge};
-
+    auto tests_bridge {QSharedPointer<TestsBridge>::create()};
     qmlRegisterSingletonInstance<TestsBridge>("Qt.singletons.bridge",1,0,"TestsBridge",tests_bridge.get());
 
-    QObject::connect(tests_settings_bridge.get(), &TestsSettingsBridge::settingsApplied ,
+    ///settings binding
+
+    auto terminal_settings{QSharedPointer<bridge::TerminalSettingsBridge>::create()};
+    qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"TerminalSettingsBridge",terminal_settings.get());
+
+    auto tests_settings{QSharedPointer<bridge::TestsSettingsBridge>::create()};
+    qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"TestsSettingsBridge",tests_settings.get());
+
+    bridge::Scanner scanner{QSharedPointer<port::PortScanner>::create()};
+    qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"Scanner", &scanner);
+
+
+    QObject::connect(&scanner , &bridge::Scanner::portsScanned , terminal_settings.get() , &bridge::SettingsBridge::setPortNames );
+    QObject::connect(&scanner , &bridge::Scanner::portsScanned , tests_settings.get() , &bridge::SettingsBridge::setPortNames );
+
+    QObject::connect(terminal_settings.get() , &bridge::SettingsBridge::portRequest , &scanner , &bridge::Scanner::getPortByName );
+    QObject::connect(tests_settings.get() , &bridge::SettingsBridge::portRequest , &scanner , &bridge::Scanner::getPortByName );
+
+
+
+
+    QObject::connect(terminal_settings.get(), &bridge::SettingsBridge::settingsApplied ,
+                     term_bridge.get(), &TerminalBridge::applySettings );
+
+
+    QObject::connect(tests_settings.get(), &bridge::TestsSettingsBridge::settingsApplied ,
                      tests_bridge.get(), &TestsBridge::applySettings );
 
+    ///END settings binding
 
-    qmlRegisterType<QSerialPort>("com.myProject", 1, 0, "SerialPort");
+
+
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/script/main.qml"));
@@ -58,27 +70,7 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
     engine.load(url);
 
-
-    //port::PortScanner scanner;
-
     port::ByteBuffer buffer;
-
-    //qDebug() << scanner.getPortNames();
-
-    //port::BufferedPortFlowOperator port_operator;
-
-    //port_operator.setInputByteBuffer(&buffer);
-    //port_operator.changeSettings(port::StandardSettings::getStandardSettings(port::StandardSetting::StandardSetting9600));
-    //port_operator.changePort(scanner.getSelectedPort(1));
-    //
-    //port_operator.openPort();
-
-    //Printer printer;
-    //printer.buf_ = &buffer;
-
-    //QObject::connect(&buffer , &port::ByteBuffer::bytesArrived , &printer, &Printer::print);
-
-
 
     return app.exec();
 }

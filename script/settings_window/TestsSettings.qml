@@ -36,7 +36,7 @@ Rectangle {
         anchors.right: comPortComboBox.left
         anchors.rightMargin: 20
 
-        onClicked: TestsSettingsBridge.scanPorts()
+        onClicked: Scanner.scanPorts()
     }
 
     ComboBox {

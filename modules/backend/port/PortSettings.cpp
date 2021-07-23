@@ -5,8 +5,7 @@
 namespace port
 {
 
-PortScanner::PortScanner(QObject* parent):
-    QObject(parent),
+PortScanner::PortScanner():
     avalaible_ports_{QSerialPortInfo::availablePorts()}
 
 {}
@@ -22,7 +21,7 @@ QList<DataType> PortScanner::getSerialInfoList(SerialPortInfoMethod<DataType> me
     return data_list;
 }
 
-QSerialPortInfo PortScanner::getSelectedPort(uint port_nmbr) const
+QSerialPortInfo PortScanner::getPortByNumber(uint port_nmbr) const
 {
     throwIf(port_nmbr >= static_cast<uint>(avalaible_ports_.size()),
             "port_nmbr >= avalaible ports number!");

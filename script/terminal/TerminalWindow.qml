@@ -19,32 +19,52 @@ Common.FramelessWindow{
     function addPortPage(port_name){
         pagesId[port_name] = repeater.count
         outputDataTextList.push("")
+        inputDataTextList.push("")
         var array = Object.keys(pagesId) //repeater does not refresh itself automatically
         repeater.model = array
     }
 
     property int pagesCount: 0
 
+    function getKeyByValue(object, value) {
+      return Object.keys(object).find(key => object[key] === value);
+    }
+
     function tryRestore(){
         var port_names = TerminalBridge.restorePorts()
         for(var i = 0 ; i < port_names.length ; i++){
             pagesId[ port_names[i] ] = i
             outputDataTextList.push("")
+            inputDataTextList.push("")
         }
         repeater.model = port_names
     }
 
-    function refresh(){
+    function refreshOutput(){
         terminalPage.replaceOutputText(outputDataTextList[bar.currentIndex])
+    }
+
+    function refreshInput(){
+        terminalPage.replaceInputText(inputDataTextList[bar.currentIndex])
     }
 
     function receiceData(port_name , data){
         outputDataTextList[pagesId[port_name]] += data
         console.log("arrived current data : " + bar.currentIndex + " " + pagesId[port_name])
-        refresh()
+        refreshOutput()
+    }
+
+    function sendData(data){
+        var port_name = getKeyByValue(pagesId , bar.currentIndex )
+        TerminalBridge.sendData( port_name , data )
+        inputDataTextList[bar.currentIndex] += data
+        console.log("sent current data : " + data + " " + bar.currentIndex)
+        refreshInput()
     }
 
     property var outputDataTextList: []
+
+    property var inputDataTextList: []
 
     property var pagesId: new Map();
 
@@ -66,7 +86,10 @@ Common.FramelessWindow{
 
         }
 
-        onCurrentIndexChanged: terminalPage.replaceOutputText(outputDataTextList[currentIndex])
+        onCurrentIndexChanged: {
+            terminalPage.replaceInputText(inputDataTextList[currentIndex])
+            terminalPage.replaceOutputText(outputDataTextList[currentIndex])
+        }
     }
 
     TerminalPage {
@@ -83,8 +106,10 @@ Common.FramelessWindow{
 
         onOpenPortRequest: {
             var port_names = Object.keys(pagesId)
-            TerminalBridge.openPort(port_names[bar.currentIndex])
+            TerminalBridge.openPort( port_names[bar.currentIndex])
         }
+
+        onSendToInputRequest: sendData(data)
     }
 
     Component.onCompleted: {

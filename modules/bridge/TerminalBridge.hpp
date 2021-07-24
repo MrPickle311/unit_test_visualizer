@@ -58,9 +58,12 @@ private:
         //mapping signals , if signal port::ByteBuffer::bytesArrived(data) will arrive it is map
         //to dataArrived( port_name , data) and resend
         //port_name idientifies certain port and then QML knows where put data
-        QObject::connect(input_buffers_[port_name].get() , &port::ByteBuffer::bytesArrived , [this , port_name](size_t count) {
+        QObject::connect(input_buffers_[port_name].get() , &port::ByteBuffer::bytesArrived ,
+        [this , port_name]([[maybe_unused]] size_t count)
+        {
             emit dataArrived(port_name , input_buffers_[port_name]->getAllBytes() );
-        } );
+        }
+        );
 
         qDebug() << "New port is set!";
         emit newPortIsSet(port_name);
@@ -103,7 +106,7 @@ public :
     }
     virtual void sendData(QString port_name, QByteArray data) override
     {
-
+        output_buffers_[port_name]->appendBytes(data);
     }
 };
 

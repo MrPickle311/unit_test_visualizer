@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.12
 import "../common" as Common
+import Qt.singletons.bridge 1.0
 
 Rectangle {
     id: pageRectangle
@@ -9,6 +10,8 @@ Rectangle {
     property string portName: "none"
 
     signal openPortRequest()
+
+    signal sendToInputRequest(var data)
 
     TerminalTextArea{
         id: outputTextArea
@@ -41,6 +44,14 @@ Rectangle {
         outputTextArea.setText(data)
     }
 
+    function appendTextToInput(data){
+        inputTextArea.appendText(data)
+    }
+
+    function replaceInputText(data){
+        inputTextArea.setText(data)
+    }
+
     TextStreamField{
         id : textStreamField
         y: 375
@@ -61,7 +72,10 @@ Rectangle {
         anchors.left: textStreamField.right
         anchors.leftMargin: 20
 
-        onClicked: inputTextArea.appendText(textStreamField.getText())
+        onClicked: {
+            sendToInputRequest(textStreamField.getText())
+            //inputTextArea.appendText(textStreamField.getText())
+        }
     }
 
     Common.MenuComboBox{

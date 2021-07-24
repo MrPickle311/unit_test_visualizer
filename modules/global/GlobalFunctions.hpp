@@ -2,6 +2,9 @@
 
 #include <QStringList>
 
+namespace global
+{
+
 template<typename... Args>
 QStringList joinStringListElements(Args... args)
 {
@@ -23,4 +26,6 @@ QStringList joinStringListElements(Args... args)
     (appender(args), ...);
 
     return result;
+}
+
 }

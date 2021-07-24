@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QTimer>
 
-namespace port
+namespace backend
 {
 
 //data handler
@@ -243,7 +243,7 @@ void BufferedPortFlowOperator::makeInputBufferConnections()
 
 void BufferedPortFlowOperator::makeOutputBufferConnections()
 {
-    connect(output_byte_buffer_ , &port::ByteBuffer::bytesArrived ,
+    connect(output_byte_buffer_ , &ByteBuffer::bytesArrived ,
             this , &BufferedPortFlowOperator::sendDataFromBufferToPort );
 }
 

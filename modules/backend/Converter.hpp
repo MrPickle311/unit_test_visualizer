@@ -4,7 +4,10 @@
 #include <QString>
 #include <variant>
 #include "Parser.hpp"
-#include <map>
+#include "../global/StaticGenerator.hpp"
+
+namespace backend
+{
 
 struct UnitTest
 {
@@ -26,7 +29,13 @@ public:
     QString   test_result_;
 };
 
-Q_DECLARE_METATYPE(UnitTest);
+}
+
+//this macro requires to be placed id the global namespace
+Q_DECLARE_METATYPE(backend::UnitTest);
+
+namespace backend
+{
 
 struct TestCase
 {
@@ -87,56 +96,32 @@ public:
     virtual QString getValue(const QByteArray& bytes) const override;
 };
 
-template<typename T>
-class Generator
+using ValueGenerator = global::StaticGenerator<TypeDescriptor , QSharedPointer<backend::AbstractValueConverter>>;
+using StringGenerator = global::StaticGenerator<TypeDescriptor , QString>;
+
+}
+
+namespace global
 {
-private:
-    static QMutex mutex_;
-    static QMap<parser::TypeDescriptor , T > variables_;
-    static bool is_initialized_;
-private:
-    static void addValue(parser::TypeDescriptor descriptor , T value)
-    {
-        variables_[descriptor] = value;
-    }
-    static void initValues();//requires user implementation
-protected:
-    Generator(){};
-public:
-    static const T getValue(parser::TypeDescriptor desc)
-    {
-        QMutexLocker{&mutex_};
-        if(not is_initialized_)
-            initValues();
-        return variables_[desc];
-    }
-};
-
-using ValueGenerator = Generator<QSharedPointer<AbstractValueConverter>>;
-using StringGenerator = Generator<QString>;
-
-template<typename T>
-QMutex Generator<T>::mutex_;
-
-template<typename T>
-QMap<parser::TypeDescriptor , T > Generator<T>::variables_;
-
-template<typename T>
-bool Generator<T>::is_initialized_{false};
 
 template<>
-void Generator<QSharedPointer<AbstractValueConverter>>::initValues();
+void backend::ValueGenerator::initValues();
 
 template<>
-void Generator<QString>::initValues();
+void backend::StringGenerator::initValues();
+
+}
+
+namespace backend
+{
 
 class UnitTestConverter:
-        public ProgramObject
+        public global::ProgramObject
 {
 protected:
-    void                      convertValues(UnitTest& test , const QSharedPointer<UnitTestDataPackage>& pack);
-    parser::TypeDescriptor    getDescriptor(const QSharedPointer<UnitTestDataPackage>& test);
-    QString                   getTestResult(const QSharedPointer<UnitTestDataPackage>& test);
+    void              convertValues(UnitTest& test , const QSharedPointer<UnitTestDataPackage>& pack);
+    TypeDescriptor    getDescriptor(const QSharedPointer<UnitTestDataPackage>& test);
+    QString           getTestResult(const QSharedPointer<UnitTestDataPackage>& test);
 public:
     UnitTestConverter();
     UnitTest getUnitTest(const QSharedPointer<UnitTestDataPackage>& test);
@@ -163,3 +148,5 @@ public:
     Transaction getConvertedTransaction();
     void reset();
 };
+
+}

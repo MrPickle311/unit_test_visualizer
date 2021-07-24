@@ -23,11 +23,11 @@ public:
         parser_connection_{new QMetaObject::Connection}
     {}
 public slots:
-    virtual void applySettings(QSerialPortInfo port , port::PortFlowSettings settings) = 0;
+    virtual void applySettings(QSerialPortInfo port , backend::PortFlowSettings settings) = 0;
     virtual void run() = 0;
 signals:
     void sendTestCase(QString test_case_name);
-    void sendUnitTest(int test_case_nmbr ,  UnitTest unit_test, bool is_range_test);
+    void sendUnitTest(int test_case_nmbr ,  backend::UnitTest unit_test, bool is_range_test);
 };
 
 template<typename BufferType,
@@ -45,7 +45,7 @@ private:
     TrasnactionPackageType  data_result_;
     ParserType              parser_;
     ConverterType           converter_;
-    Transaction             result_;
+    backend::Transaction             result_;
 private:
     void sendDataToFrontend()
     {
@@ -70,27 +70,27 @@ private:
     {
         parser_.setBuffer(&input_buffer_);
 
-        Ptr<parser::EndParser> end {Ptr<parser::EndParser>::create()};
+        Ptr<backend::EndParser> end {Ptr<backend::EndParser>::create()};
 
-        Ptr<parser::TestCaseParser> case_parser {Ptr<parser::TestCaseParser>::create()};
+        Ptr<backend::TestCaseParser> case_parser {Ptr<backend::TestCaseParser>::create()};
 
-        parser_.addChild(parser::GlobalCommand::START ,                 Ptr<parser::GlobalStartParser>::create());
-        parser_.addChild(parser::GlobalCommand::SENDING_TEST_CASE,      case_parser);
-        parser_.addChild(parser::GlobalCommand::END_ENTIRE_TRANSACTION, end);
+        parser_.addChild(backend::GlobalCommand::START ,                 Ptr<backend::GlobalStartParser>::create());
+        parser_.addChild(backend::GlobalCommand::SENDING_TEST_CASE,      case_parser);
+        parser_.addChild(backend::GlobalCommand::END_ENTIRE_TRANSACTION, end);
 
-        Ptr<parser::UnitTestParser> unit_parser{Ptr<parser::UnitTestParser>::create()};
+        Ptr<backend::UnitTestParser> unit_parser{Ptr<backend::UnitTestParser>::create()};
 
-        case_parser->addChild(parser::TestCaseCommand::SENDING_UNIT_TEST_RESULT , unit_parser);
-        case_parser->addChild(parser::TestCaseCommand::END_SENDING_TEST_CASE ,    end);
+        case_parser->addChild(backend::TestCaseCommand::SENDING_UNIT_TEST_RESULT , unit_parser);
+        case_parser->addChild(backend::TestCaseCommand::END_SENDING_TEST_CASE ,    end);
 
-        unit_parser->addChild(parser::UnitTestCommand::SENDING_TYPE_DESCRIPTOR ,      Ptr<parser::TypeDescriptorParser>::create());
-        unit_parser->addChild(parser::UnitTestCommand::SENDING_NAME ,                 Ptr<parser::NameParser>::create());
-        unit_parser->addChild(parser::UnitTestCommand::SENDING_CURRENT_VALUE ,        Ptr<parser::CurrentValueParser>::create());
-        unit_parser->addChild(parser::UnitTestCommand::SENDING_EXPECTED_VALUE ,       Ptr<parser::ExpectedValueParser>::create());
-        unit_parser->addChild(parser::UnitTestCommand::SENDING_TEST_RESULT ,          Ptr<parser::TestResultParser>::create());
-        unit_parser->addChild(parser::UnitTestCommand::SENDING_UPPER_VALUE ,          Ptr<parser::UpperValueParser>::create());
-        unit_parser->addChild(parser::UnitTestCommand::SENDING_LOWER_VALUE ,          Ptr<parser::LowerValueParser>::create());
-        unit_parser->addChild(parser::UnitTestCommand::END_SENDING_UNIT_TEST_RESULT , end);
+        unit_parser->addChild(backend::UnitTestCommand::SENDING_TYPE_DESCRIPTOR ,      Ptr<backend::TypeDescriptorParser>::create());
+        unit_parser->addChild(backend::UnitTestCommand::SENDING_NAME ,                 Ptr<backend::NameParser>::create());
+        unit_parser->addChild(backend::UnitTestCommand::SENDING_CURRENT_VALUE ,        Ptr<backend::CurrentValueParser>::create());
+        unit_parser->addChild(backend::UnitTestCommand::SENDING_EXPECTED_VALUE ,       Ptr<backend::ExpectedValueParser>::create());
+        unit_parser->addChild(backend::UnitTestCommand::SENDING_TEST_RESULT ,          Ptr<backend::TestResultParser>::create());
+        unit_parser->addChild(backend::UnitTestCommand::SENDING_UPPER_VALUE ,          Ptr<backend::UpperValueParser>::create());
+        unit_parser->addChild(backend::UnitTestCommand::SENDING_LOWER_VALUE ,          Ptr<backend::LowerValueParser>::create());
+        unit_parser->addChild(backend::UnitTestCommand::END_SENDING_UNIT_TEST_RESULT , end);
     }
     void process([[maybe_unused]] size_t count)
     {
@@ -104,11 +104,11 @@ private:
     }
     void makeConnections()
     {
-        *parser_connection_ = QObject::connect(&input_buffer_ ,&port::ByteBuffer::bytesArrived,
+        *parser_connection_ = QObject::connect(&input_buffer_ ,&backend::ByteBuffer::bytesArrived,
                                                this , &Tests::process  );
     }
 public:
-    virtual void applySettings(QSerialPortInfo port, port::PortFlowSettings settings) override
+    virtual void applySettings(QSerialPortInfo port, backend::PortFlowSettings settings) override
     {
         qDebug() << " QSerialPortInfo name : " << port.portName() << " " << settings.baudRate()
                  << " " << settings.dataBits() << " " << settings.parity() << " " << settings.stopBits();

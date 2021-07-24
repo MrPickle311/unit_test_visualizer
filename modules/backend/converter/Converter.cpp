@@ -2,6 +2,9 @@
 #include <bitset>
 #include <QDataStream>
 
+namespace backend
+{
+
 #define BITS_IN_BYTE 8
 
 QString SignedNumericValueConverter::getValue(const QByteArray& bytes) const
@@ -67,14 +70,14 @@ UnitTestConverter::UnitTestConverter():
 {}
 
 
-parser::TypeDescriptor UnitTestConverter::getDescriptor(const QSharedPointer<UnitTestDataPackage>& test)
+TypeDescriptor UnitTestConverter::getDescriptor(const QSharedPointer<UnitTestDataPackage>& test)
 {
-    return static_cast<parser::TypeDescriptor>(test->getDescriptor().at(0));
+    return static_cast<TypeDescriptor>(test->getDescriptor().at(0));
 }
 
 void UnitTestConverter::convertValues(UnitTest& test, const QSharedPointer<UnitTestDataPackage>& pack)
 {
-    parser::TypeDescriptor descriptor {getDescriptor(pack)};
+    auto descriptor {getDescriptor(pack)};
 
     auto value_conveter {ValueGenerator::getValue(descriptor)};
 
@@ -161,49 +164,56 @@ void Converter::reset()
     transaction_.cases_.clear();
 }
 
-template<>
-void Generator<QSharedPointer<AbstractValueConverter>>::initValues()
+}
+
+namespace global
 {
-    auto unsigned_numeric_conv {QSharedPointer<UnsignedNumericValueConverter>::create()};
 
-    addValue(parser::UINT8_T  , unsigned_numeric_conv );
-    addValue(parser::UINT16_T , unsigned_numeric_conv );
-    addValue(parser::UINT32_T , unsigned_numeric_conv );
-    addValue(parser::UINT64_T , unsigned_numeric_conv );
+template<>
+void backend::ValueGenerator::initValues()
+{
+    auto unsigned_numeric_conv {QSharedPointer<backend::UnsignedNumericValueConverter>::create()};
 
-    auto signed_numeric_conv {QSharedPointer<SignedNumericValueConverter>::create()};
+    addValue(backend::UINT8_T  , unsigned_numeric_conv );
+    addValue(backend::UINT16_T , unsigned_numeric_conv );
+    addValue(backend::UINT32_T , unsigned_numeric_conv );
+    addValue(backend::UINT64_T , unsigned_numeric_conv );
 
-    addValue(parser::INT8_T  , signed_numeric_conv );
-    addValue(parser::INT16_T , signed_numeric_conv );
-    addValue(parser::INT32_T , signed_numeric_conv );
-    addValue(parser::INT64_T , signed_numeric_conv );
+    auto signed_numeric_conv {QSharedPointer<backend::SignedNumericValueConverter>::create()};
 
-    addValue(parser::BOOL , QSharedPointer<BoolValueConverter>::create() );
-    addValue(parser::CHAR , QSharedPointer<CharValueConverter>::create() );
-    addValue(parser::PTR  , QSharedPointer<PtrValueConverter>::create() );
-    addValue(parser::BIT  , QSharedPointer<BitValueConverter>::create() );
+    addValue(backend::INT8_T  , signed_numeric_conv );
+    addValue(backend::INT16_T , signed_numeric_conv );
+    addValue(backend::INT32_T , signed_numeric_conv );
+    addValue(backend::INT64_T , signed_numeric_conv );
+
+    addValue(backend::BOOL , QSharedPointer<backend::BoolValueConverter>::create() );
+    addValue(backend::CHAR , QSharedPointer<backend::CharValueConverter>::create() );
+    addValue(backend::PTR  , QSharedPointer<backend::PtrValueConverter>::create() );
+    addValue(backend::BIT  , QSharedPointer<backend::BitValueConverter>::create() );
 
     is_initialized_ = true;
 }
 
 template<>
-void Generator<QString>::initValues()
+void backend::StringGenerator::initValues()
 {
 
-    addValue(parser::UINT8_T  , "uint8_t" );
-    addValue(parser::UINT16_T , "uint16_t" );
-    addValue(parser::UINT32_T , "uint32_t" );
-    addValue(parser::UINT64_T , "uint64_t" );
+    addValue(backend::UINT8_T  , "uint8_t" );
+    addValue(backend::UINT16_T , "uint16_t" );
+    addValue(backend::UINT32_T , "uint32_t" );
+    addValue(backend::UINT64_T , "uint64_t" );
 
-    addValue(parser::INT8_T  , "int8_t" );
-    addValue(parser::INT16_T , "int16_t" );
-    addValue(parser::INT32_T , "int32_t" );
-    addValue(parser::INT64_T , "int64_t" );
+    addValue(backend::INT8_T  , "int8_t" );
+    addValue(backend::INT16_T , "int16_t" );
+    addValue(backend::INT32_T , "int32_t" );
+    addValue(backend::INT64_T , "int64_t" );
 
-    addValue(parser::BOOL , "bool" );
-    addValue(parser::CHAR , "char" );
-    addValue(parser::PTR  , "pointer" );
-    addValue(parser::BIT  , "bit" );
+    addValue(backend::BOOL , "bool" );
+    addValue(backend::CHAR , "char" );
+    addValue(backend::PTR  , "pointer" );
+    addValue(backend::BIT  , "bit" );
 
     is_initialized_ = true;
+}
+
 }

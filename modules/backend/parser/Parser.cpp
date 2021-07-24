@@ -1,48 +1,38 @@
 #include "../Parser.hpp"
 #include <algorithm>
 
-namespace parser
-{
-
 //Sizes singleton initialization
 
-QMutex TypesSizes::mutex_{};
-QMap<TypeDescriptor , int> TypesSizes::sizes_{};
-bool TypesSizes::sizes_initialized_{false};
-
-void TypesSizes::addSize(TypeDescriptor desc , int size)
+namespace global
 {
-    sizes_[desc] = size;
+
+template<>
+void TypesSizes::initValues()
+{
+    addValue(TypeDescriptor::BIT, 1);
+    addValue(TypeDescriptor::BOOL, 1);
+    addValue(TypeDescriptor::CHAR, 1);
+    addValue(TypeDescriptor::PTR, 1);
+    addValue(TypeDescriptor::UINT8_T, 1);
+    addValue(TypeDescriptor::INT8_T, 1);
+
+    addValue(TypeDescriptor::INT16_T, 2);
+    addValue(TypeDescriptor::UINT16_T, 2);
+
+    addValue(TypeDescriptor::INT32_T, 4);
+    addValue(TypeDescriptor::UINT32_T, 4);
+
+    addValue(TypeDescriptor::INT64_T, 8);
+    addValue(TypeDescriptor::UINT64_T, 8);
+
+    is_initialized_ = true;
 }
 
-void TypesSizes::initSizes()
-{
-    addSize(TypeDescriptor::BIT, 1);
-    addSize(TypeDescriptor::BOOL, 1);
-    addSize(TypeDescriptor::CHAR, 1);
-    addSize(TypeDescriptor::PTR, 1);
-    addSize(TypeDescriptor::UINT8_T, 1);
-    addSize(TypeDescriptor::INT8_T, 1);
-
-    addSize(TypeDescriptor::INT16_T, 2);
-    addSize(TypeDescriptor::UINT16_T, 2);
-
-    addSize(TypeDescriptor::INT32_T, 4);
-    addSize(TypeDescriptor::UINT32_T, 4);
-
-    addSize(TypeDescriptor::INT64_T, 8);
-    addSize(TypeDescriptor::UINT64_T, 8);
-
-    sizes_initialized_ = true;
 }
 
-int TypesSizes::getSize(TypeDescriptor desc)
+namespace backend
 {
-    QMutexLocker{&mutex_};
-    if(not sizes_initialized_)
-        initSizes();
-    return sizes_[desc];
-}
+
 
 TypeDescriptor  ParserComponent::current_type_{};
 
@@ -63,7 +53,7 @@ bool ParserComponent::isComposite() const
     return false;
 }
 
-void ParserComponent::setBuffer(port::ByteBuffer* newBuffer)
+void ParserComponent::setBuffer(ByteBuffer* newBuffer)
 {
     buffer_ = newBuffer;
 }
@@ -127,20 +117,20 @@ void ComplexParser::specialPreOperations([[maybe_unused]] AcceptedTypes result){
 
 void ComplexParser::specialPostOperations([[maybe_unused]] AcceptedTypes result){}
 
-GlobalParser::GlobalParser():
+RootParser::RootParser():
     ComplexParser{GlobalCommand::GLOBAL_COMMAND_COUNT}{}
 
-void GlobalParser::createPackage()
+void RootParser::createPackage()
 {
     package_ = TransactionPackPtr::create();
 }
 
-TransactionPackPtr GlobalParser::getPackage()
+TransactionPackPtr RootParser::getPackage()
 {
     return std::get<TransactionPackPtr>(package_);
 }
 
-void GlobalParser::startProcessing()
+void RootParser::startProcessing()
 {
     parseCommand(std::monostate{});
 }
@@ -229,7 +219,7 @@ bool ValueParser::parseCommand(AcceptedTypes result)//unit test
 
     QByteArray value_result;
 
-    for(int i{0}; i < TypesSizes::getSize(current_type_) ; ++i)
+    for(int i{0}; i < TypesSizes::getValue(current_type_) ; ++i)
         value_result.append(buffer_->getByte());
 
     redirectValueBytes(value_result, test_case);

@@ -3,6 +3,8 @@
 #include <QString>
 #include <QObject>
 
+namespace global
+{
 
 class ThrowingObject
 {
@@ -23,3 +25,4 @@ protected:
     virtual void makeConnections() = 0;
 };
 
+}

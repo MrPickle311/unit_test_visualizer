@@ -4,6 +4,9 @@
 #include <QSharedPointer>
 #include <memory>
 
+namespace backend
+{
+
 class UnitTestDataPackage
 {
 public:
@@ -63,3 +66,5 @@ public:
     bool operator==(const TransactionDataPackage& other);
     void clear();
 };
+
+}

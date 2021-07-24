@@ -1,37 +1,12 @@
 #pragma once
 
-#include <QByteArray>
-#include <QMap>
 #include "PortOperator.hpp"
-#include <memory>
 #include "parser/ParsedDataPackage.hpp"
 #include <variant>
+#include "../global/StaticGenerator.hpp"
 
-namespace parser
+namespace backend
 {
-
-//change commands on this
-/*
- * class Colors
-{
-public:
-  static const int RED = 1;
-  static const int GREEN = 2;
-};
-
-class RGB : public Colors
-{
-  static const int BLUE = 10;
-};
-
-
-class FourColors : public Colors
-{
-public:
-  static const int ORANGE = 100;
-  static const int PURPLE = 101;
-};
-*/
 
 using Code = char;
 
@@ -72,23 +47,24 @@ enum TypeDescriptor : uint8_t { UINT8_T  = 0  ,
                                 TYPES_COUNT};
 
 
-//useful singletons
+using TypesSizes = global::StaticGenerator<TypeDescriptor , int>;
 
-class TypesSizes
+}
+
+
+namespace global
 {
-private:
-    static QMutex mutex_;
-    static QMap<TypeDescriptor , int> sizes_;
-    static bool sizes_initialized_;
-private:
-    static void addSize(TypeDescriptor desc , int size);
-    static void initSizes();
-protected:
-    TypesSizes(){};
-public:
-    static int getSize(TypeDescriptor desc) ;
-};
 
+using backend::TypesSizes;
+using backend::TypeDescriptor;
+
+template<>
+void TypesSizes::initValues();
+
+}
+
+namespace backend
+{
 ///idea
 
 using AcceptedTypes = std::variant< QSharedPointer<UnitTestDataPackage> ,
@@ -107,7 +83,7 @@ class ParserComponent
     friend class ComplexParser;
 protected:
     ParserComponent*      parent_;
-    port::ByteBuffer*     buffer_;
+    ByteBuffer*           buffer_;
     AcceptedTypes         package_;
     static TypeDescriptor current_type_;
 public:
@@ -115,7 +91,7 @@ public:
     virtual void setParent(ParserComponent* newParent);
     virtual void addChild(uint8_t cmd , QSharedPointer<ParserComponent> child);
     virtual bool isComposite() const;
-    void setBuffer(port::ByteBuffer* newBuffer);
+    void setBuffer(ByteBuffer* newBuffer);
 protected:
     virtual bool parseCommand(AcceptedTypes result) = 0;//if true -> still parsing
     virtual void createPackage();
@@ -123,7 +99,7 @@ protected:
 
 class ComplexParser:
         public ParserComponent,
-        public ProgramObject
+        public global::ProgramObject
 {
 protected:
     QMap<Code , QSharedPointer<ParserComponent>> children_;
@@ -142,11 +118,11 @@ protected:
 
 ///real
 
-class GlobalParser:
+class RootParser:
         public ComplexParser
 {
 public:
-    GlobalParser();
+    RootParser();
     virtual void       createPackage() override;
     TransactionPackPtr getPackage();
     void               startProcessing();

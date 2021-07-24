@@ -10,8 +10,11 @@
 
 #ifdef MAIN_PROGRAM
 
-using MainProgram = bridge::Program<port::ByteBuffer, port::BufferedPortFlowOperator ,
-                                   TransactionDataPackage , parser::GlobalParser , Converter>;
+using MainProgram = bridge::Program<backend::ByteBuffer,
+                                    backend::BufferedPortFlowOperator ,
+                                    backend::TransactionDataPackage ,
+                                    backend::RootParser ,
+                                    backend::Converter>;
 
 
 int main(int argc, char *argv[])
@@ -36,7 +39,7 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
     engine.load(url);
 
-    port::ByteBuffer buffer;
+    backend::ByteBuffer buffer;
 
     return app.exec();
 }

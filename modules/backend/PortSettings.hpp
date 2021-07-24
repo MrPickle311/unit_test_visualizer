@@ -9,7 +9,7 @@
 #include <QMutex>
 #include "../global/ProgramObject.hpp"
 
-namespace port
+namespace backend
 {
 
 class PortScannerInterface
@@ -26,7 +26,7 @@ public:
 };
 
 class PortScanner:
-        public ProgramObject,
+        public global::ProgramObject,
         public PortScannerInterface
 {
 private:

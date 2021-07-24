@@ -12,10 +12,10 @@ class Scanner:
 {
     Q_OBJECT;
 private:
-    QSharedPointer<port::PortScannerInterface> scanner_impl_;
+    QSharedPointer<backend::PortScannerInterface> scanner_impl_;
 
 public:
-    Scanner(QSharedPointer<port::PortScannerInterface> scanner_impl , QObject* parent = nullptr);
+    Scanner(QSharedPointer<backend::PortScannerInterface> scanner_impl , QObject* parent = nullptr);
 
 public slots:
     void scanPorts();//invoked from QML
@@ -44,7 +44,7 @@ protected:
 
     QStringList portNames;
 protected:
-    virtual port::PortFlowSettings prepareSettings() const = 0;
+    virtual backend::PortFlowSettings prepareSettings() const = 0;
 
 public :
     explicit Settings(QObject *parent = nullptr);
@@ -71,7 +71,7 @@ signals:
     void baudRateChanged();
     void portNamesChanged();
 
-    void settingsApplied(QSerialPortInfo port , port::PortFlowSettings settings);
+    void settingsApplied(QSerialPortInfo port , backend::PortFlowSettings settings);
 
     QSerialPortInfo portRequest(QString port_name);
 };
@@ -96,7 +96,7 @@ signals :
     void dataBitsChanged();
 
 protected:
-    virtual port::PortFlowSettings prepareSettings() const override;
+    virtual backend::PortFlowSettings prepareSettings() const override;
 };
 
 class TestsSettings:
@@ -104,7 +104,7 @@ class TestsSettings:
 {
     Q_OBJECT;
 protected:
-    virtual port::PortFlowSettings prepareSettings() const override;
+    virtual backend::PortFlowSettings prepareSettings() const override;
 };
 
 }

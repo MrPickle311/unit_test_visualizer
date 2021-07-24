@@ -2,7 +2,7 @@
 #include <QMutexLocker>
 #include "../../global/GlobalFunctions.hpp"
 
-namespace port
+namespace backend
 {
 
 PortScanner::PortScanner():
@@ -54,7 +54,7 @@ QStringList PortScanner::getPortDescriptions() const
 
 QStringList PortScanner::getCompletePortData() const
 {
-    return joinStringListElements( getPortNames() , getPortDescriptions() );
+    return global::joinStringListElements( getPortNames() , getPortDescriptions() );
 }
 
 void PortScanner::rescan()

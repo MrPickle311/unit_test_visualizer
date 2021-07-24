@@ -1,6 +1,7 @@
 set(global_public_headers
     ProgramObject.hpp
-    GlobalFunctions.hpp)
+    GlobalFunctions.hpp
+    StaticGenerator.hpp)
 
 add_subdirectory(program_object)
 

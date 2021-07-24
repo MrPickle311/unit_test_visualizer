@@ -3,7 +3,7 @@
 #include "PortSettings.hpp"
 #include <QEventLoop>
 
-namespace port
+namespace backend
 {
 
 class ByteBufferInterface:
@@ -26,7 +26,7 @@ signals:
 
 class ByteBuffer :
         public ByteBufferInterface,
-        public ProgramObject
+        public global::ProgramObject
 {
     Q_OBJECT;
 private:
@@ -51,7 +51,7 @@ public:
 //one operator per one port
 class PortStateOperator :
         public QObject,//it only opens a port , nothing else
-        public ProgramObject
+        public global::ProgramObject
 {
     Q_OBJECT;
 protected:

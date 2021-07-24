@@ -43,7 +43,7 @@ private:
     }
     void registerTypes()
     {
-        qRegisterMetaType<UnitTest>();
+        qRegisterMetaType<backend::UnitTest>();
         qmlRegisterType<QSerialPort>("com.myProject", 1, 0, "SerialPort");
         qmlRegisterSingletonInstance<TestsType>("Qt.singletons.bridge",1,0,"TestsBridge",&tests_);
         qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"TerminalBridge",&terminal_);
@@ -53,7 +53,7 @@ private:
     }
 public:
     Program():
-        scanner_{QSharedPointer<port::PortScanner>::create()}
+        scanner_{QSharedPointer<backend::PortScanner>::create()}
     {
         registerTypes();
         makeConnections();

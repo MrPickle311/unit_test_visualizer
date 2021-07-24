@@ -1,5 +1,8 @@
 #include "ParsedDataPackage.hpp"
 
+namespace backend
+{
+
 const QByteArray& UnitTestDataPackage::getName() const
 {
     return name_;
@@ -176,4 +179,6 @@ void TransactionDataPackage::addTestCase(QSharedPointer<TestCaseDataPackage> tes
 QSharedPointer<TestCaseDataPackage> TransactionDataPackage::getTestCase(int idx)
 {
     return cases_[idx];
+}
+
 }

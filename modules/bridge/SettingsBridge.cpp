@@ -47,7 +47,7 @@ void Settings::setBaudRate(const QSerialPort::BaudRate& newBaudRate)
     emit baudRateChanged();
 }
 
-Scanner::Scanner(QSharedPointer<port::PortScannerInterface> scanner_impl, QObject* parent):
+Scanner::Scanner(QSharedPointer<backend::PortScannerInterface> scanner_impl, QObject* parent):
     QObject{parent},
     scanner_impl_{scanner_impl}
 {
@@ -81,7 +81,7 @@ void Settings::setPortNames(const QStringList& newPortNames)
 
 void Settings::sendSettings(QString port_name)
 {
-    port::PortFlowSettings new_settings{prepareSettings()};
+    backend::PortFlowSettings new_settings{prepareSettings()};
 
     emit settingsApplied( emit portRequest(port_name), new_settings);
 }
@@ -102,9 +102,9 @@ void TerminalSettings::setDataBits(const QSerialPort::DataBits& newDataBits)
 }
 
 
-port::PortFlowSettings TerminalSettings::prepareSettings() const
+backend::PortFlowSettings TerminalSettings::prepareSettings() const
 {
-    port::PortFlowSettings new_settings;
+    backend::PortFlowSettings new_settings;
 
     new_settings.setBaudRate(baudRate);
     new_settings.setDataBits(dataBits);
@@ -115,9 +115,9 @@ port::PortFlowSettings TerminalSettings::prepareSettings() const
     return new_settings;
 }
 
-port::PortFlowSettings TestsSettings::prepareSettings() const
+backend::PortFlowSettings TestsSettings::prepareSettings() const
 {
-    port::PortFlowSettings new_settings;
+    backend::PortFlowSettings new_settings;
 
     new_settings.setBaudRate(baudRate);
     new_settings.setDataBits(QSerialPort::Data8);

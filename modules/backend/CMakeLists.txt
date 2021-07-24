@@ -25,7 +25,11 @@ set(backend_public_headers
     PortOperator.hpp
     PortSettings.hpp
     Parser.hpp
-    Converter.hpp)
+    Converter.hpp
+    ConvertedDataTypes.hpp
+    ParsedDataTypes.hpp
+    PortScanner.hpp
+    Interfaces.hpp)
 
 add_library(BACKEND_LIBRARIES STATIC
     ${backend_public_headers})

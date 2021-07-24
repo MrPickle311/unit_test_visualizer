@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.12)
 
 set(port_cpp_files
 	PortOperator.cpp
-	PortSettings.cpp)
+        PortSettings.cpp
+        PortScanner.cpp)
 
 set(port_private_hpp_files )
 

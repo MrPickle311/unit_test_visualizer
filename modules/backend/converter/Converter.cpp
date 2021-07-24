@@ -146,8 +146,8 @@ TestCase TestCaseConverter::getTestCase(const QSharedPointer<TestCaseDataPackage
 }
 
 Converter::Converter(const TransactionDataPackage& pack):
+    interface::Converter{pack},
     transaction_{},
-    pack_{pack},
     case_converter_{}
 {}
 

@@ -1,24 +1,22 @@
 #pragma once
 
-#include <QStateMachine>
-#include <QState>
 #include "SettingsBridge.hpp"
 #include "TerminalBridge.hpp"
 #include "TestsBridge.hpp"
 #include <QDebug>
 #include <QQmlApplicationEngine>
+#include "../backend/PortSettings.hpp"
+#include "../backend/ConvertedDataTypes.hpp"
+#include "../backend/PortScanner.hpp"
 
 namespace bridge
 {
 
 template<typename BufferType,
-         typename PortOperatortType,
-         typename TrasnactionPackageType,
-         typename ParserType,
-         typename ConverterType>
+         typename PortOperatortType>
 class Program
 {
-    using TestsType = Tests<BufferType,PortOperatortType,TrasnactionPackageType,ParserType,ConverterType>;
+    using TestsType = Tests<BufferType,PortOperatortType>;
     using TerminalType = Terminal<BufferType,PortOperatortType>;
 private:
     Scanner          scanner_;
@@ -52,7 +50,7 @@ private:
         qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"Scanner", &scanner_);
     }
 public:
-    Program():
+    Program()://injection via constructor
         scanner_{QSharedPointer<backend::PortScanner>::create()}
     {
         registerTypes();

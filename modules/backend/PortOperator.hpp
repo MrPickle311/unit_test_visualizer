@@ -2,30 +2,13 @@
 
 #include "PortSettings.hpp"
 #include <QEventLoop>
+#include "Interfaces.hpp"
 
 namespace backend
 {
 
-class ByteBufferInterface:
-        public QObject
-{
-    Q_OBJECT;
-public:
-    virtual ~ByteBufferInterface(){}
-    virtual void       appendBytes(const QByteArray& array) = 0;
-    virtual void       appendByte(char byte) = 0;
-    virtual QByteArray getAllBytes() noexcept = 0;
-    virtual QByteArray getBytes(size_t count) = 0;
-    virtual char       getByte() = 0;
-    virtual bool       isEmpty() const = 0;
-    virtual size_t     size()    const = 0;
-signals:
-   void bytesArrived(size_t count);
-   void bytesExtracted(size_t count);
-};
-
 class ByteBuffer :
-        public ByteBufferInterface,
+        public interface::ByteBuffer,
         public global::ProgramObject
 {
     Q_OBJECT;

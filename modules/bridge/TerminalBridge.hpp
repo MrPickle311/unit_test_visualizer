@@ -1,10 +1,15 @@
 #pragma once
 
 #include <QObject>
-#include "../backend/PortOperator.hpp"
-#include "../backend/Converter.hpp"
 #include <utility>
 #include <QDebug>
+#include <QString>
+#include <QSerialPort>
+#include <QSerialPortInfo>
+#include <QSharedPointer>
+#include "../backend/PortSettings.hpp"
+#include "../backend/ConvertedDataTypes.hpp"
+#include "../backend/Interfaces.hpp"
 
 namespace bridge
 {
@@ -58,7 +63,7 @@ private:
         //mapping signals , if signal port::ByteBuffer::bytesArrived(data) will arrive it is map
         //to dataArrived( port_name , data) and resend
         //port_name idientifies certain port and then QML knows where put data
-        QObject::connect(input_buffers_[port_name].get() , &backend::ByteBuffer::bytesArrived ,
+        QObject::connect(input_buffers_[port_name].get() , &interface::ByteBuffer::bytesArrived ,
         [this , port_name]([[maybe_unused]] size_t count)
         {
             emit dataArrived(port_name , input_buffers_[port_name]->getAllBytes() );

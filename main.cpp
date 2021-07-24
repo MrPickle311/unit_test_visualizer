@@ -11,10 +11,7 @@
 #ifdef MAIN_PROGRAM
 
 using MainProgram = bridge::Program<backend::ByteBuffer,
-                                    backend::BufferedPortFlowOperator ,
-                                    backend::TransactionDataPackage ,
-                                    backend::RootParser ,
-                                    backend::Converter>;
+                                    backend::BufferedPortFlowOperator>;
 
 
 int main(int argc, char *argv[])

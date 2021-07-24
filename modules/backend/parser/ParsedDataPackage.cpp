@@ -1,4 +1,31 @@
-#include "ParsedDataPackage.hpp"
+#include "../ParsedDataTypes.hpp"
+
+namespace global
+{
+
+template<>
+void backend::TypesSizes::initValues()
+{
+    addValue(backend::TypeDescriptor::BIT, 1);
+    addValue(backend::TypeDescriptor::BOOL, 1);
+    addValue(backend::TypeDescriptor::CHAR, 1);
+    addValue(backend::TypeDescriptor::PTR, 1);
+    addValue(backend::TypeDescriptor::UINT8_T, 1);
+    addValue(backend::TypeDescriptor::INT8_T, 1);
+
+    addValue(backend::TypeDescriptor::INT16_T, 2);
+    addValue(backend::TypeDescriptor::UINT16_T, 2);
+
+    addValue(backend::TypeDescriptor::INT32_T, 4);
+    addValue(backend::TypeDescriptor::UINT32_T, 4);
+
+    addValue(backend::TypeDescriptor::INT64_T, 8);
+    addValue(backend::TypeDescriptor::UINT64_T, 8);
+
+    is_initialized_ = true;
+}
+
+}
 
 namespace backend
 {

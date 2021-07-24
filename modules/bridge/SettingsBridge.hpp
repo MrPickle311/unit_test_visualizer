@@ -1,8 +1,14 @@
 #pragma once
 
 #include <QObject>
-#include "../backend/PortOperator.hpp"
 #include <QDebug>
+#include <QString>
+#include <QSerialPort>
+#include <QSerialPortInfo>
+#include <QSharedPointer>
+#include "../backend/PortSettings.hpp"
+#include "../backend/ConvertedDataTypes.hpp"
+#include "../backend/Interfaces.hpp"
 
 namespace bridge
 {
@@ -12,10 +18,10 @@ class Scanner:
 {
     Q_OBJECT;
 private:
-    QSharedPointer<backend::PortScannerInterface> scanner_impl_;
+    QSharedPointer<interface::PortScanner> scanner_impl_;
 
 public:
-    Scanner(QSharedPointer<backend::PortScannerInterface> scanner_impl , QObject* parent = nullptr);
+    Scanner(QSharedPointer<interface::PortScanner> scanner_impl , QObject* parent = nullptr);
 
 public slots:
     void scanPorts();//invoked from QML

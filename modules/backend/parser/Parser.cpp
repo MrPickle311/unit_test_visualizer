@@ -6,26 +6,37 @@
 namespace global
 {
 
+template <typename  T>
+using Ptr = QSharedPointer<T>;
+
 template<>
-void TypesSizes::initValues()
+void backend::ReadyParsers::initValues()
 {
-    addValue(TypeDescriptor::BIT, 1);
-    addValue(TypeDescriptor::BOOL, 1);
-    addValue(TypeDescriptor::CHAR, 1);
-    addValue(TypeDescriptor::PTR, 1);
-    addValue(TypeDescriptor::UINT8_T, 1);
-    addValue(TypeDescriptor::INT8_T, 1);
+    Ptr<backend::RootParser> parser{Ptr<backend::RootParser>::create()};
 
-    addValue(TypeDescriptor::INT16_T, 2);
-    addValue(TypeDescriptor::UINT16_T, 2);
+    Ptr<backend::EndParser> end {Ptr<backend::EndParser>::create()};
 
-    addValue(TypeDescriptor::INT32_T, 4);
-    addValue(TypeDescriptor::UINT32_T, 4);
+    Ptr<backend::TestCaseParser> case_parser {Ptr<backend::TestCaseParser>::create()};
 
-    addValue(TypeDescriptor::INT64_T, 8);
-    addValue(TypeDescriptor::UINT64_T, 8);
+    parser->addChild(backend::GlobalCommand::START ,                 Ptr<backend::GlobalStartParser>::create());
+    parser->addChild(backend::GlobalCommand::SENDING_TEST_CASE,      case_parser);
+    parser->addChild(backend::GlobalCommand::END_ENTIRE_TRANSACTION, end);
 
-    is_initialized_ = true;
+    Ptr<backend::UnitTestParser> unit_parser{Ptr<backend::UnitTestParser>::create()};
+
+    case_parser->addChild(backend::TestCaseCommand::SENDING_UNIT_TEST_RESULT , unit_parser);
+    case_parser->addChild(backend::TestCaseCommand::END_SENDING_TEST_CASE ,    end);
+
+    unit_parser->addChild(backend::UnitTestCommand::SENDING_TYPE_DESCRIPTOR ,      Ptr<backend::TypeDescriptorParser>::create());
+    unit_parser->addChild(backend::UnitTestCommand::SENDING_NAME ,                 Ptr<backend::NameParser>::create());
+    unit_parser->addChild(backend::UnitTestCommand::SENDING_CURRENT_VALUE ,        Ptr<backend::CurrentValueParser>::create());
+    unit_parser->addChild(backend::UnitTestCommand::SENDING_EXPECTED_VALUE ,       Ptr<backend::ExpectedValueParser>::create());
+    unit_parser->addChild(backend::UnitTestCommand::SENDING_TEST_RESULT ,          Ptr<backend::TestResultParser>::create());
+    unit_parser->addChild(backend::UnitTestCommand::SENDING_UPPER_VALUE ,          Ptr<backend::UpperValueParser>::create());
+    unit_parser->addChild(backend::UnitTestCommand::SENDING_LOWER_VALUE ,          Ptr<backend::LowerValueParser>::create());
+    unit_parser->addChild(backend::UnitTestCommand::END_SENDING_UNIT_TEST_RESULT , end);
+
+    variables_[backend::ParserImplementations::FirstImplementation] = parser;
 }
 
 }
@@ -36,26 +47,28 @@ namespace backend
 
 TypeDescriptor  ParserComponent::current_type_{};
 
-ParserComponent* ParserComponent::getParent()
+interface::ParserComponent* ParserComponent::getParent()
 {
     return  this->parent_;
 }
 
-void ParserComponent::setParent(ParserComponent* newParent)
+void ParserComponent::setParent(interface::ParserComponent* newParent)
 {
     this->parent_ = newParent;
 }
 
-void ParserComponent::addChild(uint8_t cmd, QSharedPointer<ParserComponent> child){}
+void ParserComponent::addChild(uint8_t cmd, QSharedPointer<interface::ParserComponent> child){}
 
 bool ParserComponent::isComposite() const
 {
     return false;
 }
 
-void ParserComponent::setBuffer(ByteBuffer* newBuffer)
+void ParserComponent::setBuffer(interface::ByteBuffer* newBuffer)
 {
     buffer_ = newBuffer;
+
+    //for(auto&& child : )
 }
 
 void ParserComponent::createPackage()
@@ -71,7 +84,7 @@ bool ComplexParser::isComposite() const
     return true;
 }
 
-void ComplexParser::addChild(uint8_t cmd, QSharedPointer<ParserComponent> child)
+void ComplexParser::addChild(uint8_t cmd, QSharedPointer<interface::ParserComponent> child)
 {
     throwIf(child.isNull() , "Child cannot be a nullptr!");
 
@@ -79,6 +92,14 @@ void ComplexParser::addChild(uint8_t cmd, QSharedPointer<ParserComponent> child)
     child->setBuffer(buffer_);
 
     children_[cmd] = child;
+}
+
+void ComplexParser::setBuffer(interface::ByteBuffer* newBuffer)
+{
+    buffer_ = newBuffer;
+
+    for(auto&& child : children_)
+        child->setBuffer(newBuffer);
 }
 
 void ComplexParser::checkCode(Code cmd, std::string class_name)

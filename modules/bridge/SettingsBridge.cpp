@@ -47,7 +47,7 @@ void Settings::setBaudRate(const QSerialPort::BaudRate& newBaudRate)
     emit baudRateChanged();
 }
 
-Scanner::Scanner(QSharedPointer<backend::PortScannerInterface> scanner_impl, QObject* parent):
+Scanner::Scanner(QSharedPointer<interface::PortScanner> scanner_impl, QObject* parent):
     QObject{parent},
     scanner_impl_{scanner_impl}
 {

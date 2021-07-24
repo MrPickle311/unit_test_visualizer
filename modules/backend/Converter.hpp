@@ -3,10 +3,10 @@
 #include <QList>
 #include <QString>
 #include <variant>
-#include "Parser.hpp"
-#include "../global/StaticGenerator.hpp"
 #include "ConvertedDataTypes.hpp"
 #include "ParsedDataTypes.hpp"
+#include "../global/ProgramObject.hpp"
+#include "Interfaces.hpp"
 
 namespace backend
 {
@@ -100,16 +100,16 @@ public:
 };
 
 
-class Converter
+class Converter:
+        public interface::Converter
 {
 private:
     Transaction transaction_;
-    const TransactionDataPackage& pack_;
     TestCaseConverter case_converter_;
 public:
     Converter(const TransactionDataPackage& pack);
-    Transaction getConvertedTransaction();
-    void reset();
+    virtual Transaction getConvertedTransaction() override;
+    virtual void reset() override;
 };
 
 }

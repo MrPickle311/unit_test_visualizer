@@ -1,55 +1,12 @@
 #pragma once
 
 #include "PortOperator.hpp"
-#include "parser/ParsedDataPackage.hpp"
+#include "ParsedDataTypes.hpp"
 #include <variant>
 #include "../global/StaticGenerator.hpp"
-
-namespace backend
-{
-
-using Code = char;
-
-enum GlobalCommand : uint8_t{ START					   = 0 ,
-                              SENDING_TEST_CASE        = 1 ,
-                              END_ENTIRE_TRANSACTION   = 2 ,
-                              GLOBAL_COMMAND_COUNT};
-
-enum TestCaseCommand : uint8_t{ SENDING_UNIT_TEST_RESULT = 0 ,
-                                END_SENDING_TEST_CASE    = 1 ,
-                                TEST_CASE_COMMAND_COUNT};
-
-enum UnitTestCommand : uint8_t{ SENDING_TYPE_DESCRIPTOR 	 = 0 ,
-                                SENDING_NAME				 = 1 ,
-                                SENDING_CURRENT_VALUE		 = 2 ,
-                                SENDING_EXPECTED_VALUE		 = 3 ,
-                                SENDING_TEST_RESULT			 = 4 ,
-                                SENDING_LINE_NMBR			 = 5 ,
-                                SENDING_LOWER_VALUE          = 6 ,
-                                SENDING_UPPER_VALUE          = 7 ,
-                                END_SENDING_UNIT_TEST_RESULT = 8 ,
-                                COMMANDS_COUNT};
-
-enum TypeDescriptor : uint8_t { UINT8_T  = 0  ,
-                                UINT16_T = 1  ,
-                                UINT32_T = 2  ,
-                                UINT64_T = 3  ,
-
-                                INT8_T   = 4  ,
-                                INT16_T  = 5  ,
-                                INT32_T  = 6  ,
-                                INT64_T  = 7  ,
-
-                                BOOL     = 8  ,
-                                CHAR     = 9  ,
-                                PTR	     = 10 ,
-                                BIT	     = 11 ,
-                                TYPES_COUNT};
+#include "Interfaces.hpp"
 
 
-using TypesSizes = global::StaticGenerator<TypeDescriptor , int>;
-
-}
 
 
 namespace global
@@ -67,34 +24,31 @@ namespace backend
 {
 ///idea
 
-using AcceptedTypes = std::variant< QSharedPointer<UnitTestDataPackage> ,
-                                    QSharedPointer<TestCaseDataPackage> ,
-                                    QSharedPointer<TransactionDataPackage> ,
-                                    std::monostate >;
-
 //aliases
+
+//using interface::AcceptedTypes;
 
 using UnitTestPackPtr    = QSharedPointer<UnitTestDataPackage>;
 using TestCasePackPtr    = QSharedPointer<TestCaseDataPackage>;
 using TransactionPackPtr = QSharedPointer<TransactionDataPackage>;
 
-class ParserComponent
+class ParserComponent:
+        public interface::ParserComponent
 {
     friend class ComplexParser;
 protected:
-    ParserComponent*      parent_;
-    ByteBuffer*           buffer_;
-    AcceptedTypes         package_;
-    static TypeDescriptor current_type_;
+    interface::ParserComponent* parent_;
+    interface::ByteBuffer*      buffer_;
+    AcceptedTypes               package_;
+    static TypeDescriptor       current_type_;
 public:
-    virtual ParserComponent* getParent();
-    virtual void setParent(ParserComponent* newParent);
-    virtual void addChild(uint8_t cmd , QSharedPointer<ParserComponent> child);
-    virtual bool isComposite() const;
-    void setBuffer(ByteBuffer* newBuffer);
+    virtual interface::ParserComponent* getParent() override;
+    virtual void setParent(interface::ParserComponent* newParent) override;
+    virtual void addChild(uint8_t cmd , QSharedPointer<interface::ParserComponent> child) override;
+    virtual bool isComposite() const override;
+    virtual void setBuffer(interface::ByteBuffer* newBuffer) override;
 protected:
-    virtual bool parseCommand(AcceptedTypes result) = 0;//if true -> still parsing
-    virtual void createPackage();
+    virtual void createPackage() override;
 };
 
 class ComplexParser:
@@ -102,12 +56,13 @@ class ComplexParser:
         public global::ProgramObject
 {
 protected:
-    QMap<Code , QSharedPointer<ParserComponent>> children_;
+    QMap<Code , QSharedPointer<interface::ParserComponent>> children_;
     Code                                         commands_count_;
 public:
     ComplexParser(Code commands_count);
     virtual bool isComposite() const override;
-    virtual void addChild(uint8_t cmd , QSharedPointer<ParserComponent> child) override;
+    virtual void addChild(uint8_t cmd , QSharedPointer<interface::ParserComponent> child) override;
+    virtual void setBuffer(interface::ByteBuffer* newBuffer) override;
 protected:
     void checkCode(Code cmd, std::string class_name);
     void proccessingLoop();
@@ -124,8 +79,8 @@ class RootParser:
 public:
     RootParser();
     virtual void       createPackage() override;
-    TransactionPackPtr getPackage();
-    void               startProcessing();
+    virtual TransactionPackPtr getPackage() override;
+    virtual void               startProcessing() override;
 };
 
 class GlobalStartParser:
@@ -225,5 +180,19 @@ protected:
     virtual bool parseCommand(AcceptedTypes result) override;
 };
 
+enum class ParserImplementations
+{
+    FirstImplementation
+};
+
+using ReadyParsers  = global::StaticGenerator< ParserImplementations , QSharedPointer<RootParser>>;
+
 }
 
+namespace global
+{
+
+template<>
+void backend::ReadyParsers::initValues();
+
+}

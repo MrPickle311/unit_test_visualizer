@@ -27,7 +27,6 @@ Common.FramelessWindow {
     }
 
     Grid {
-        objectName: "xd3"
         id: mainMenuGrid
         property int buttonSize: 64
         anchors.left: parent.left

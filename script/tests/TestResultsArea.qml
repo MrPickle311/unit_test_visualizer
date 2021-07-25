@@ -4,30 +4,18 @@ import "../common" as Common
 
 import Qt.singletons.bridge 1.0
 
+import "testWindowLogic.js" as Logic
+
 Common.FrameRectangle {
 
     Component.onCompleted: {
-        TestsBridge.sendTestCase.connect(appendTestCase)
-        TestsBridge.sendUnitTest.connect(appendUnitTest)
+        logic = new Logic.TestsLogic(testCasesModel)
+        TestsBridge.sendTestCase.connect(logic.appendTestCase)
+        TestsBridge.sendUnitTest.connect(logic.appendUnitTest)
+
     }
 
-    function appendTestCase(test_case_name){
-        testCasesModel.append({"testCaseName" : test_case_name , "collapsed" : true ,"unitTests" : []  })
-    }
-
-    function appendUnitTest(test_case_nmbr , unit_test , is_range_test){
-        testCasesModel.get(test_case_nmbr).unitTests.append({"expressionName": unit_test.name ,
-                                                             "typeDescriptor": unit_test.typeDescriptor ,
-                                                             "currentValue"  : unit_test.currentValue ,
-
-                                                             "expectedValue" : is_range_test ?
-                                                                                   "A value between " + unit_test.lowerValue +
-                                                                                   " and " + unit_test.upperValue
-                                                                                 :
-                                                                                   unit_test.expectetedValue ,
-
-                                                             "testResult"    : unit_test.testResult} );
-    }
+    property var logic: undefined
 
     ListModel {
         id: testCasesModel
@@ -124,5 +112,6 @@ Common.FrameRectangle {
                 delegate: categoryDelegate
             }
     }
-     z: 2
+
+    z: 2
 }

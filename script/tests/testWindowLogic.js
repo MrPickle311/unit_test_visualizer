@@ -5,22 +5,15 @@ function createTestsWindow()
     return Global.createWindow("qrc:/script/tests/TestWindow.qml")
 }
 
-class TestsLogic{
-    constructor (list_model){
-        console.log(list_model)
-        this.model = list_model
-        console.log(this.model)
-        this.model.append({"testCaseName" : "xd" , "collapsed" : true ,"unitTests" : []  })
-        this.nmbr = 5
-    }
+function TestsLogic(list_model){
+    this.model = list_model;
 
-    appendTestCase(test_case_name){
+    this.appendTestCase = function (test_case_name){
         console.log(this.model)
-        console.log(this.nmbr)
         this.model.append({"testCaseName" : test_case_name , "collapsed" : true ,"unitTests" : []  })
     }
 
-    appendUnitTest(test_case_nmbr , unit_test , is_range_test){
+    this.appendUnitTest = function (test_case_nmbr , unit_test , is_range_test){
         console.log(this.model)
         this.model.get(test_case_nmbr).unitTests.append({"expressionName": unit_test.name ,
                                                               "typeDescriptor": unit_test.typeDescriptor ,
@@ -34,4 +27,16 @@ class TestsLogic{
 
                                                               "testResult"    : unit_test.testResult} );
     }
-};
+}
+
+//class TestsLogic{
+//    constructor (list_model){
+//        console.log(list_model)
+//        this.model = list_model
+//        console.log(this.model)
+//        this.model.append({"testCaseName" : "xd" , "collapsed" : true ,"unitTests" : []  })
+//        this.nmbr = 5
+//    }
+//
+//
+//};

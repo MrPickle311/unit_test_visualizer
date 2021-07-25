@@ -18,11 +18,10 @@ void TypesSizes::initValues();
 
 namespace backend
 {
-///idea
 
 //aliases
 
-//using interface::AcceptedTypes;
+using interface::AcceptedTypes;
 
 using UnitTestPackPtr    = QSharedPointer<UnitTestDataPackage>;
 using TestCasePackPtr    = QSharedPointer<TestCaseDataPackage>;

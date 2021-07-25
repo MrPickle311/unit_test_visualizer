@@ -8,11 +8,6 @@
 #include "ConvertedDataTypes.hpp"
 #include <variant>
 
-using AcceptedTypes = std::variant< QSharedPointer<backend::UnitTestDataPackage> ,
-                                    QSharedPointer<backend::TestCaseDataPackage> ,
-                                    QSharedPointer<backend::TransactionDataPackage> ,
-                                    std::monostate >;
-
 namespace interface
 {
 
@@ -46,6 +41,11 @@ signals:
    void bytesArrived(size_t count);
    void bytesExtracted(size_t count);
 };
+
+using AcceptedTypes = std::variant< QSharedPointer<backend::UnitTestDataPackage> ,
+                                    QSharedPointer<backend::TestCaseDataPackage> ,
+                                    QSharedPointer<backend::TransactionDataPackage> ,
+                                    std::monostate >;
 
 class ParserComponent
 {

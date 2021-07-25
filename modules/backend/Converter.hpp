@@ -99,17 +99,18 @@ public:
     TestCase getTestCase(const QSharedPointer<TestCaseDataPackage>& test_case);
 };
 
-
 class Converter:
         public interface::Converter
 {
 private:
+    backend::TransactionDataPackage const * pack_;//cannot change the content
     Transaction transaction_;
     TestCaseConverter case_converter_;
 public:
-    Converter(const TransactionDataPackage& pack);
+    Converter();
     virtual Transaction getConvertedTransaction() override;
     virtual void reset() override;
+    virtual void setPack(const TransactionDataPackage* pack) override;
 };
 
 }

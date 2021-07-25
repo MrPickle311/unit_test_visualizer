@@ -7,7 +7,6 @@
 #include <QQmlApplicationEngine>
 #include "../backend/PortSettings.hpp"
 #include "../backend/ConvertedDataTypes.hpp"
-#include "../backend/PortScanner.hpp"
 
 namespace bridge
 {
@@ -50,8 +49,12 @@ private:
         qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"Scanner", &scanner_);
     }
 public:
-    Program()://injection via constructor
-        scanner_{QSharedPointer<backend::PortScanner>::create()}
+    Program() = delete;
+    Program(QSharedPointer<interface::PortScanner> scanner,
+            QSharedPointer<interface::Converter> converter ,
+            QSharedPointer<interface::ParserComponent>  parser):
+        scanner_{scanner},
+        tests_{converter , parser}
     {
         registerTypes();
         makeConnections();

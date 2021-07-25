@@ -8,7 +8,6 @@
 #include <QSerialPortInfo>
 #include <QSharedPointer>
 #include "../backend/PortSettings.hpp"
-#include "../backend/ConvertedDataTypes.hpp"
 #include "../backend/Interfaces.hpp"
 
 namespace bridge

@@ -145,15 +145,14 @@ TestCase TestCaseConverter::getTestCase(const QSharedPointer<TestCaseDataPackage
     return result;
 }
 
-Converter::Converter(const TransactionDataPackage& pack):
-    interface::Converter{pack},
+Converter::Converter():
     transaction_{},
     case_converter_{}
 {}
 
 Transaction Converter::getConvertedTransaction()
-{
-    for(auto&& test_case : pack_.getCases())
+{   
+    for(auto&& test_case : pack_->getCases())
         transaction_.cases_.append(case_converter_.getTestCase(test_case));
 
     return transaction_;
@@ -162,6 +161,11 @@ Transaction Converter::getConvertedTransaction()
 void Converter::reset()
 {
     transaction_.cases_.clear();
+}
+
+void Converter::setPack(const TransactionDataPackage* pack)
+{
+    pack_ = pack;
 }
 
 }

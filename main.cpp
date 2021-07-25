@@ -2,11 +2,9 @@
 #include <QQmlApplicationEngine>
 #include <modules/backend/PortOperator.hpp>
 #include <modules/bridge/Bridge.hpp>
-#include <modules/bridge/SettingsBridge.hpp>
-#include <modules/bridge/TerminalBridge.hpp>
-#include <QQuickWindow>
+#include <modules/backend/PortScanner.hpp>
 #include <modules/backend/Converter.hpp>
-#include <modules/bridge/TestsBridge.hpp>
+#include <modules/backend/Parser.hpp>
 
 #ifdef MAIN_PROGRAM
 
@@ -25,7 +23,11 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    MainProgram program;
+    MainProgram program(
+                QSharedPointer<backend::PortScanner>::create(),
+                QSharedPointer<backend::Converter>::create()  ,
+                backend::ReadyParsers::getValue(backend::ParserImplementations::FirstImplementation)
+    );
 
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/script/main.qml"));

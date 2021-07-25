@@ -34,6 +34,7 @@ public slots:
 signals:
     void sendTestCase(QString test_case_name);
     void sendUnitTest(int test_case_nmbr ,  backend::UnitTest unit_test, bool is_range_test);
+    void errorOccurred(const std::logic_error& error);
 };
 
 template<typename BufferType,
@@ -77,16 +78,30 @@ private:
     {
         QObject::disconnect(*parser_connection_);
         qDebug() << "Invoked!";
-        parser_->startProcessing();
-        data_result_ = *parser_->getPackage();
-        result_ = converter_->getConvertedTransaction();
-        operator_.closePort();
-        sendDataToFrontend();
+        try
+        {
+            parser_->startProcessing();
+            data_result_ = *parser_->getPackage();
+            result_ = converter_->getConvertedTransaction();
+            operator_.closePort();
+            sendDataToFrontend();
+        }
+        catch (const std::logic_error& error)
+        {
+            clearAll();
+            emit errorOccurred(error);
+        }
     }
     void makeConnections()
     {
         *parser_connection_ = QObject::connect(&input_buffer_ ,&interface::ByteBuffer::bytesArrived,
                                                this , &Tests::process  );
+    }
+    void clearAll()
+    {
+        data_result_.clear();
+        result_.cases_.clear();
+        converter_->reset();
     }
 public:
     virtual void applySettings(QSerialPortInfo port, backend::PortFlowSettings settings) override
@@ -103,21 +118,29 @@ public:
     }
     virtual void run() override
     {
-        data_result_.clear();
-        result_.cases_.clear();
-        converter_->reset();
+        clearAll();
 
-        if(result_.cases_.isEmpty())
-            qDebug() << "Is empty!";
+        //if(result_.cases_.isEmpty())
+        //    qDebug() << "Is empty!";
 
-        makeConnections();
+        try
+        {
 
         if(operator_.openPort())
         {
+            makeConnections();
             qDebug() << "Port has been opened successfully";
             output_buffer_.appendByte(51);
         }
-        else qDebug() << operator_.getError();
+        else throw std::logic_error{" Error occured at opening port : " + operator_.getError().toStdString() };
+            //qDebug() << operator_.getError();
+
+        }
+        catch(const std::logic_error& error)
+        {
+            emit errorOccurred(error);
+            //emit is open + info
+        }
 
     }
     Tests(QSharedPointer<interface::Converter> converter,

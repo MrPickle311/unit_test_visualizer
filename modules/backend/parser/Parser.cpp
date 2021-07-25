@@ -53,7 +53,7 @@ interface::ParserComponent* ParserComponent::getParent()
 }
 
 void ParserComponent::setParent(interface::ParserComponent* newParent)
-{
+{   
     this->parent_ = newParent;
 }
 
@@ -67,8 +67,6 @@ bool ParserComponent::isComposite() const
 void ParserComponent::setBuffer(interface::ByteBuffer* newBuffer)
 {
     buffer_ = newBuffer;
-
-    //for(auto&& child : )
 }
 
 void ParserComponent::createPackage()
@@ -96,6 +94,8 @@ void ComplexParser::addChild(uint8_t cmd, QSharedPointer<interface::ParserCompon
 
 void ComplexParser::setBuffer(interface::ByteBuffer* newBuffer)
 {
+    //throwIf(newBuffer == nullptr , "ComplexParser::setBuffer : Passed a nullptr as buffer!");
+
     buffer_ = newBuffer;
 
     for(auto&& child : children_)

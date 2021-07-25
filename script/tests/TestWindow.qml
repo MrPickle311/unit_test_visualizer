@@ -39,6 +39,12 @@ Common.FramelessWindow{
         }
     }
 
+    function logError(error){
+        console.log(error)
+    }
+
+    Component.onCompleted: ErrorReporter.propagateError.connect(logError)
+
     Common.SaveButton{
         id: saveButton
         anchors.verticalCenter: refreshButton.verticalCenter

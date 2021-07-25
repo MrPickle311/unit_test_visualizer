@@ -1,6 +1,7 @@
 #include "../PortOperator.hpp"
 #include <QDebug>
 #include <QTimer>
+#include <QMetaEnum>
 
 namespace backend
 {
@@ -92,6 +93,12 @@ void ByteBuffer::waitForData()
     //qDebug() << "Exit waiting...";
 }
 
+void PortStateOperator::makeConnections()
+{
+    connect(&current_port_ , &QSerialPort::errorOccurred ,//move up
+            this , &PortStateOperator::deviceErrorService);
+}
+
 PortStateOperator::PortStateOperator(QObject* parent):
     QObject{parent},
     current_port_{this},
@@ -132,7 +139,7 @@ void PortStateOperator::closePort()
 
 bool PortStateOperator::openPort()
 {
-    throwIf(current_port_.isOpen(), {"This port("  +
+    throwIf(current_port_.isOpen(), {"This port( "  +
             current_port_.portName().toStdString() + " ) is arleady open!"});
 
     return current_port_.open(QSerialPort::ReadWrite);
@@ -143,9 +150,17 @@ bool PortStateOperator::isOpen() const
     return current_port_.isOpen();
 }
 
-QSerialPort::SerialPortError PortStateOperator::getError() const
+QString PortStateOperator::getError() const
 {
-    return current_port_.error();
+    return QMetaEnum::fromType<QSerialPort::SerialPortError>().valueToKey(current_port_.error());
+    //return QString{current_port_.error()};
+}
+
+void PortStateOperator::deviceErrorService(QSerialPort::SerialPortError error)
+{
+    QString error_msg{QMetaEnum::fromType<QSerialPort::SerialPortError>().valueToKey(error)};
+
+    emit deviceErrorOccurred(error_msg);
 }
 
 ///

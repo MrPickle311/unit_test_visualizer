@@ -40,6 +40,8 @@ class PortStateOperator :
 protected:
     QSerialPort     current_port_;
     QSerialPortInfo current_port_info_;
+private:
+    void makeConnections();
 public:
     PortStateOperator(QObject* parent = nullptr);
     PortStateOperator(PortFlowSettings settings,
@@ -52,7 +54,11 @@ public slots:
     void closePort();
     bool openPort();
     bool isOpen() const;
-    QSerialPort::SerialPortError getError() const;
+    QString getError() const;
+protected slots:
+    void deviceErrorService(QSerialPort::SerialPortError error);
+signals:
+    void deviceErrorOccurred(QString what);
 };
 
 class PortFlowOperator:

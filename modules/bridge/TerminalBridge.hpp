@@ -26,6 +26,7 @@ public slots:
 signals:
     void newPortIsSet(QString port_name);
     void dataArrived(QString port_name ,  QByteArray data);
+    void errorOccurred(std::logic_error error);
 };
 
 //this template accepts implementations
@@ -66,8 +67,13 @@ private:
         [this , port_name]([[maybe_unused]] size_t count)
         {
             emit dataArrived(port_name , input_buffers_[port_name]->getAllBytes() );
-        }
-        );
+        });
+
+        QObject::connect(set_ports_[port_name].get() , &PortOperatorType::deviceErrorOccurred ,
+        [this , port_name](QString what)
+        {
+            emit errorOccurred(std::logic_error{ (port_name + " " + what ).toStdString() });
+        });
 
         qDebug() << "New port is set!";
         emit newPortIsSet(port_name);
@@ -91,11 +97,21 @@ public :
     }
     virtual void openPort(QString port_name) override
     {
-        qDebug() << port_name;
-        if(set_ports_[port_name]->openPort())
-            qDebug() << port_name + " port opened!";
-        else qDebug() << set_ports_[port_name]->getError();
-        qDebug() << set_ports_.size();
+        if(not set_ports_.contains(port_name))
+            return;
+
+        try
+        {
+            if(set_ports_[port_name]->openPort())
+                qDebug() << port_name  << " has been opened successfully";
+            else throw std::logic_error{" Error occured at opening port : " +
+                                    set_ports_[port_name]->getError().toStdString() };
+        }
+        catch(const std::logic_error& error)
+        {
+            qDebug() << "exc";
+            emit errorOccurred(error);
+        }
     }
     virtual void closeAllPorts() override
     {

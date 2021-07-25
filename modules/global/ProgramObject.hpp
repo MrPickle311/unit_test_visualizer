@@ -19,10 +19,4 @@ public:
 
 };
 
-class ConnectedObject_interface
-{
-protected:
-    virtual void makeConnections() = 0;
-};
-
 }

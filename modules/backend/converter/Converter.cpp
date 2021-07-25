@@ -87,15 +87,15 @@ void UnitTestConverter::convertValues(UnitTest& test, const QSharedPointer<UnitT
 
     if(pack->getExpectedValue().isEmpty())
     {
-        throwIf(pack->getLowerValue().isEmpty() , "Error: lower value not specified!");
-        throwIf(pack->getUpperValue().isEmpty() , "Error: upper value not specified!");
+        throwIf(pack->getLowerValue().isEmpty() , "Converting error: lower value not specified!");
+        throwIf(pack->getUpperValue().isEmpty() , "Converting error: upper value not specified!");
 
         test.lower_value_ = value_conveter->getValue(pack->getLowerValue());
         test.upper_value_ = value_conveter->getValue(pack->getUpperValue());
     }
     else
     {
-        throwIf(pack->getExpectedValue().isEmpty() , "Error: expected value not specified!");
+        throwIf(pack->getExpectedValue().isEmpty() , "Converting error: expected value not specified!");
         test.expecteted_value_ = value_conveter->getValue(pack->getExpectedValue());
     }
 }
@@ -104,7 +104,7 @@ QString UnitTestConverter::getTestResult(const QSharedPointer<UnitTestDataPackag
 {
     uint temp{static_cast<uint>(test->getResult().at(0))};
 
-    throwIf(temp > 1 , "Test result error : test_result > 1!");
+    throwIf(temp > 1 , "Converting error : test_result > 1!");
 
     if(temp == 1)
         return "Passed";
@@ -116,9 +116,9 @@ UnitTest UnitTestConverter::getUnitTest(const QSharedPointer<UnitTestDataPackage
 {
     UnitTest result;
 
-    throwIf(test->getName().isEmpty() , "Error: expression text is empty!");
-    throwIf(test->getResult().isEmpty() , "Error: test result not specified!");
-    throwIf(test->getCurrentValue().isEmpty() , "Error: current value not specified!");
+    throwIf(test->getName().isEmpty() , "Converting error: expression text is empty!");
+    throwIf(test->getResult().isEmpty() , "Converting error: test result not specified!");
+    throwIf(test->getCurrentValue().isEmpty() , "Converting error: current value not specified!");
 
     result.name_ = test->getName().data();
     result.test_result_ = getTestResult(test);

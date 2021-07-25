@@ -3,6 +3,7 @@
 #include "SettingsBridge.hpp"
 #include "TerminalBridge.hpp"
 #include "TestsBridge.hpp"
+#include "ErrorReporter.hpp"
 #include <QDebug>
 #include <QQmlApplicationEngine>
 #include "../backend/PortSettings.hpp"
@@ -23,6 +24,7 @@ private:
     TestsSettings    tests_settings_;
     TerminalType     terminal_;
     TestsType        tests_;
+    ErrorReporter    reporter_;
 private:
     void makeConnections()
     {
@@ -37,6 +39,9 @@ private:
 
         QObject::connect(&tests_settings_, &TestsSettings::settingsApplied ,
                          &tests_, &TestsBody::applySettings );
+
+        QObject::connect(&tests_ , &TestsBody::errorOccurred , &reporter_ , &ErrorReporter::errorService);
+        QObject::connect(&terminal_ , &TerminalBase::errorOccurred , &reporter_ , &ErrorReporter::errorService);
     }
     void registerTypes()
     {
@@ -47,6 +52,7 @@ private:
         qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"TerminalSettingsBridge",&terminal_settings_);
         qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"TestsSettingsBridge",&tests_settings_);
         qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"Scanner", &scanner_);
+        qmlRegisterSingletonInstance("Qt.singletons.bridge",1,0,"ErrorReporter", &reporter_);
     }
 public:
     Program() = delete;

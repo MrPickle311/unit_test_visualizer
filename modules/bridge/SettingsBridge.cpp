@@ -4,9 +4,7 @@ namespace bridge
 {
 
 Settings::Settings(QObject *parent) : QObject(parent)
-{
-
-}
+{}
 
 const QSerialPort::Parity& Settings::getParity() const
 {
@@ -50,9 +48,7 @@ void Settings::setBaudRate(const QSerialPort::BaudRate& newBaudRate)
 Scanner::Scanner(QSharedPointer<interface::PortScanner> scanner_impl, QObject* parent):
     QObject{parent},
     scanner_impl_{scanner_impl}
-{
-    //THROW IF scanner_impl == NULL
-}
+{}
 
 void Scanner::scanPorts()
 {

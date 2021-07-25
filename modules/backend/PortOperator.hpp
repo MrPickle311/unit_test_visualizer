@@ -24,11 +24,11 @@ public:
     virtual ~ByteBuffer(){}
     void       appendBytes(const QByteArray& array);
     void       appendByte(char byte);
-    QByteArray getAllBytes() noexcept;
+    QByteArray getAllBytes()                        noexcept;
     QByteArray getBytes(size_t count);
     char       getByte();
-    bool       isEmpty() const;
-    size_t     size()    const;
+    bool       isEmpty()                            const;
+    size_t     size()                               const;
 };
 
 //one operator per one port
@@ -49,12 +49,12 @@ public:
                       QObject* parent = nullptr);
     virtual ~PortStateOperator(){}
 public slots:
-    void changePort(QSerialPortInfo port);
-    void changeSettings(PortFlowSettings settings);//only copy ,so nothing unexpected will happen
-    void closePort();
-    bool openPort();
-    bool isOpen() const;
-    QString getError() const;
+    void    changePort(QSerialPortInfo port);
+    void    changeSettings(PortFlowSettings settings);//only copy ,so nothing unexpected will happen
+    void    closePort();
+    bool    openPort();
+    bool    isOpen()                                    const;
+    QString getError()                                  const;
 protected slots:
     void deviceErrorService(QSerialPort::SerialPortError error);
 signals:
@@ -74,7 +74,7 @@ public:
                       QObject* parent = nullptr);
     virtual ~PortFlowOperator(){}
 public:
-    void sendBytesToPort(const QByteArray& array);
+    void       sendBytesToPort(const QByteArray& array);
     QByteArray getAllBytesFromPort();
 signals:
     void dataArrived();//external signal ,for user , data <- serial

@@ -1,5 +1,4 @@
 #include "../PortOperator.hpp"
-#include <QDebug>
 #include <QTimer>
 #include <QMetaEnum>
 
@@ -14,16 +13,12 @@ void ByteBuffer::appendBytes(const QByteArray& array)
     received_bytes_.append(array);
     lock.unlock();
 
-    //qDebug() << "appended : " << array;
-
     emit bytesArrived(array.size());
 }
 
 void ByteBuffer::appendByte(char byte)
 {
     received_bytes_.append(byte);
-
-    //qDebug() << "appended : " << byte;
 
     emit bytesArrived(1);//one byte
 }
@@ -40,8 +35,6 @@ QByteArray ByteBuffer::splitByteArray(size_t count)
     received_bytes_ = received_bytes_.right( received_bytes_.size() - count );
 
     lock.unlock();
-
-    //qDebug() << "byte dropped : " << temp;
 
     emit bytesExtracted(count );
     return temp;
@@ -86,16 +79,14 @@ size_t ByteBuffer::size() const
 
 void ByteBuffer::waitForData()
 {
-    qDebug() << "Start waiting...";
     //i will have to correct it by including different baud rates
     QTimer::singleShot(TEN_MSEC , &loop_ , &QEventLoop::quit);
     loop_.exec();
-    //qDebug() << "Exit waiting...";
 }
 
 void PortStateOperator::makeConnections()
 {
-    connect(&current_port_ , &QSerialPort::errorOccurred ,//move up
+    connect(&current_port_ , &QSerialPort::errorOccurred ,
             this , &PortStateOperator::deviceErrorService);
 }
 
@@ -153,7 +144,6 @@ bool PortStateOperator::isOpen() const
 QString PortStateOperator::getError() const
 {
     return QMetaEnum::fromType<QSerialPort::SerialPortError>().valueToKey(current_port_.error());
-    //return QString{current_port_.error()};
 }
 
 void PortStateOperator::deviceErrorService(QSerialPort::SerialPortError error)
@@ -216,16 +206,12 @@ void BufferedPortFlowOperator::sendDataFromPortToBuffer()
 {
     checkBuffer(input_byte_buffer_);
 
-   // qDebug() << "to input sent";
-
     input_byte_buffer_->appendBytes(std::move(current_port_.readAll()));
     emit dataArrived();
 }
 
 void BufferedPortFlowOperator::sendDataFromBufferToPort()
 {
-   // qDebug() << "to output sent!";
-
     checkBuffer(output_byte_buffer_);
 
     if(current_port_.isWritable())

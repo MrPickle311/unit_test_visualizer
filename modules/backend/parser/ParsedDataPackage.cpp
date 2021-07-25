@@ -187,7 +187,7 @@ bool TransactionDataPackage::operator==(const TransactionDataPackage& other)
         return false;
 
     for(int i{0} ; i < cases_.size() ; ++i)
-        if(*this->cases_[i] != *other.cases_[i])
+        if( *this->cases_[i] != *other.cases_[i] )
             return false;
 
     return true;

@@ -2,7 +2,6 @@
 
 #include <QObject>
 #include <utility>
-#include <QDebug>
 #include <QString>
 #include <QSerialPort>
 #include <QSerialPortInfo>
@@ -18,11 +17,11 @@ class TerminalBase
 {
     Q_OBJECT;
 public slots:
-    virtual void applySettings(QSerialPortInfo port , backend::PortFlowSettings settings) = 0;
-    virtual void openPort(QString port_name) = 0;
-    virtual void closeAllPorts() = 0;
-    virtual QStringList restorePorts() const = 0;
-    virtual void sendData(QString port_name , QByteArray data) = 0;
+    virtual void        applySettings(QSerialPortInfo port , backend::PortFlowSettings settings)      = 0;
+    virtual void        openPort(QString port_name)                                                   = 0;
+    virtual void        closeAllPorts()                                                               = 0;
+    virtual QStringList restorePorts()                                                          const = 0;
+    virtual void        sendData(QString port_name , QByteArray data)                                 = 0;
 signals:
     void newPortIsSet(QString port_name);
     void dataArrived(QString port_name ,  QByteArray data);
@@ -42,8 +41,6 @@ private:
         if(set_ports_[port_name]->isOpen())
             set_ports_[port_name]->closePort();
         set_ports_[port_name]->changeSettings(settings);
-
-        qDebug() << "Settings changed!";
     }
     void setupNewPort( const QSerialPortInfo& port , const backend::PortFlowSettings& settings)
     {
@@ -75,7 +72,6 @@ private:
             emit errorOccurred(std::logic_error{ (port_name + " " + what ).toStdString() });
         });
 
-        qDebug() << "New port is set!";
         emit newPortIsSet(port_name);
     }
 private:
@@ -86,14 +82,11 @@ private:
 public :
     virtual void applySettings(QSerialPortInfo port, backend::PortFlowSettings settings) override
     {
-        qDebug() << " QSerialPortInfo name : " << port.portName();
-
         QString port_name{port.portName()};
 
         if(set_ports_.contains(port_name))
             changePortSettings(port_name , settings);
         else setupNewPort(port, settings);
-
     }
     virtual void openPort(QString port_name) override
     {
@@ -102,14 +95,12 @@ public :
 
         try
         {
-            if(set_ports_[port_name]->openPort())
-                qDebug() << port_name  << " has been opened successfully";
-            else throw std::logic_error{" Error occured at opening port : " +
-                                    set_ports_[port_name]->getError().toStdString() };
+            if(not set_ports_[port_name]->openPort())
+                throw std::logic_error{" Error occured at opening port : " +
+                                       set_ports_[port_name]->getError().toStdString() };
         }
         catch(const std::logic_error& error)
         {
-            qDebug() << "exc";
             emit errorOccurred(error);
         }
     }
@@ -117,8 +108,6 @@ public :
     {
         for(auto&& port : set_ports_)
             port->closePort();
-
-        qDebug() << "All ports closed!";
     }
     virtual QStringList restorePorts() const override
     {

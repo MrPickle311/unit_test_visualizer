@@ -23,7 +23,7 @@ public:
     Scanner(QSharedPointer<interface::PortScanner> scanner_impl , QObject* parent = nullptr);
 
 public slots:
-    void scanPorts();//invoked from QML
+    void            scanPorts();//invoked from QML
     QSerialPortInfo getPortByName(QString port_name);
 
 signals:
@@ -37,17 +37,16 @@ class Settings:
 {
     Q_OBJECT
 
-    Q_PROPERTY(QSerialPort::Parity parity READ getParity WRITE setParity NOTIFY parityChanged);
-    Q_PROPERTY(QSerialPort::StopBits stopBits READ getStopBits WRITE setStopBits NOTIFY stopBitsChanged);
-    Q_PROPERTY(QSerialPort::BaudRate baudRate READ getBaudRate WRITE setBaudRate NOTIFY baudRateChanged);
-    Q_PROPERTY(QStringList portNames READ getPortNames WRITE setPortNames NOTIFY portNamesChanged);
+    Q_PROPERTY(QSerialPort::Parity   parity    READ getParity    WRITE setParity    NOTIFY parityChanged);
+    Q_PROPERTY(QSerialPort::StopBits stopBits  READ getStopBits  WRITE setStopBits  NOTIFY stopBitsChanged);
+    Q_PROPERTY(QSerialPort::BaudRate baudRate  READ getBaudRate  WRITE setBaudRate  NOTIFY baudRateChanged);
+    Q_PROPERTY(QStringList           portNames READ getPortNames WRITE setPortNames NOTIFY portNamesChanged);
 
 protected:
-    QSerialPort::Parity parity;
+    QSerialPort::Parity   parity;
     QSerialPort::StopBits stopBits;
     QSerialPort::BaudRate baudRate;
-
-    QStringList portNames;
+    QStringList           portNames;
 protected:
     virtual backend::PortFlowSettings prepareSettings() const = 0;
 
@@ -55,16 +54,14 @@ public :
     explicit Settings(QObject *parent = nullptr);
 
 public slots:
-    const QSerialPort::Parity& getParity() const;
+    const QSerialPort::Parity&   getParity()    const;
+    const QSerialPort::StopBits& getStopBits()  const;
+    const QSerialPort::BaudRate& getBaudRate()  const;
+    const QStringList&           getPortNames() const;
+
     void setParity(const QSerialPort::Parity& newParity);
-
-    const QSerialPort::StopBits& getStopBits() const;
     void setStopBits(const QSerialPort::StopBits& newStopBits);
-
-    const QSerialPort::BaudRate& getBaudRate() const;
     void setBaudRate(const QSerialPort::BaudRate& newBaudRate);
-
-    const QStringList& getPortNames() const;
     void setPortNames(const QStringList& newPortNames);
 
     void sendSettings(QString port_name);
@@ -95,6 +92,7 @@ private:
 
 public slots:
     const QSerialPort::DataBits& getDataBits() const;
+
     void setDataBits(const QSerialPort::DataBits& newDataBits);
 
 signals :

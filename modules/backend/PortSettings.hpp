@@ -27,21 +27,21 @@ public:
                      const QSerialPort::FlowControl& flow_control,
                      const QSerialPort::Parity& parity,
                      const QSerialPort::StopBits& stop_bits);
-    PortFlowSettings(const PortFlowSettings& other) = default;
-    PortFlowSettings() = default;
-public:
-    PortFlowSettings cloneSettings() const;
 
-    const QSerialPort::BaudRate& baudRate() const;
-    const QSerialPort::DataBits& dataBits() const;
-    const QSerialPort::FlowControl& flowControl() const;
-    const QSerialPort::Parity& parity() const;
-    const QSerialPort::StopBits& stopBits() const;
-    void setBaudRate(const QSerialPort::BaudRate& newBaud_rate);
-    void setDataBits(const QSerialPort::DataBits& newData_bits);
-    void setFlowControl(const QSerialPort::FlowControl& newFlow_control);
-    void setParity(const QSerialPort::Parity& newParity);
-    void setStopBits(const QSerialPort::StopBits& newStop_bits);
+    PortFlowSettings(const PortFlowSettings& other) = default;
+    PortFlowSettings()                              = default;
+public:
+    PortFlowSettings                cloneSettings()                                                 const;
+    const QSerialPort::BaudRate&    baudRate()                                                      const;
+    const QSerialPort::DataBits&    dataBits()                                                      const;
+    const QSerialPort::FlowControl& flowControl()                                                   const;
+    const QSerialPort::Parity&      parity()                                                        const;
+    const QSerialPort::StopBits&    stopBits()                                                      const;
+    void                            setBaudRate(const QSerialPort::BaudRate& newBaud_rate);
+    void                            setDataBits(const QSerialPort::DataBits& newData_bits);
+    void                            setFlowControl(const QSerialPort::FlowControl& newFlow_control);
+    void                            setParity(const QSerialPort::Parity& newParity);
+    void                            setStopBits(const QSerialPort::StopBits& newStop_bits);
 };
 
 enum class StandardSetting : size_t

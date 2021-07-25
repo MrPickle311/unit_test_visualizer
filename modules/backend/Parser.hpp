@@ -37,13 +37,13 @@ protected:
     AcceptedTypes               package_;
     static TypeDescriptor       current_type_;
 public:
-    virtual interface::ParserComponent* getParent() override;
-    virtual void setParent(interface::ParserComponent* newParent) override;
-    virtual void addChild(uint8_t cmd , QSharedPointer<interface::ParserComponent> child) override;
-    virtual bool isComposite() const override;
-    virtual void setBuffer(interface::ByteBuffer* newBuffer) override;
+    virtual interface::ParserComponent* getParent()                                                              override;
+    virtual void                        setParent(interface::ParserComponent* newParent)                         override;
+    virtual void                        addChild(uint8_t cmd , QSharedPointer<interface::ParserComponent> child) override;
+    virtual bool                        isComposite()                                                            const override;
+    virtual void                        setBuffer(interface::ByteBuffer* newBuffer)                              override;
 protected:
-    virtual void createPackage() override;
+    virtual void                        createPackage()                                                          override;
 };
 
 class ComplexParser:
@@ -55,13 +55,13 @@ protected:
     Code                                         commands_count_;
 public:
     ComplexParser(Code commands_count);
-    virtual bool isComposite() const override;
+    virtual bool isComposite()                                                            const override;
     virtual void addChild(uint8_t cmd , QSharedPointer<interface::ParserComponent> child) override;
-    virtual void setBuffer(interface::ByteBuffer* newBuffer) override;
+    virtual void setBuffer(interface::ByteBuffer* newBuffer)                              override;
 protected:
-    void checkCode(Code cmd, std::string class_name);
-    void proccessingLoop();
-    virtual bool parseCommand(AcceptedTypes result) override;
+    void         checkCode(Code cmd, std::string class_name);
+    void         proccessingLoop();
+    virtual bool parseCommand(AcceptedTypes result)                                       override;
     virtual void specialPreOperations(AcceptedTypes result);
     virtual void specialPostOperations(AcceptedTypes result);//operations specific to parser
 };
@@ -73,8 +73,8 @@ class RootParser:
 {
 public:
     RootParser();
-    virtual void       createPackage() override;
-    virtual TransactionPackPtr getPackage() override;
+    virtual void               createPackage()   override;
+    virtual TransactionPackPtr getPackage()      override;
     virtual void               startProcessing() override;
 };
 
@@ -100,7 +100,7 @@ class TestCaseParser:
 public:
     TestCaseParser();
 protected:
-    virtual void createPackage() override;
+    virtual void createPackage()                            override;
     virtual void specialPreOperations(AcceptedTypes result) override;
 };
 
@@ -131,9 +131,9 @@ class ValueParser:
         public ParserComponent
 {
 protected:
-    virtual bool parseCommand(AcceptedTypes result) override;
+    virtual bool parseCommand(AcceptedTypes result)                 override;
     virtual void redirectValueBytes(const QByteArray& value_result,
-                                    UnitTestPackPtr& unit_test ) = 0;
+                                    UnitTestPackPtr& unit_test )    = 0;
 };
 
 class CurrentValueParser:
@@ -141,7 +141,7 @@ class CurrentValueParser:
 {
 public:
     virtual void redirectValueBytes(const QByteArray& value_result,
-                                    UnitTestPackPtr& unit_test) override;
+                                    UnitTestPackPtr& unit_test)     override;
 };
 
 class ExpectedValueParser:
@@ -149,7 +149,7 @@ class ExpectedValueParser:
 {
 protected:
     virtual void redirectValueBytes(const QByteArray& value_result,
-                                    UnitTestPackPtr& unit_test) override;
+                                    UnitTestPackPtr& unit_test)     override;
 };
 
 class LowerValueParser:
@@ -157,7 +157,7 @@ class LowerValueParser:
 {
 protected:
     virtual void redirectValueBytes(const QByteArray& value_result,
-                                    UnitTestPackPtr& unit_test) override;
+                                    UnitTestPackPtr& unit_test)     override;
 };
 
 class UpperValueParser:
@@ -165,7 +165,7 @@ class UpperValueParser:
 {
 protected:
     virtual void redirectValueBytes(const QByteArray& value_result,
-                                    UnitTestPackPtr& unit_test) override;
+                                    UnitTestPackPtr& unit_test)     override;
 };
 
 class TestResultParser:

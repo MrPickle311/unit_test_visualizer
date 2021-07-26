@@ -9,7 +9,8 @@ Common.FramelessWindow{
     id: testWindow
 
     height: 400
-    width: 400
+    minimumWidth: 500
+    isSizeConst: true
 
     TestResultsArea{
         id: testResultsArea
@@ -45,13 +46,14 @@ Common.FramelessWindow{
 
     Component.onCompleted: ErrorReporter.propagateError.connect(logError)
 
-    Common.SaveButton{
-        id: saveButton
-        anchors.verticalCenter: refreshButton.verticalCenter
-        anchors.left: refreshButton.right
-        anchors.leftMargin: 10
-        z: 2
-
-    }
+    //IN NEXT VERSION
+    //Common.SaveButton{
+    //    id: saveButton
+    //    anchors.verticalCenter: refreshButton.verticalCenter
+    //    anchors.left: refreshButton.right
+    //    anchors.leftMargin: 10
+    //    z: 2
+    //
+    //}
 
 }

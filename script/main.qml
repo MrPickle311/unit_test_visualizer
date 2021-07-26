@@ -26,6 +26,9 @@ Common.FramelessWindow {
         isTerminalWindowCreated = false
     }
 
+    //ERROR SERVICE!!!
+    //Component.onCompleted: ErrorReporter.propagateError.connect(logError)
+
     Grid {
         id: mainMenuGrid
         property int buttonSize: 64

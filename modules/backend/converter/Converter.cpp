@@ -1,25 +1,57 @@
 #include "../Converter.hpp"
 #include <bitset>
 #include <QDataStream>
+#include <QDebug>
+#include <limits>
+#include <stdint.h>
 
 namespace backend
 {
 
 #define BITS_IN_BYTE 8
 
-QString SignedNumericValueConverter::getValue(const QByteArray& bytes) const
+QString Int8NumericValueConverter::getValue(const QByteArray& bytes) const
 {
-    uint64_t temp_result{0};
+    int8_t result = int8_t((unsigned char)(bytes[0]));
 
-    for(int i{0}; i < bytes.size() ; ++i)
-        temp_result |=   (uint64_t)( (uint8_t)bytes[i] )  << ( BITS_IN_BYTE * i ) ;
-    //                        ^           ^--- conversion to unsigned ( pure byte)
-    //                        | - extending type to 64-bit to proper bitwise shifting
-
-    int64_t converted = temp_result;
-
-    return QString::number(converted);
+    return QString::number(result);
 }
+
+
+QString Int16NumericValueConverter::getValue(const QByteArray& bytes) const
+{
+    int16_t result = int16_t((unsigned char)(bytes[0])  |
+                             (unsigned char)(bytes[1]) << 8);
+
+    return QString::number(result);
+}
+
+
+QString Int32NumericValueConverter::getValue(const QByteArray& bytes) const
+{
+    int32_t result = int32_t((unsigned char)(bytes[0])       |
+                             (unsigned char)(bytes[1]) << 8  |
+                             (unsigned char)(bytes[2]) << 16 |
+                             (unsigned char)(bytes[3]) << 24 );
+
+    return QString::number(result);
+}
+
+QString Int64NumericValueConverter::getValue(const QByteArray& bytes) const
+{
+    int64_t result = int64_t((uint8_t)(bytes[0])        |
+                             (uint8_t)(bytes[1]) << 8   |
+                             (uint8_t)(bytes[2]) << 16  |
+                             (uint8_t)(bytes[3]) << 24  |
+                             (uint64_t)(bytes[4]) << 32 |
+                             (uint64_t)(bytes[5]) << 40 |
+                             (uint64_t)(bytes[6]) << 48 |
+                             (uint64_t)(bytes[7]) << 56 );
+
+    return QString::number(result);
+}
+
+
 
 QString UnsignedNumericValueConverter::getValue(const QByteArray& bytes) const
 {
@@ -183,12 +215,10 @@ void backend::ValueGenerator::initValues()
     addValue(backend::UINT32_T , unsigned_numeric_conv );
     addValue(backend::UINT64_T , unsigned_numeric_conv );
 
-    auto signed_numeric_conv {QSharedPointer<backend::SignedNumericValueConverter>::create()};
-
-    addValue(backend::INT8_T  , signed_numeric_conv );
-    addValue(backend::INT16_T , signed_numeric_conv );
-    addValue(backend::INT32_T , signed_numeric_conv );
-    addValue(backend::INT64_T , signed_numeric_conv );
+    addValue(backend::INT8_T  , QSharedPointer<backend::Int8NumericValueConverter>::create() );
+    addValue(backend::INT16_T , QSharedPointer<backend::Int16NumericValueConverter>::create() );
+    addValue(backend::INT32_T , QSharedPointer<backend::Int32NumericValueConverter>::create() );
+    addValue(backend::INT64_T , QSharedPointer<backend::Int64NumericValueConverter>::create() );
 
     addValue(backend::BOOL , QSharedPointer<backend::BoolValueConverter>::create() );
     addValue(backend::CHAR , QSharedPointer<backend::CharValueConverter>::create() );

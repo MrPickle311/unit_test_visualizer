@@ -17,7 +17,28 @@ public:
     virtual QString getValue(const QByteArray& bytes) const = 0;
 };
 
-class SignedNumericValueConverter:
+class Int8NumericValueConverter:
+        public AbstractValueConverter
+{
+public:
+    virtual QString getValue(const QByteArray& bytes) const override;
+};
+
+class Int16NumericValueConverter:
+        public AbstractValueConverter
+{
+public:
+    virtual QString getValue(const QByteArray& bytes) const override;
+};
+
+class Int32NumericValueConverter:
+        public AbstractValueConverter
+{
+public:
+    virtual QString getValue(const QByteArray& bytes) const override;
+};
+
+class Int64NumericValueConverter:
         public AbstractValueConverter
 {
 public:

@@ -8,6 +8,7 @@
 #include <QSharedPointer>
 #include "../backend/PortSettings.hpp"
 #include "../backend/Interfaces.hpp"
+#include <QDebug>
 
 namespace bridge
 {
@@ -60,15 +61,18 @@ private:
         //mapping signals , if signal port::ByteBuffer::bytesArrived(data) will arrive it is map
         //to dataArrived( port_name , data) and resend
         //port_name idientifies certain port and then QML knows where put data
-        QObject::connect(input_buffers_[port_name].get() , &interface::ByteBuffer::bytesArrived ,
+        QObject::connect(input_buffers_[port_name].get() , &BufferType::bytesArrived ,
         [this , port_name]([[maybe_unused]] size_t count)
         {
-            emit dataArrived(port_name , input_buffers_[port_name]->getAllBytes() );
+            QByteArray bytes {input_buffers_[port_name]->getAllBytes()};
+            qDebug() << bytes;
+            emit dataArrived(port_name , bytes );
         });
 
         QObject::connect(set_ports_[port_name].get() , &PortOperatorType::deviceErrorOccurred ,
         [this , port_name](QString what)
         {
+
             emit errorOccurred(std::logic_error{ (port_name + " " + what ).toStdString() });
         });
 

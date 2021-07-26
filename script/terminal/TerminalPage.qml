@@ -1,20 +1,21 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.12
 import "../common" as Common
-import Qt.singletons.bridge 1.0
 
 Rectangle {
     id: pageRectangle
     color: "white"
+    clip: false
 
     property string portName: "none"
 
     signal openPortRequest()
-
-    signal sendToInputRequest(var data)
+    signal sendToOutputRequest(var data)
+    height: 405
+    width: 800
 
     TerminalTextArea{
-        id: outputTextArea
+        id: inputTextArea
         width: ( parent.width - anchors.leftMargin.valueOf() * 3 ) / 2//every margin has 20 ,so i just taken only one and multiplied by 3
         anchors.left: parent.left
         anchors.top: parent.top
@@ -25,10 +26,10 @@ Rectangle {
     }
 
     TerminalTextArea{
-        id: inputTextArea
-        width: outputTextArea.width
-        height: outputTextArea.height
-        anchors.left: outputTextArea.right
+        id: outputTextArea
+        width: inputTextArea.width
+        height: inputTextArea.height
+        anchors.left: inputTextArea.right
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.rightMargin: 20
@@ -36,20 +37,66 @@ Rectangle {
         anchors.topMargin: 20
     }
 
-    function appendTextToOutput(data){
-        outputTextArea.appendText(data)
+    function convertStrTo(str, base){
+        return str.split('').map(c => c.charCodeAt(0).toString(base)).join(' ')
     }
 
-    function replaceOutputText(data){
-        outputTextArea.setText(data)
+    function convertNmbrToBytes(str , bits){
+
+        var data = parseInt(str)
+        //[0, 0, 0, 0, 0, 0, 0, 0];
+        var byteArray = [];
+
+        for ( let idx = 0; idx < bits; idx++ ){
+            byteArray.push(0);
+        }
+
+        for ( let index = 0; index < byteArray.length; index ++ ) {
+            var byte_ = data & 0xFF;
+            byteArray [ index ] = byte_;
+            data = (data - byte_) / 256 ;
+        }
+
+        return byteArray;
     }
+
+    property var inputConverters: [
+        function(str) { return str;},
+        function(str) { return convertStrTo(str,10) },
+        function(str) { return convertStrTo(str,16) },
+        function(str) { return convertStrTo(str,2) }
+    ]
+
+    property var outputConverters: [
+        function(str) { return str;},
+        function(str) { return convertNmbrToBytes(str,1) },//uint8
+        function(str) { return convertNmbrToBytes(str,2) },//uint16
+        function(str) { return convertNmbrToBytes(str,4) },//uint32
+        function(str) { return convertNmbrToBytes(str,8) }//uint64
+    ]
 
     function appendTextToInput(data){
-        inputTextArea.appendText(data)
+        inputTextArea.appendText(inputConverters[displayComboBox.currentIndex](data))
     }
 
     function replaceInputText(data){
-        inputTextArea.setText(data)
+        inputTextArea.setText(inputConverters[displayComboBox.currentIndex](data))
+    }
+
+    function appendTextToOutput(data){
+        outputTextArea.appendText(outputConverters[sendModeComboBox.currentIndex](data))
+
+        //if(displayComboBox.currentIndex == 1)
+        //    inputTextArea.appendText(convertToUint8(data))
+        //else inputTextArea.appendText(data)
+    }
+
+    function replaceOutputText(data){
+        outputTextArea.setText(outputConverters[sendModeComboBox.currentIndex](data))
+        //inputTextArea.setText(data)
+        //if(displayComboBox.currentIndex == 1)
+        //    inputTextArea.setText(convertToUint8(data))
+        //else inputTextArea.setText(data)
     }
 
     TextStreamField{
@@ -58,8 +105,8 @@ Rectangle {
         width: 164
         height: 27
         anchors.left: parent.left
-        anchors.bottom: sendModeComboBox.top
-        anchors.bottomMargin: 20
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 30
         anchors.leftMargin: 20
     }
 
@@ -72,31 +119,35 @@ Rectangle {
         anchors.left: textStreamField.right
         anchors.leftMargin: 20
 
-        onClicked: {
-            sendToInputRequest(textStreamField.getText())
-            //inputTextArea.appendText(textStreamField.getText())
-        }
+        onClicked:  sendToOutputRequest(textStreamField.getText())
     }
 
     Common.MenuComboBox{
         id: sendModeComboBox
         y: 50
         anchors.verticalCenter: checkBoxLF.verticalCenter
-        anchors.left: parent.left
-        anchors.verticalCenterOffset: -25
-        anchors.leftMargin: 100
+        anchors.right: parent.right
+        anchors.rightMargin: 200
+        anchors.verticalCenterOffset: -20
         prefixText: "Sending mode"
-        elements: ["Send Ascii", "Send Number"]
+        elements: ["Send Ascii", "Send Uint8", "Send Uint16", "Send Uint32", "Send Uint64"]
+    }
+
+    Common.MenuComboBox{
+        id: displayComboBox
+        anchors.verticalCenter: parent.verticalCenter
+
+        prefixText: "Display as"
+        elements: ["Ascii","Number","Hexadecimal","Binary"]
     }
 
     CheckBox {
         id: checkBoxCR
-        x: 245
-        y: 373
+        y: 368
         text: qsTr("Apend +CR")
-        anchors.bottom: checkBoxLF.top
-        anchors.horizontalCenter: checkBoxLF.horizontalCenter
-        anchors.bottomMargin: 20
+        anchors.verticalCenter: textStreamField.verticalCenter
+        anchors.left: textStreamField.right
+        anchors.leftMargin: 60
     }
 
     CheckBox {
@@ -104,10 +155,9 @@ Rectangle {
         y: 401
         width: 102
         text: qsTr("Apend +LF")
-        anchors.left: sendModeComboBox.right
-        anchors.bottom: parent.bottom
-        anchors.leftMargin: 150
-        anchors.bottomMargin: 20
+        anchors.verticalCenter: checkBoxCR.verticalCenter
+        anchors.left: checkBoxCR.right
+        anchors.leftMargin: 30
     }
 
     Common.MenuTextButton{
@@ -117,7 +167,7 @@ Rectangle {
         height: 32
         anchors.right: outputTextArea.right
         anchors.bottom: checkBoxCR.top
-        anchors.bottomMargin: 30
+        anchors.bottomMargin: 15
         anchors.rightMargin: 0
         buttonText: "Clear output"
     }
@@ -142,17 +192,6 @@ Rectangle {
     }
 
     Common.MenuTextButton{
-        id: chooseFileButton
-        x: 544
-        y: 393
-        anchors.right: parent.right
-        anchors.bottom: sendFileButton.bottom
-        anchors.bottomMargin: 35
-        anchors.rightMargin: 40
-        buttonText: "Choose file..."
-    }
-
-    Common.MenuTextButton{
         id: openPortButton
         x: 101
         y: 298
@@ -164,25 +203,36 @@ Rectangle {
         onClicked: openPortRequest()
     }
 
-    Common.MenuTextButton{
-        id: sendFileButton
-        y: 428
-        anchors.left: fileTextField.left
-        anchors.bottom: parent.bottom
-        anchors.leftMargin: 0
-        anchors.bottomMargin: 40
-        buttonText: "Send file"
-    }
-
-    TerminalTextArea{
-        id : fileTextField
-        x: 367
-        y: 395
-        width: 164
-        height: 27
-        anchors.verticalCenter: chooseFileButton.verticalCenter
-        anchors.right: chooseFileButton.left
-        anchors.rightMargin: 20
-
-    }
+    //IN NEXT VERSION
+    //Common.MenuTextButton{
+    //    id: chooseFileButton
+    //    x: 544
+    //    y: 393
+    //    anchors.right: parent.right
+    //    anchors.bottom: sendFileButton.bottom
+    //    anchors.bottomMargin: 35
+    //    anchors.rightMargin: 40
+    //    buttonText: "Choose file..."
+    //}
+    //Common.MenuTextButton{
+    //    id: sendFileButton
+    //    y: 428
+    //    anchors.left: fileTextField.left
+    //    anchors.bottom: parent.bottom
+    //    anchors.leftMargin: 0
+    //    anchors.bottomMargin: 40
+    //    buttonText: "Send file"
+    //}
+    //
+    //TerminalTextArea{
+    //    id : fileTextField
+    //    x: 367
+    //    y: 395
+    //    width: 164
+    //    height: 27
+    //    anchors.verticalCenter: chooseFileButton.verticalCenter
+    //    anchors.right: chooseFileButton.left
+    //    anchors.rightMargin: 20
+    //
+    //}
 }

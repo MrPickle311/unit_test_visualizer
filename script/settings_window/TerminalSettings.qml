@@ -103,20 +103,6 @@ Rectangle {
        body.onActivated: TerminalSettingsBridge.setStopBits(SJ.stopBits.get(elements[body.currentIndex]))
    }
 
-
-   Common.MenuComboBox{
-       id: displayComboBox
-       anchors.right: stopBitsComboBox.right
-       anchors.top: stopBitsComboBox.bottom
-       anchors.rightMargin: 0
-       anchors.horizontalCenterOffset: 0
-       anchors.topMargin: 50
-       anchors.horizontalCenter: stopBitsComboBox.horizontalCenter
-
-       prefixText: "Display as"
-       elements: ["Ascii","uint8","int8","Hexadecimal","Binary"]
-   }
-
    Text {
        id: text1
        x: 310

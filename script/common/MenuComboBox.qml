@@ -33,4 +33,6 @@ Item {
     }
 
     property alias body: comboBox
+
+    property alias currentIndex: comboBox.currentIndex
 }

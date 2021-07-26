@@ -11,11 +11,15 @@ Common.FrameRectangle {
         anchors.fill: parent
         anchors.margins: 7
         TextArea{
+            width: scrollView.width
             id: textArea
             readOnly: true
             antialiasing: true
             wrapMode: TextEdit.Wrap
         }
+        ColumnLayout {
+            width: scrollView.width
+        }//to proper TextArea wrapping
     }
 
     function appendText(new_text){

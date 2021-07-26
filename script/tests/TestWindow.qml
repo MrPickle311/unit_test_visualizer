@@ -44,8 +44,6 @@ Common.FramelessWindow{
         console.log(error)
     }
 
-    Component.onCompleted: ErrorReporter.propagateError.connect(logError)
-
     //IN NEXT VERSION
     //Common.SaveButton{
     //    id: saveButton

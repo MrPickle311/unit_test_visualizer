@@ -46,9 +46,9 @@ function concatTypedArrays(a, b) { // a, b TypedArray of same type
 
 function receiceData(port_name , data){
     var uint8 = new Uint8Array(data);
-    console.log("uint8 start " + "   "  + uint8 + "  uint8 END")
+    //console.log("uint8 start " + "   "  + uint8 + "  uint8 END")
     inputDataTextList[pagesId[port_name]] = concatTypedArrays(inputDataTextList[pagesId[port_name]] ,  uint8)
-    console.log("array   " + inputDataTextList[pagesId[port_name]] + "   array END ")
+    //console.log("array   " + inputDataTextList[pagesId[port_name]] + "   array END ")
     refreshInput()
 }
 

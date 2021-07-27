@@ -60,12 +60,22 @@ Rectangle {
         return byteArray;
     }
 
+    //accepts uint8tArray and removes all occurences of 'from' and replaces it with 'to' argument
+    function replaceALl(data, from ,to){
+        return data.toString().split(from).join(to)
+    }
+
     function convertStrTo(str, base){
-        return str.split('').map(c => c.charCodeAt(0).toString(base)).join(' ')
+        return str.map(c => String.fromCharCode(c)).join(' ')
+        //return str.split('').map(c => c.charCodeAt(0).toString(base)).join(' ')
+    }
+
+    function convertToChars(data){
+        return String.fromCharCode(data)
     }
 
     property var inputConverters: [
-        function(str) { return str},
+        function(str) { return replaceALl(str,","," ") },
         function(str) { return convertStrTo(str,10) },
         function(str) { return convertStrTo(str,16) },
         function(str) { return convertStrTo(str,2) }
@@ -83,13 +93,7 @@ Rectangle {
         inputTextArea.appendText(inputConverters[inputDisplayComboBox.currentIndex](data))
     }
 
-    //accepts uint8tArray and removes all occurences of from and replaces it with to argument
-    function replaceALl(data, from ,to){
-        return data.toString().split(from).join(to)
-    }
-
     function replaceInputText(data){
-        console.log("str converted : " + str)
         inputTextArea.setText(inputConverters[inputDisplayComboBox.currentIndex](data))
     }
 

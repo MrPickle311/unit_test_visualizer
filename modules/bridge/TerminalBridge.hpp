@@ -8,7 +8,7 @@
 #include <QSharedPointer>
 #include "../backend/PortSettings.hpp"
 #include "../backend/Interfaces.hpp"
-#include <QDebug>
+//#include <QDebug>
 
 namespace bridge
 {
@@ -22,7 +22,7 @@ public slots:
     virtual void        openPort(QString port_name)                                                   = 0;
     virtual void        closeAllPorts()                                                               = 0;
     virtual QStringList restorePorts()                                                          const = 0;
-    virtual void        sendData(QString port_name , QByteArray data)                                 = 0;
+    virtual void        sendData(QString port_name , QString data)                                 = 0;
 signals:
     void newPortIsSet(QString port_name);
     void dataArrived(QString port_name ,  QByteArray data);
@@ -65,7 +65,6 @@ private:
         [this , port_name]([[maybe_unused]] size_t count)
         {
             QByteArray bytes {input_buffers_[port_name]->getAllBytes()};
-            qDebug() << bytes;
             emit dataArrived(port_name , bytes );
         });
 
@@ -117,9 +116,9 @@ public :
     {
         return set_ports_.keys();
     }
-    virtual void sendData(QString port_name, QByteArray data) override
+    virtual void sendData(QString port_name, QString data) override
     {
-        output_buffers_[port_name]->appendBytes(data);
+        output_buffers_[port_name]->appendBytes(data.toUtf8());//saviour
     }
 };
 

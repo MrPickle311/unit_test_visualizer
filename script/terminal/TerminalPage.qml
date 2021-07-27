@@ -1,4 +1,4 @@
-import QtQuick 2.15
+﻿import QtQuick 2.15
 import QtQuick.Controls 2.12
 import "../common" as Common
 
@@ -11,6 +11,10 @@ Rectangle {
 
     signal openPortRequest()
     signal sendToOutputRequest(var data)
+
+    signal outputDisplayModeChanged()
+    signal inputSendModeChanged()
+
     height: 405
     width: 800
 
@@ -37,14 +41,10 @@ Rectangle {
         anchors.topMargin: 20
     }
 
-    function convertStrTo(str, base){
-        return str.split('').map(c => c.charCodeAt(0).toString(base)).join(' ')
-    }
-
     function convertNmbrToBytes(str , bits){
 
         var data = parseInt(str)
-        //[0, 0, 0, 0, 0, 0, 0, 0];
+
         var byteArray = [];
 
         for ( let idx = 0; idx < bits; idx++ ){
@@ -60,8 +60,12 @@ Rectangle {
         return byteArray;
     }
 
+    function convertStrTo(str, base){
+        return str.split('').map(c => c.charCodeAt(0).toString(base)).join(' ')
+    }
+
     property var inputConverters: [
-        function(str) { return str;},
+        function(str) { return str},
         function(str) { return convertStrTo(str,10) },
         function(str) { return convertStrTo(str,16) },
         function(str) { return convertStrTo(str,2) }
@@ -76,27 +80,35 @@ Rectangle {
     ]
 
     function appendTextToInput(data){
-        inputTextArea.appendText(inputConverters[displayComboBox.currentIndex](data))
+        inputTextArea.appendText(inputConverters[inputDisplayComboBox.currentIndex](data))
+    }
+
+    //accepts uint8tArray and removes all occurences of from and replaces it with to argument
+    function replaceALl(data, from ,to){
+        return data.toString().split(from).join(to)
     }
 
     function replaceInputText(data){
-        inputTextArea.setText(inputConverters[displayComboBox.currentIndex](data))
+        console.log("str converted : " + str)
+        inputTextArea.setText(inputConverters[inputDisplayComboBox.currentIndex](data))
+    }
+
+    function resetInputTextArea(){
+        inputTextArea.setText("")
+    }
+
+    function resetOutputTextArea(){
+        outputTextArea.setText("")
     }
 
     function appendTextToOutput(data){
-        outputTextArea.appendText(outputConverters[sendModeComboBox.currentIndex](data))
+        outputTextArea.appendText(data)
 
-        //if(displayComboBox.currentIndex == 1)
-        //    inputTextArea.appendText(convertToUint8(data))
-        //else inputTextArea.appendText(data)
+        //outputTextArea.appendText(outputConverters[outputSendModeComboBox.currentIndex](data))
     }
 
     function replaceOutputText(data){
-        outputTextArea.setText(outputConverters[sendModeComboBox.currentIndex](data))
-        //inputTextArea.setText(data)
-        //if(displayComboBox.currentIndex == 1)
-        //    inputTextArea.setText(convertToUint8(data))
-        //else inputTextArea.setText(data)
+        outputTextArea.setText(outputConverters[outputSendModeComboBox.currentIndex](data))
     }
 
     TextStreamField{
@@ -119,11 +131,14 @@ Rectangle {
         anchors.left: textStreamField.right
         anchors.leftMargin: 20
 
-        onClicked:  sendToOutputRequest(textStreamField.getText())
+        onClicked:  {
+            //send array of bytes or string
+            sendToOutputRequest(outputConverters[outputSendModeComboBox.currentIndex](textStreamField.getText()))
+        }
     }
 
     Common.MenuComboBox{
-        id: sendModeComboBox
+        id: outputSendModeComboBox
         y: 50
         anchors.verticalCenter: checkBoxLF.verticalCenter
         anchors.right: parent.right
@@ -131,14 +146,18 @@ Rectangle {
         anchors.verticalCenterOffset: -20
         prefixText: "Sending mode"
         elements: ["Send Ascii", "Send Uint8", "Send Uint16", "Send Uint32", "Send Uint64"]
+
+        body.onActivated: outputDisplayModeChanged()
     }
 
     Common.MenuComboBox{
-        id: displayComboBox
+        id: inputDisplayComboBox
         anchors.verticalCenter: parent.verticalCenter
 
         prefixText: "Display as"
         elements: ["Ascii","Number","Hexadecimal","Binary"]
+
+        body.onActivated: inputSendModeChanged()
     }
 
     CheckBox {

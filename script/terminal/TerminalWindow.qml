@@ -65,7 +65,25 @@ Common.FramelessWindow{
 
         onSendToOutputRequest: {
             if(outputDataTextList.length != 0)
-                Logic.sendData(data)
+                Logic.sendData(typeof(data) == "string" ?  data : String.fromCharCode(...data) )
+
+                var view_data = typeof(data) == "string" ?  data : data.map(String).toString() + '  '
+
+                Logic.refreshOutput(view_data)
+
+                outputDataTextList[bar.currentIndex] += view_data
+
+                //incoming data is still array of bytes or string
+        }
+
+        onInputSendModeChanged: {
+            terminalPage.resetInputTextArea()
+            inputDataTextList[bar.currentIndex] = ""
+        }
+
+        onOutputDisplayModeChanged: {
+            terminalPage.resetOutputTextArea()
+            outputDataTextList[bar.currentIndex] = ""
         }
     }
 

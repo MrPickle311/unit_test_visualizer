@@ -60,25 +60,20 @@ Rectangle {
         return byteArray;
     }
 
-    //accepts uint8tArray and removes all occurences of 'from' and replaces it with 'to' argument
-    function replaceALl(data, from ,to){
-        return data.toString().split(from).join(to)
+    //accepts uint8tArray and converts it to dec ,bin or hex(see 'base' argument) string
+    function buf2hex(buffer, base ) {
+      return [...new Uint8Array(buffer)].map(x => x.toString(base)).join(' ');
     }
 
-    function convertStrTo(str, base){
-        return str.map(c => String.fromCharCode(c)).join(' ')
-        //return str.split('').map(c => c.charCodeAt(0).toString(base)).join(' ')
-    }
-
-    function convertToChars(data){
-        return String.fromCharCode(data)
+    function replaceALl(data){
+        return [...new Uint8Array(data)].map(x => String.fromCharCode(x)).join('')
     }
 
     property var inputConverters: [
-        function(str) { return replaceALl(str,","," ") },
-        function(str) { return convertStrTo(str,10) },
-        function(str) { return convertStrTo(str,16) },
-        function(str) { return convertStrTo(str,2) }
+        function(data) { return replaceALl(data) },
+        function(data) { return buf2hex(data,10) },
+        function(data) { return buf2hex(data, 16 ) },
+        function(data) { return buf2hex(data,2) }
     ]
 
     property var outputConverters: [

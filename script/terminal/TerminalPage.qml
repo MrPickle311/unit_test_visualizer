@@ -2,6 +2,8 @@
 import QtQuick.Controls 2.12
 import "../common" as Common
 
+import "terminalPage.js" as Logic
+
 Rectangle {
     id: pageRectangle
     color: "white"
@@ -15,8 +17,53 @@ Rectangle {
     signal outputDisplayModeChanged()
     signal inputSendModeChanged()
 
+    signal clearInputRequested()
+    signal clearOutputRequested()
+
+    signal freezeInputRequested()
+
     height: 405
     width: 800
+
+    property var inputConverters: [
+        function(data) { return Logic.toAscii(data) },
+        function(data) { return Logic.toNumbersString(data,10) },
+        function(data) { return Logic.toNumbersString(data,16) },
+        function(data) { return Logic.toNumbersString(data,2) }
+    ]
+
+    property var outputConverters: [
+        function(str) { return str;},
+        function(str) { return Logic.convertNmbrToBytes(str,1) },//uint8
+        function(str) { return Logic.convertNmbrToBytes(str,2) },//uint16
+        function(str) { return Logic.convertNmbrToBytes(str,4) },//uint32
+        function(str) { return Logic.convertNmbrToBytes(str,8) }//uint64
+    ]
+
+    function appendTextToInput(data){
+        inputTextArea.appendText(inputConverters[inputDisplayComboBox.currentIndex](data))
+    }
+
+    function replaceInputText(data){
+        inputTextArea.setText(inputConverters[inputDisplayComboBox.currentIndex](data))
+    }
+
+    function resetInputTextArea(){
+        inputTextArea.setText("")
+    }
+
+    function resetOutputTextArea(){
+        outputTextArea.setText("")
+    }
+
+    function appendTextToOutput(data){
+        outputTextArea.appendText(data)
+    }
+
+    function replaceOutputText(data){
+        outputTextArea.setText(outputConverters[outputSendModeComboBox.currentIndex](data))
+    }
+
 
     TerminalTextArea{
         id: inputTextArea
@@ -41,84 +88,14 @@ Rectangle {
         anchors.topMargin: 20
     }
 
-    function convertNmbrToBytes(str , bits){
-
-        var data = parseInt(str)
-
-        var byteArray = [];
-
-        for ( let idx = 0; idx < bits; idx++ ){
-            byteArray.push(0);
-        }
-
-        for ( let index = 0; index < byteArray.length; index ++ ) {
-            var byte_ = data & 0xFF;
-            byteArray [ index ] = byte_;
-            data = (data - byte_) / 256 ;
-        }
-
-        return byteArray;
-    }
-
-    //accepts uint8tArray and converts it to dec ,bin or hex(see 'base' argument) string
-    function buf2hex(buffer, base ) {
-      return [...new Uint8Array(buffer)].map(x => x.toString(base)).join(' ');
-    }
-
-    function replaceALl(data){
-        return [...new Uint8Array(data)].map(x => String.fromCharCode(x)).join('')
-    }
-
-    property var inputConverters: [
-        function(data) { return replaceALl(data) },
-        function(data) { return buf2hex(data,10) },
-        function(data) { return buf2hex(data, 16 ) },
-        function(data) { return buf2hex(data,2) }
-    ]
-
-    property var outputConverters: [
-        function(str) { return str;},
-        function(str) { return convertNmbrToBytes(str,1) },//uint8
-        function(str) { return convertNmbrToBytes(str,2) },//uint16
-        function(str) { return convertNmbrToBytes(str,4) },//uint32
-        function(str) { return convertNmbrToBytes(str,8) }//uint64
-    ]
-
-    function appendTextToInput(data){
-        inputTextArea.appendText(inputConverters[inputDisplayComboBox.currentIndex](data))
-    }
-
-    function replaceInputText(data){
-        inputTextArea.setText(inputConverters[inputDisplayComboBox.currentIndex](data))
-    }
-
-    function resetInputTextArea(){
-        inputTextArea.setText("")
-    }
-
-    function resetOutputTextArea(){
-        outputTextArea.setText("")
-    }
-
-    function appendTextToOutput(data){
-        outputTextArea.appendText(data)
-
-        //outputTextArea.appendText(outputConverters[outputSendModeComboBox.currentIndex](data))
-    }
-
-    function replaceOutputText(data){
-        outputTextArea.setText(outputConverters[outputSendModeComboBox.currentIndex](data))
-    }
-
     TextStreamField{
         id : textStreamField
         y: 375
         width: 164
         height: 27
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 30
-        anchors.leftMargin: 20
+        anchors.verticalCenter: clearOutputButton.verticalCenter
+        anchors.left: outputTextArea.left
+        anchors.leftMargin: 0
     }
 
     SendButton{
@@ -151,7 +128,9 @@ Rectangle {
 
     Common.MenuComboBox{
         id: inputDisplayComboBox
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenter: outputSendModeComboBox.verticalCenter
+        anchors.right: outputSendModeComboBox.left
+        anchors.rightMargin: 250
 
         prefixText: "Display as"
         elements: ["Ascii","Number","Hexadecimal","Binary"]
@@ -163,9 +142,10 @@ Rectangle {
         id: checkBoxCR
         y: 368
         text: qsTr("Apend +CR")
-        anchors.verticalCenter: textStreamField.verticalCenter
-        anchors.left: textStreamField.right
-        anchors.leftMargin: 60
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+        anchors.leftMargin: 10
+        anchors.bottomMargin: 10
     }
 
     CheckBox {
@@ -175,7 +155,7 @@ Rectangle {
         text: qsTr("Apend +LF")
         anchors.verticalCenter: checkBoxCR.verticalCenter
         anchors.left: checkBoxCR.right
-        anchors.leftMargin: 30
+        anchors.leftMargin: 10
     }
 
     Common.MenuTextButton{
@@ -188,16 +168,20 @@ Rectangle {
         anchors.bottomMargin: 15
         anchors.rightMargin: 0
         buttonText: "Clear output"
+
+        onClicked: clearOutputRequested()
     }
 
     Common.MenuTextButton{
         id: freezeOutputButton
         x: 179
         y: 322
-        anchors.verticalCenter: clearOutputButton.verticalCenter
-        anchors.right: clearOutputButton.left
-        anchors.rightMargin: 10
-        buttonText: "Freeze output"
+        anchors.verticalCenter: clearInputButton.verticalCenter
+        anchors.right: clearInputButton.left
+        anchors.rightMargin: 15
+        buttonText: "Freeze input"
+
+        onClicked: freezeInputRequested()
     }
 
     Common.MenuTextButton{
@@ -207,6 +191,8 @@ Rectangle {
         anchors.right: inputTextArea.right
         anchors.rightMargin: 0
         buttonText: "Clear input"
+
+        onClicked: clearInputRequested()
     }
 
     Common.MenuTextButton{

@@ -42,5 +42,6 @@
         <file>script/tests/TestResultsArea.qml</file>
         <file>data/common/save.png</file>
         <file>script/common/SaveButton.qml</file>
+        <file>script/terminal/terminalPage.js</file>
     </qresource>
 </RCC>

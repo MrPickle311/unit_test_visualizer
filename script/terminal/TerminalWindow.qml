@@ -42,10 +42,7 @@ Common.FramelessWindow{
             }
         }
 
-        onCurrentIndexChanged: {
-            terminalPage.replaceInputText(inputDataList[currentIndex])
-            terminalPage.replaceOutputText(outputDataList[currentIndex])
-        }
+        onCurrentIndexChanged: Logic.changePortPage()
     }
 
     TerminalPage {
@@ -78,25 +75,11 @@ Common.FramelessWindow{
                 //incoming data is still array of bytes or string
         }
 
-        onInputSendModeChanged: {
-            terminalPage.resetInputTextArea()
-            inputDataList[bar.currentIndex] = []
-        }
+        onInputSendModeChanged: Logic.resetInput()
+        onClearInputRequested: Logic.resetInput()
 
-        onOutputDisplayModeChanged: {
-            terminalPage.resetOutputTextArea()
-            outputDataList[bar.currentIndex] = []
-        }
-
-        onClearInputRequested: {
-            terminalPage.resetInputTextArea()
-            inputDataList[bar.currentIndex] = []
-        }
-
-        onClearOutputRequested: {
-            terminalPage.resetOutputTextArea()
-            outputDataList[bar.currentIndex] = []
-        }
+        onOutputDisplayModeChanged: Logic.resetOutput()
+        onClearOutputRequested: Logic.resetOutput()
 
         onFreezeInputRequested: isInputFreezed[bar.currentIndex] = !isInputFreezed[bar.currentIndex]
     }

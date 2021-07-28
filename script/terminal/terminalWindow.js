@@ -29,13 +29,29 @@ function tryRestore(){
     repeater.model = port_names
 }
 
+function changePortPage(){
+    terminalPage.replaceInputText(inputDataList[currentIndex])
+    terminalPage.replaceOutputText(outputDataList[currentIndex])
+}
+
 function refreshOutput(data){
     terminalPage.appendTextToOutput(data)
+}
+
+function resetOutput(){
+    terminalPage.resetOutputTextArea()
+    outputDataList[bar.currentIndex] = []
 }
 
 function refreshInput(){
     terminalPage.replaceInputText(inputDataList[bar.currentIndex])
 }
+
+function resetInput(){
+    terminalPage.resetInputTextArea()
+    inputDataList[bar.currentIndex] = []
+}
+
 
 function concatTypedArrays(a, b) { // a, b TypedArray of same type
     var c = new Uint8Array(a.length + b.length);

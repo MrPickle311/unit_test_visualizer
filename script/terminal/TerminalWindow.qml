@@ -16,14 +16,16 @@ Common.FramelessWindow{
     minimumHeight: 400
     minimumWidth: 800
 
-    property var outputDataTextList: []
+    property var outputDataList: []
 
-    property var inputDataTextList: []
+    property var inputDataList: []
 
     property var pagesId: new Map();
 
     property var bridge: TerminalBridge
 
+    //this array holds free-unfreeze state of certain port
+    property var isInputFreezed: []
 
     TabBar {
         z: 2
@@ -41,8 +43,8 @@ Common.FramelessWindow{
         }
 
         onCurrentIndexChanged: {
-            terminalPage.replaceInputText(inputDataTextList[currentIndex])
-            terminalPage.replaceOutputText(outputDataTextList[currentIndex])
+            terminalPage.replaceInputText(inputDataList[currentIndex])
+            terminalPage.replaceOutputText(outputDataList[currentIndex])
         }
     }
 
@@ -64,27 +66,39 @@ Common.FramelessWindow{
         }
 
         onSendToOutputRequest: {
-            if(outputDataTextList.length != 0)
+            if(outputDataList.length != 0)
                 Logic.sendData(typeof(data) == "string" ?  data : String.fromCharCode(...data) )
 
                 var view_data = typeof(data) == "string" ?  data : data.map(String).toString() + '  '
 
                 Logic.refreshOutput(view_data)
 
-                outputDataTextList[bar.currentIndex] += view_data
+                outputDataList[bar.currentIndex] += view_data
 
                 //incoming data is still array of bytes or string
         }
 
         onInputSendModeChanged: {
             terminalPage.resetInputTextArea()
-            inputDataTextList[bar.currentIndex] = ""
+            inputDataList[bar.currentIndex] = []
         }
 
         onOutputDisplayModeChanged: {
             terminalPage.resetOutputTextArea()
-            outputDataTextList[bar.currentIndex] = ""
+            outputDataList[bar.currentIndex] = []
         }
+
+        onClearInputRequested: {
+            terminalPage.resetInputTextArea()
+            inputDataList[bar.currentIndex] = []
+        }
+
+        onClearOutputRequested: {
+            terminalPage.resetOutputTextArea()
+            outputDataList[bar.currentIndex] = []
+        }
+
+        onFreezeInputRequested: isInputFreezed[bar.currentIndex] = !isInputFreezed[bar.currentIndex]
     }
 
     Component.onCompleted: {

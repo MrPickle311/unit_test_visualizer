@@ -7,8 +7,9 @@ function createTerminalWindow()
 
 function addPortPage(port_name){
     pagesId[port_name] = repeater.count
-    outputDataTextList.push("")
-    inputDataTextList.push("")
+    outputDataList.push("")
+    inputDataList.push("")
+    isInputFreezed.push(false)
     var array = Object.keys(pagesId) //repeater does not refresh itself automatically
     repeater.model = array
 }
@@ -21,20 +22,19 @@ function tryRestore(){
     var port_names = bridge.restorePorts()
     for(var i = 0 ; i < port_names.length ; i++){
         pagesId[ port_names[i] ] = i
-        outputDataTextList.push("")
-        inputDataTextList.push(new Uint8Array(data))
+        outputDataList.push("")
+        isInputFreezed.push(false)
+        inputDataList.push(new Uint8Array(data))
     }
     repeater.model = port_names
 }
 
 function refreshOutput(data){
-    //outputDataTextList[bar.currentIndex]
     terminalPage.appendTextToOutput(data)
-    //terminalPage.replaceOutputText(outputDataTextList[bar.currentIndex])
 }
 
 function refreshInput(){
-    terminalPage.replaceInputText(inputDataTextList[bar.currentIndex])
+    terminalPage.replaceInputText(inputDataList[bar.currentIndex])
 }
 
 function concatTypedArrays(a, b) { // a, b TypedArray of same type
@@ -45,11 +45,12 @@ function concatTypedArrays(a, b) { // a, b TypedArray of same type
 }
 
 function receiceData(port_name , data){
-    var uint8 = new Uint8Array(data);
-    //console.log("uint8 start " + "   "  + uint8 + "  uint8 END")
-    inputDataTextList[pagesId[port_name]] = concatTypedArrays(inputDataTextList[pagesId[port_name]] ,  uint8)
-    //console.log("array   " + inputDataTextList[pagesId[port_name]] + "   array END ")
-    refreshInput()
+    if(!isInputFreezed[pagesId[port_name]])//if port is not freezed
+    {
+        var uint8 = new Uint8Array(data);
+        inputDataList[pagesId[port_name]] = concatTypedArrays(inputDataList[pagesId[port_name]] ,  uint8)
+        refreshInput()
+    }
 }
 
 function sendData(data){

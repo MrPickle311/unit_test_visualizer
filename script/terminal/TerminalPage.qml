@@ -64,7 +64,6 @@ Rectangle {
         outputTextArea.setText(outputConverters[outputSendModeComboBox.currentIndex](data))
     }
 
-
     TerminalTextArea{
         id: inputTextArea
         width: ( parent.width - anchors.leftMargin.valueOf() * 3 ) / 2//every margin has 20 ,so i just taken only one and multiplied by 3
@@ -116,10 +115,10 @@ Rectangle {
     Common.MenuComboBox{
         id: outputSendModeComboBox
         y: 50
-        anchors.verticalCenter: checkBoxLF.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: 200
-        anchors.verticalCenterOffset: -20
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 45
+        anchors.rightMargin: 300
         prefixText: "Sending mode"
         elements: ["Send Ascii", "Send Uint8", "Send Uint16", "Send Uint32", "Send Uint64"]
 
@@ -138,34 +137,14 @@ Rectangle {
         body.onActivated: inputSendModeChanged()
     }
 
-    CheckBox {
-        id: checkBoxCR
-        y: 368
-        text: qsTr("Apend +CR")
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        anchors.leftMargin: 10
-        anchors.bottomMargin: 10
-    }
-
-    CheckBox {
-        id: checkBoxLF
-        y: 401
-        width: 102
-        text: qsTr("Apend +LF")
-        anchors.verticalCenter: checkBoxCR.verticalCenter
-        anchors.left: checkBoxCR.right
-        anchors.leftMargin: 10
-    }
-
     Common.MenuTextButton{
         id: clearOutputButton
         x: 258
         y: 322
         height: 32
         anchors.right: outputTextArea.right
-        anchors.bottom: checkBoxCR.top
-        anchors.bottomMargin: 15
+        anchors.bottom: outputSendModeComboBox.top
+        anchors.bottomMargin: 10
         anchors.rightMargin: 0
         buttonText: "Clear output"
 

@@ -12,9 +12,8 @@ void ConverterTest::run()
 
 TEST_F(ConverterTest , SimpleLogicTest)
 {
-    using namespace parser;
 
-    TestCasePackPtr test_case{TestCasePackPtr::create()};
+    backend::TestCasePackPtr test_case{backend::TestCasePackPtr::create()};
     test_case->setTestCaseName("test1");
 
     test_case->addUnitTest(factory_.createBoolUnitTest());
@@ -36,12 +35,11 @@ TEST_F(ConverterTest , SimpleLogicTest)
 
 TEST_F(ConverterTest , ForceThrowTest)//it fails if it throws
 {
-    using namespace parser;
 
-    TestCasePackPtr test_case1{TestCasePackPtr::create()};
+    auto test_case1{backend::TestCasePackPtr::create()};
     test_case1->setTestCaseName("test1");
 
-    TestCasePackPtr test_case2{TestCasePackPtr::create()};
+    auto test_case2{backend::TestCasePackPtr::create()};
     test_case2->setTestCaseName("test2");
 
     test_case1->addUnitTest(factory_.createUint32UnitTest());
@@ -63,12 +61,11 @@ TEST_F(ConverterTest , ForceThrowTest)//it fails if it throws
 
 TEST_F(ConverterTest , ComplexLogicTest)//it fails if it throws
 {
-    using namespace parser;
 
-    TestCasePackPtr test_case1{TestCasePackPtr::create()};
+    auto test_case1{backend::TestCasePackPtr::create()};
     test_case1->setTestCaseName("test1");
 
-    TestCasePackPtr test_case2{TestCasePackPtr::create()};
+    auto test_case2{backend::TestCasePackPtr::create()};
     test_case2->setTestCaseName("test2");
 
     test_case1->addUnitTest(factory_.createUint32UnitTest());
@@ -119,12 +116,10 @@ TEST_F(ConverterTest , ComplexLogicTest)//it fails if it throws
 
 TEST_F(ConverterTest , EmptyUnitTestTest)//it success if it throws
 {
-    using namespace parser;
-
-    TestCasePackPtr test_case1{TestCasePackPtr::create()};
+    auto test_case1{backend::TestCasePackPtr::create()};
     test_case1->setTestCaseName("test1");
 
-    test_case1->addUnitTest(UnitTestPackPtr::create());
+    test_case1->addUnitTest(backend::UnitTestPackPtr::create());
 
     transaction_pack_.addTestCase(test_case1);
 
@@ -133,9 +128,7 @@ TEST_F(ConverterTest , EmptyUnitTestTest)//it success if it throws
 
 TEST_F(ConverterTest , EmptyTestCaseTest)//it fails if it throws
 {
-    using namespace parser;
-
-    TestCasePackPtr test_case1{TestCasePackPtr::create()};
+    auto test_case1{backend::TestCasePackPtr::create()};
     test_case1->setTestCaseName("test1");
 
     transaction_pack_.addTestCase(test_case1);
@@ -152,7 +145,9 @@ TEST_F(ConverterTest , EmptyTransactionTest)//it fails if it throws
 
 ConverterTest::ConverterTest():
     transaction_pack_{},
-    converter_{transaction_pack_},
+    converter_{},
     factory_{}
-{}
+{
+    converter_.setPack(&transaction_pack_);
+}
 

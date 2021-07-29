@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Parser.hpp>
+#include <PortOperator.hpp>
 
 using TestResult = uint8_t;
 using byte_t     = uint8_t;
@@ -8,9 +9,9 @@ using byte_t     = uint8_t;
 class BufferStorage
 {
 protected:
-    port::ByteBuffer* buffer_;
+    backend::ByteBuffer* buffer_;
 public:
-    virtual void setBuffer(port::ByteBuffer* newBuffer);
+    virtual void setBuffer(backend::ByteBuffer* newBuffer);
 };
 
 class ByteSender:
@@ -31,9 +32,9 @@ private:
     void injectTestResult(const QByteArray& test_result);
     void injectEnd();
 protected:
-    virtual void injectValues(const QSharedPointer<UnitTestDataPackage>& unit_test) = 0;
+    virtual void injectValues(const QSharedPointer<backend::UnitTestDataPackage>& unit_test) = 0;
 public:
-    void inject(const QSharedPointer<UnitTestDataPackage>& unit_test);
+    void inject(const QSharedPointer<backend::UnitTestDataPackage>& unit_test);
 };
 
 class UnitTestInjecter:
@@ -42,7 +43,7 @@ class UnitTestInjecter:
 private:
     void injectExpectedValue(const QByteArray& expected_values);
 protected:
-    virtual void injectValues(const QSharedPointer<UnitTestDataPackage>& unit_test) override;
+    virtual void injectValues(const QSharedPointer<backend::UnitTestDataPackage>& unit_test) override;
 };
 
 class RangeUnitTestInjecter:
@@ -52,7 +53,7 @@ private:
     void injectLowerValue(const QByteArray& lower_value);
     void injectUpperValue(const QByteArray& upper_value);
 protected:
-    virtual void injectValues(const QSharedPointer<UnitTestDataPackage>& unit_test) override;
+    virtual void injectValues(const QSharedPointer<backend::UnitTestDataPackage>& unit_test) override;
 };
 
 class TestCaseInjecter:
@@ -64,8 +65,8 @@ private:
 private:
     void injectCaseName(const QByteArray& test_case_name);
 public:
-    void inject(const QSharedPointer<TestCaseDataPackage>& test_case);
-    virtual void setBuffer(port::ByteBuffer* newBuffer) override;
+    void inject(const QSharedPointer<backend::TestCaseDataPackage>& test_case);
+    virtual void setBuffer(backend::ByteBuffer* newBuffer) override;
 };
 
 class TransactionInjecter:
@@ -74,6 +75,6 @@ class TransactionInjecter:
 private:
     TestCaseInjecter case_injecter_;
 public:
-    virtual void setBuffer(port::ByteBuffer* newBuffer) override;
-    void inject(const QSharedPointer<TransactionDataPackage>& test_case);
+    virtual void setBuffer(backend::ByteBuffer* newBuffer) override;
+    void inject(const QSharedPointer<backend::TransactionDataPackage>& test_case);
 };

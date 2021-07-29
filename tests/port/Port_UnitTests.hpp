@@ -3,13 +3,14 @@
 #include <PortOperator.hpp>
 #include <PortSettings.hpp>
 #include <common.hpp>
+#include <PortScanner.hpp>
 
 class ScannerTests :
         public DebugLogger,
         public ::testing::Test
 {
 private :
-    port::PortScanner scanner_;
+    backend::PortScanner scanner_;
 public:
     void segvTests();
     void throwingTests();
@@ -19,7 +20,7 @@ class ByteBufferTEST_body:
         public ::testing::Test
 {
 protected:
-    port::ByteBuffer buffer_;
+    backend::ByteBuffer buffer_;
 public:
     ByteBufferTEST_body();
     void        appendCharsToBuffer(std::string bytes);

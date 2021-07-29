@@ -8,10 +8,10 @@ class ConverterTest:
         public ::testing::Test
 {
 protected:
-    TransactionDataPackage transaction_pack_;
-    Converter              converter_;
-    TestPackageFactory     factory_;
-    Transaction            result_;
+    backend::TransactionDataPackage transaction_pack_;
+    backend::Converter              converter_;
+    TestPackageFactory              factory_;
+    backend::Transaction            result_;
 public:
     ConverterTest();
     void run();

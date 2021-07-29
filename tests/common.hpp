@@ -27,12 +27,12 @@ public:
 };
 
 
-class Processor:
-        public ConnectedObject_interface
+class Processor
 {
 protected:
     virtual void startProcessing() = 0;
     virtual void start()           = 0;
+    virtual void makeConnections() = 0;
     virtual void showResults()     = 0;
     virtual void stopProcessing()  = 0;
 public:

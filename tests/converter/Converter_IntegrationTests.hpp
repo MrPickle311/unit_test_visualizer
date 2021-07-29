@@ -3,22 +3,23 @@
 #include <PortOperator.hpp>
 #include <Parser.hpp>
 #include <Converter.hpp>
+#include <PortScanner.hpp>
 
-void printTests(Transaction transaction);
+void printTests(backend::Transaction transaction);
 
 class Converter_IntegrationTests
 {
 private:
     QSharedPointer<QMetaObject::Connection> parser_connection_;
 protected:
-    port::PortScanner                      scanner_;
-    port::ByteBuffer                       input_buffer_;
-    port::ByteBuffer                       output_buffer_;
-    port::BufferedPortFlowOperator         operator_;
-    TransactionDataPackage                 data_result_;
-    parser::GlobalParser                   parser_;
-    Converter                              converter_;
-    Transaction                            result_;
+    backend::PortScanner                   scanner_;
+    backend::ByteBuffer                    input_buffer_;
+    backend::ByteBuffer                    output_buffer_;
+    backend::BufferedPortFlowOperator      operator_;
+    backend::TransactionDataPackage        data_result_;
+    QSharedPointer<backend::RootParser>    parser_;
+    backend::Converter                     converter_;
+    backend::Transaction                   result_;
 protected:
     void configureParser();
     void makeConnections();

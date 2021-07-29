@@ -12,7 +12,7 @@ void ScannerTests::segvTests()
 
 void ScannerTests::throwingTests()
 {
-    EXPECT_THROW(scanner_.getSelectedPort(50), std::logic_error );
+    EXPECT_THROW(scanner_.getPortByNumber(50), std::logic_error );
 }
 
 
@@ -128,9 +128,9 @@ TEST_F(ByteBufferTEST_body, SignalTest)
 {
    ByteBuffer_SignalTester tester;
 
-   QObject::connect(&buffer_ , &port::ByteBuffer::bytesArrived , &tester ,
+   QObject::connect(&buffer_ , &backend::ByteBuffer::bytesArrived , &tester ,
                      &ByteBuffer_SignalTester::expectBytes);
-   QObject::connect(&buffer_ , &port::ByteBuffer::bytesExtracted , &tester ,
+   QObject::connect(&buffer_ , &backend::ByteBuffer::bytesExtracted , &tester ,
                      &ByteBuffer_SignalTester::expectEmptyHandler);
 
    appendCharsToBuffer("abcde");

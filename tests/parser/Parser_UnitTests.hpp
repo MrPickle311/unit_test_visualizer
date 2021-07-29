@@ -11,29 +11,29 @@
 class TestPackageFactory
 {
 protected:
-    QSharedPointer<UnitTestDataPackage> allocPackage();
+    QSharedPointer<backend::UnitTestDataPackage> allocPackage();
 public:
-    QSharedPointer<UnitTestDataPackage> createBoolUnitTest();
-    QSharedPointer<UnitTestDataPackage> createUint32UnitTest();
-    QSharedPointer<UnitTestDataPackage> createBitUnitTest();
-    QSharedPointer<UnitTestDataPackage> createInt64UnitTest();
-    QSharedPointer<UnitTestDataPackage> createUint64UnitTest();
-    QSharedPointer<UnitTestDataPackage> createPtrUnitTest();
-    QSharedPointer<UnitTestDataPackage> createInt16RangeUnitTest();
+    QSharedPointer<backend::UnitTestDataPackage> createBoolUnitTest();
+    QSharedPointer<backend::UnitTestDataPackage> createUint32UnitTest();
+    QSharedPointer<backend::UnitTestDataPackage> createBitUnitTest();
+    QSharedPointer<backend::UnitTestDataPackage> createInt64UnitTest();
+    QSharedPointer<backend::UnitTestDataPackage> createUint64UnitTest();
+    QSharedPointer<backend::UnitTestDataPackage> createPtrUnitTest();
+    QSharedPointer<backend::UnitTestDataPackage> createInt16RangeUnitTest();
 };
 
 class ParserTests:
         public ::testing::Test
 {
 protected:
-    QSharedPointer<TransactionDataPackage> result_;
-    QSharedPointer<parser::GlobalParser>   root_;
-    QSharedPointer<port::ByteBuffer>       buffer_;
-    TransactionInjecter                    injecter_;
-    TestPackageFactory                     factory_;
+    QSharedPointer<backend::TransactionDataPackage> result_;
+    QSharedPointer<backend::RootParser>             root_;
+    QSharedPointer<backend::ByteBuffer>             buffer_;
+    TransactionInjecter                             injecter_;
+    TestPackageFactory                              factory_;
 public:
     ParserTests();
-    void insertDataAndRun(QSharedPointer<TransactionDataPackage> transaction);
+    void insertDataAndRun(QSharedPointer<backend::TransactionDataPackage> transaction);
 };
 
 //converts lits of bytes to QByteArray

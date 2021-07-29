@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 #endif
 
 #if CONVERTER_INTEGRATION_TESTS
-    Converter_IntegrationTests tests;//plug and play
+    Converter_IntegrationTests tests;
     tests.run();
 #endif
 

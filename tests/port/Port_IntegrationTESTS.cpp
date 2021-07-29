@@ -1,6 +1,7 @@
 #include "Port_IntegrationTests.hpp"
 #include <QThread>
-
+#include <PortSettings.hpp>
+#include <PortScanner.hpp>
 
 PortInputOperatorTEST::PortInputOperatorTEST():
     scanner_{},
@@ -8,12 +9,12 @@ PortInputOperatorTEST::PortInputOperatorTEST():
 {
     operator_.setInputByteBuffer(&input_buffer_);
     operator_.setOutputByteBuffer(&output_buffer_);
-    operator_.changeSettings(port::StandardSettings::getStandardSettings(port::StandardSetting::StandardSetting9600));
+    operator_.changeSettings(backend::StandardSettings::getValue(backend::StandardSetting::StandardSetting9600));
 }
 
 void PortInputOperatorTEST::selectPort(uint port_nmbr)
 {
-    operator_.changePort(scanner_.getSelectedPort(port_nmbr));
+    operator_.changePort(scanner_.getPortByNumber(port_nmbr));
 }
 
 void PortInputOperatorTEST::showPorts() const
@@ -25,7 +26,7 @@ void PortInputOperatorTEST::waitAndShowArrivingData()
 {
     SignalChecker input_checker;
 
-    QObject::connect(&operator_ ,&port::PortFlowOperator::dataArrived,
+    QObject::connect(&operator_ ,&backend::PortFlowOperator::dataArrived,
                      &input_checker , &SignalChecker::checkEvent);
 
     output_buffer_.appendBytes(QByteArray{"gg"});

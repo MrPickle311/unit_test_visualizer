@@ -76,10 +76,14 @@ set(TESTED_DIRECTORIES
 set(TESTED_HEADERS
     ${CMAKE_CURRENT_SOURCE_DIR}/../modules/global/ProgramObject.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../modules/global/GlobalFunctions.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../modules/global/StaticGenerator.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../modules/backend/PortSettings.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../modules/backend/PortOperator.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../modules/backend/Parser.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../modules/backend/parser/ParsedDataPackage.hpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/../modules/backend/ParsedDataTypes.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../modules/backend/Converter.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../modules/backend/Interfaces.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../modules/backend/PortScanner.hpp)
 
 set(PortTest_files
     port/Port_UnitTests.cpp

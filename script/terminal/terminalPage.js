@@ -25,3 +25,27 @@ function toNumbersString(buffer, base ) {
 function toAscii(data){
     return [...new Uint8Array(data)].map(x => String.fromCharCode(x)).join('')
 }
+
+function appendTextToInput(data){
+    inputTextArea.appendText(inputConverters[inputDisplayComboBox.currentIndex](data))
+}
+
+function replaceInputText(data){
+    inputTextArea.setText(inputConverters[inputDisplayComboBox.currentIndex](data))
+}
+
+function resetInputTextArea(){
+    inputTextArea.setText("")
+}
+
+function appendTextToOutput(data){
+    outputTextArea.appendText(data)
+}
+
+function replaceOutputText(data){
+    outputTextArea.setText(outputConverters[outputSendModeComboBox.currentIndex](data))
+}
+
+function resetOutputTextArea(){
+    outputTextArea.setText("")
+}

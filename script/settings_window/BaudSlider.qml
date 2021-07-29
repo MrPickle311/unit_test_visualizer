@@ -1,6 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import "baudSliderLogic.js" as BaudSliderLogic
+import "baudSliderLogic.js" as Logic
 
 Item{
     id: baudSlider
@@ -11,10 +11,7 @@ Item{
         to: 7
         stepSize: 1
         snapMode: Slider.SnapAlways
-        onPositionChanged:{
-            baudRateText.text = BaudSliderLogic.getBaudRateText(slider.value)
-            baudSlider.positionChanged(baudRateText.text)
-        }
+        onPositionChanged: Logic.changeSliderValue()
     }
 
     Text {

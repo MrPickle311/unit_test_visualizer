@@ -13,7 +13,7 @@ Common.FramelessWindow{
     isSizeConst: true
 
     minimumWidth: 400
-    minimumHeight: 500
+    minimumHeight: 400
 
     Common.ChoiceButton{
         id : choiceButton

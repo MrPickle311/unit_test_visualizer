@@ -1,7 +1,7 @@
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick 2.15
-import "buttonLogic.js" as ButtonLogic
+import "buttonLogic.js" as Logic
 
 Item {
 
@@ -16,7 +16,7 @@ Item {
       property int borderWidth: 3
       property string iconDir: ""
       property bool usesImage: true
-      scale:  ButtonLogic.fitScaleToState(menuButton)
+      scale:  Logic.fitScaleToState(menuButton)
       onEnabledChanged: state = ""
 
       signal clicked
@@ -100,6 +100,6 @@ Item {
               menuButton.clicked()
           }
           onPressed: { menuButton.state = "Pressed" }
-          onReleased: ButtonLogic.switchState(this , menuButton)
+          onReleased: Logic.switchState(this , menuButton)
       }
 }

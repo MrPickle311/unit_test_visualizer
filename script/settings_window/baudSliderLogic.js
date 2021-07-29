@@ -12,3 +12,8 @@ const baudRates = [
 function getBaudRateText(sliderPos) {
     return baudRates[sliderPos]
 }
+
+function changeSliderValue(){
+    baudRateText.text = getBaudRateText(slider.value)
+    baudSlider.positionChanged(baudRateText.text)
+}

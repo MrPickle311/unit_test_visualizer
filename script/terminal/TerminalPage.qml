@@ -8,6 +8,8 @@ Rectangle {
     id: pageRectangle
     color: "white"
     clip: false
+    height: 405
+    width: 800
 
     property string portName: "none"
 
@@ -22,9 +24,6 @@ Rectangle {
 
     signal freezeInputRequested()
 
-    height: 405
-    width: 800
-
     property var inputConverters: [
         function(data) { return Logic.toAscii(data) },
         function(data) { return Logic.toNumbersString(data,10) },
@@ -33,36 +32,22 @@ Rectangle {
     ]
 
     property var outputConverters: [
-        function(str) { return str;},
+        function(str) { return str },
         function(str) { return Logic.convertNmbrToBytes(str,1) },//uint8
         function(str) { return Logic.convertNmbrToBytes(str,2) },//uint16
         function(str) { return Logic.convertNmbrToBytes(str,4) },//uint32
         function(str) { return Logic.convertNmbrToBytes(str,8) }//uint64
     ]
 
-    function appendTextToInput(data){
-        inputTextArea.appendText(inputConverters[inputDisplayComboBox.currentIndex](data))
-    }
+    //exporting functions
 
-    function replaceInputText(data){
-        inputTextArea.setText(inputConverters[inputDisplayComboBox.currentIndex](data))
-    }
+    function appendTextToInput()   { Logic.appendTextToInput()   }
+    function replaceInputText()    { Logic.replaceInputText()    }
+    function resetInputTextArea()  { Logic.resetInputTextArea()  }
+    function appendTextToOutput()  { Logic.appendTextToOutput()  }
+    function replaceOutputText()   { Logic.replaceOutputText()   }
+    function resetOutputTextArea() { Logic.resetOutputTextArea() }
 
-    function resetInputTextArea(){
-        inputTextArea.setText("")
-    }
-
-    function resetOutputTextArea(){
-        outputTextArea.setText("")
-    }
-
-    function appendTextToOutput(data){
-        outputTextArea.appendText(data)
-    }
-
-    function replaceOutputText(data){
-        outputTextArea.setText(outputConverters[outputSendModeComboBox.currentIndex](data))
-    }
 
     TerminalTextArea{
         id: inputTextArea

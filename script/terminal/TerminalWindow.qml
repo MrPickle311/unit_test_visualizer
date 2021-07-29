@@ -57,31 +57,25 @@ Common.FramelessWindow{
         anchors.topMargin: 5
         z: 2
 
-        onOpenPortRequest: {
-            var port_names = Object.keys(pagesId)
-            TerminalBridge.openPort( port_names[bar.currentIndex])
-        }
+        onOpenPortRequest: Logic.openPort()
 
-        onSendToOutputRequest: {
+        onSendToOutputRequest: {//incoming data are still array of bytes or string
             if(outputDataList.length != 0)
-                Logic.sendData(typeof(data) == "string" ?  data : String.fromCharCode(...data) )
-
-                var view_data = typeof(data) == "string" ?  data : data.map(String).toString() + '  '
-
-                Logic.refreshOutput(view_data)
-
-                outputDataList[bar.currentIndex] += view_data
-
-                //incoming data is still array of bytes or string
+            {
+                //send to backend
+                Logic.sendData(data)
+                //update view
+                Logic.refreshOutput(data)
+            }
         }
 
         onInputSendModeChanged: Logic.resetInput()
         onClearInputRequested: Logic.resetInput()
 
+        onFreezeInputRequested: isInputFreezed[bar.currentIndex] = !isInputFreezed[bar.currentIndex]
+
         onOutputDisplayModeChanged: Logic.resetOutput()
         onClearOutputRequested: Logic.resetOutput()
-
-        onFreezeInputRequested: isInputFreezed[bar.currentIndex] = !isInputFreezed[bar.currentIndex]
     }
 
     Component.onCompleted: {
@@ -91,5 +85,4 @@ Common.FramelessWindow{
     }
 
     onClosing: TerminalBridge.closeAllPorts()
-
 }

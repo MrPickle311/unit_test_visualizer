@@ -2,22 +2,15 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import "../common" as Common
 
-import com.myProject 1.0
-
-import "settingsWindow.js" as SJ
+import "settingsWindow.js" as Logic
 
 import Qt.singletons.bridge 1.0
 
 Rectangle {
     id: rectangle
     color: "white"
-    property int comNumber: 0
 
     signal applyButtonClicked(string port_name)
-
-    Text{
-        text: Number(SJ.bauds.get(baudSlider.text))
-    }
 
     Common.ApplyButton{
         id: applyButton
@@ -59,7 +52,7 @@ Rectangle {
         anchors.topMargin: 80
         anchors.horizontalCenter: parent.horizontalCenter
 
-        onPositionChanged: TerminalSettingsBridge.setBaudRate(SJ.bauds.get(value))
+        onPositionChanged: TerminalSettingsBridge.setBaudRate(Logic.bauds.get(value))
     }
 
    Common.MenuComboBox{
@@ -72,7 +65,7 @@ Rectangle {
        prefixText: "Parity"
        elements: ["None","Odd","Even","Space","Mark"]
 
-       body.onActivated: TerminalSettingsBridge.setParity(SJ.parity.get(elements[body.currentIndex]))
+       body.onActivated: TerminalSettingsBridge.setParity(Logic.parity.get(elements[body.currentIndex]))
    }
 
    Common.MenuComboBox{
@@ -86,7 +79,7 @@ Rectangle {
        prefixText: "Data bits"
        elements: ["5","6","7","8"]
 
-       body.onActivated: TerminalSettingsBridge.setDataBits(SJ.dataBits.get(elements[body.currentIndex]))
+       body.onActivated: TerminalSettingsBridge.setDataBits(Logic.dataBits.get(elements[body.currentIndex]))
    }
 
    Common.MenuComboBox{
@@ -100,18 +93,20 @@ Rectangle {
        prefixText: "Stop bits"
        elements: ["1","1.5","2"]
 
-       body.onActivated: TerminalSettingsBridge.setStopBits(SJ.stopBits.get(elements[body.currentIndex]))
+       body.onActivated: TerminalSettingsBridge.setStopBits(Logic.stopBits.get(elements[body.currentIndex]))
    }
 
-   Text {
-       id: text1
-       x: 310
-       y: 395
-       text: qsTr("FONT HERE!!!")
-       font.pixelSize: 12
+   Common.MenuComboBox{
+       id: flowControlComboBox
+       anchors.right: stopBitsComboBox.right
+       anchors.top: stopBitsComboBox.bottom
+       anchors.rightMargin: 0
+       anchors.topMargin: 50
+       anchors.horizontalCenter: stopBitsComboBox.horizontalCenter
+
+       prefixText: "Flow control"
+       elements: ["No flow control","Hardware (RTS/CTS)","Software (XON/XOFF)"]
+
+       //body.onActivated: TerminalSettingsBridge.setStopBits(Logic.stopBits.get(elements[body.currentIndex]))
    }
-
-
-
-
 }

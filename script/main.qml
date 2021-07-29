@@ -6,7 +6,9 @@ import "MainWindowLogic.js" as MainWindowLogic
 import "settings_window/settingsWindow.js" as SettingsWindowLogic
 import "terminal/terminalWindow.js" as TerminalWindowLogic
 import "tests/testWindowLogic.js" as TestWindowLogic
+import QtQuick.Dialogs 1.2
 
+import Qt.singletons.bridge 1.0
 
 Common.FramelessWindow {
     id: mainWindow
@@ -14,16 +16,17 @@ Common.FramelessWindow {
 
     isSizeConst: true
 
-    property var settingsWindowHandler: undefined
-    property bool isSettingsWindowCreated: false
-    function restoreSettingsWindowFalse(event){
-        isSettingsWindowCreated = false
-    }
+    property var isWindowCreated: [false ,false ,false ,false]
 
+    property var settingsWindowHandler: undefined
     property var terminalWindowHandler: undefined
-    property bool isTerminalWindowCreated: false
-    function restoreTerminalWindowFalse(event){
-        isTerminalWindowCreated = false
+    property var testWindowHandler: undefined
+
+    function markWindowNotCreated(window_id){
+        console.log(window_id)
+        console.log(isWindowCreated)
+        isWindowCreated[windowId] = false
+        console.log(isWindowCreated)
     }
 
     //ERROR SERVICE!!!
@@ -52,13 +55,15 @@ Common.FramelessWindow {
             id: settingsButton
             iconDir: "qrc:/data/main_window/settings.png"
             onClicked: {
-                if(!isSettingsWindowCreated)
+                if(!isWindowCreated[0])
                 {
                     settingsWindowHandler = SettingsWindowLogic.createSettignsWindow()
 
-                    isSettingsWindowCreated = true
+                    settingsWindowHandler.windowId  = 0
 
-                    settingsWindowHandler.closing.connect(restoreSettingsWindowFalse)
+                    isWindowCreated[0] = true
+
+                    settingsWindowHandler.closing.connect(markWindowNotCreated)
                 }
             }
         }
@@ -67,22 +72,36 @@ Common.FramelessWindow {
             id: terminalButton
             iconDir: "qrc:/data/main_window/terminal.png"
             onClicked: {
-                if(!isTerminalWindowCreated)
+                if(!isWindowCreated[1])
                 {
                     terminalWindowHandler = TerminalWindowLogic.createTerminalWindow()
 
-                    isTerminalWindowCreated = true
+                    terminalWindowHandler.windowId  = 1
 
-                    terminalWindowHandler.closing.connect(restoreTerminalWindowFalse)
+                    isWindowCreated[1] = true
+
+                    terminalWindowHandler.closing.connect(markWindowNotCreated)
                 }
-
             }
         }
 
         Common.MenuButton{
             id : testButton
             iconDir: "qrc:/data/main_window/test.png"
-            onClicked: TestWindowLogic.createTestsWindow()
+            onClicked: {
+                console.log(isWindowCreated[2])
+                if(!isWindowCreated[2])
+                {
+                    testWindowHandler = TestWindowLogic.createTestsWindow()
+
+                    testWindowHandler.windowId  = 2
+
+                    isWindowCreated[2] = true
+
+                    testWindowHandler.closing.connect(markWindowNotCreated)
+                }
+
+            }
         }
 
         Common.MenuButton{
@@ -90,8 +109,26 @@ Common.FramelessWindow {
             iconDir: "qrc:/data/main_window/about.png"
 
         }
-
     }
+
+    MessageDialog {
+        id: msgBox
+        title: "Overwrite?"
+        icon: StandardIcon.NoIcon
+        text: "Error has occurred!"
+        //detailedText: "To replace a file means that its existing contents will be lost. " +
+        //    "The file that you are copying now will be copied over it instead."
+        standardButtons: StandardButton.Ok
+    }
+
+    function showError(msg){
+        console.log("XDXDXD")
+        msgBox.text = msg
+        msgBox.open()
+    }
+
+    Component.onCompleted: ErrorReporter.propagateError.connect(showError)
+
 
 
 }

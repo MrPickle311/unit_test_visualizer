@@ -61,7 +61,7 @@ Rectangle {
         prefixText: "Parity"
         elements: ["None","Odd","Even","Space","Mark"]
 
-        body.onActivated: TerminalSettingsBridge.setParity(Logic.parity.get(elements[body.currentIndex]))
+        body.onActivated: TestsSettingsBridge.setParity(Logic.parity.get(elements[body.currentIndex]))
     }
 
     Common.MenuComboBox{
@@ -75,7 +75,7 @@ Rectangle {
         prefixText: "Stop bits"
         elements: ["1","1.5","2"]
 
-        body.onActivated: TerminalSettingsBridge.setStopBits(Logic.stopBits.get(elements[body.currentIndex]))
+        body.onActivated: TestsSettingsBridge.setStopBits(Logic.stopBits.get(elements[body.currentIndex]))
     }
 
     Common.MenuComboBox{
@@ -89,6 +89,6 @@ Rectangle {
         prefixText: "Flow control"
         elements: ["No flow control","Hardware (RTS/CTS)","Software (XON/XOFF)"]
 
-        //body.onActivated: TerminalSettingsBridge.setStopBits(Logic.stopBits.get(elements[body.currentIndex]))
+        body.onActivated: TestsSettingsBridge.setFlowControl(Logic.flowControl.get(elements[body.currentIndex]))
     }
 }

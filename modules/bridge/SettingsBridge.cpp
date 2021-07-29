@@ -67,12 +67,26 @@ const QStringList& Settings::getPortNames() const
     return portNames;
 }
 
+QSerialPort::FlowControl Settings::getFlowControl() const
+{
+    return flowControl;
+}
+
 void Settings::setPortNames(const QStringList& newPortNames)
 {
     if (portNames == newPortNames)
         return;
     portNames = newPortNames;
     emit portNamesChanged();
+}
+
+void Settings::setFlowControl(QSerialPort::FlowControl flowControl)
+{
+    if (flowControl == flowControl)
+        return;
+
+    flowControl = flowControl;
+    emit flowControlChanged(flowControl);
 }
 
 void Settings::sendSettings(QString port_name)
@@ -104,7 +118,7 @@ backend::PortFlowSettings TerminalSettings::prepareSettings() const
 
     new_settings.setBaudRate(baudRate);
     new_settings.setDataBits(dataBits);
-    new_settings.setFlowControl(QSerialPort::NoFlowControl);
+    new_settings.setFlowControl(flowControl);
     new_settings.setParity(parity);
     new_settings.setStopBits(stopBits);
 
@@ -117,9 +131,9 @@ backend::PortFlowSettings TestsSettings::prepareSettings() const
 
     new_settings.setBaudRate(baudRate);
     new_settings.setDataBits(QSerialPort::Data8);
-    new_settings.setFlowControl(QSerialPort::NoFlowControl);
-    new_settings.setParity(QSerialPort::NoParity);
-    new_settings.setStopBits(QSerialPort::OneStop);
+    new_settings.setFlowControl(flowControl);
+    new_settings.setParity(parity);
+    new_settings.setStopBits(stopBits);
 
     return new_settings;
 }

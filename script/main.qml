@@ -23,14 +23,8 @@ Common.FramelessWindow {
     property var testWindowHandler: undefined
 
     function markWindowNotCreated(window_id){
-        console.log(window_id)
-        console.log(isWindowCreated)
-        isWindowCreated[windowId] = false
-        console.log(isWindowCreated)
+        isWindowCreated[window_id] = false
     }
-
-    //ERROR SERVICE!!!
-    //Component.onCompleted: ErrorReporter.propagateError.connect(logError)
 
     Grid {
         id: mainMenuGrid
@@ -89,7 +83,6 @@ Common.FramelessWindow {
             id : testButton
             iconDir: "qrc:/data/main_window/test.png"
             onClicked: {
-                console.log(isWindowCreated[2])
                 if(!isWindowCreated[2])
                 {
                     testWindowHandler = TestWindowLogic.createTestsWindow()
@@ -108,27 +101,32 @@ Common.FramelessWindow {
             id : aboutButton
             iconDir: "qrc:/data/main_window/about.png"
 
+            onClicked: aboutBox.open()
         }
     }
 
     MessageDialog {
-        id: msgBox
+        id: errorServiceBox
         title: "Overwrite?"
         icon: StandardIcon.NoIcon
         text: "Error has occurred!"
-        //detailedText: "To replace a file means that its existing contents will be lost. " +
-        //    "The file that you are copying now will be copied over it instead."
+        standardButtons: StandardButton.Ok
+    }
+
+    MessageDialog{
+        id: aboutBox
+        title: "About"
+        icon: StandardIcon.NoIcon
+        text: "Author : Damian Wójcik\n
+               Version : 1.0"
         standardButtons: StandardButton.Ok
     }
 
     function showError(msg){
-        console.log("XDXDXD")
-        msgBox.text = msg
-        msgBox.open()
+        errorServiceBox.text = msg
+        errorServiceBox.open()
     }
 
+    //errors handling
     Component.onCompleted: ErrorReporter.propagateError.connect(showError)
-
-
-
 }

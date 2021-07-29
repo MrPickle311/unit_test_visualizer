@@ -107,6 +107,6 @@ Rectangle {
        prefixText: "Flow control"
        elements: ["No flow control","Hardware (RTS/CTS)","Software (XON/XOFF)"]
 
-       //body.onActivated: TerminalSettingsBridge.setStopBits(Logic.stopBits.get(elements[body.currentIndex]))
+       body.onActivated: TerminalSettingsBridge.setFlowControl(Logic.flowControl.get(elements[body.currentIndex]))
    }
 }

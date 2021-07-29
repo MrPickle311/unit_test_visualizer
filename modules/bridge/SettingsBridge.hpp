@@ -37,16 +37,18 @@ class Settings:
 {
     Q_OBJECT
 
-    Q_PROPERTY(QSerialPort::Parity   parity    READ getParity    WRITE setParity    NOTIFY parityChanged);
-    Q_PROPERTY(QSerialPort::StopBits stopBits  READ getStopBits  WRITE setStopBits  NOTIFY stopBitsChanged);
-    Q_PROPERTY(QSerialPort::BaudRate baudRate  READ getBaudRate  WRITE setBaudRate  NOTIFY baudRateChanged);
-    Q_PROPERTY(QStringList           portNames READ getPortNames WRITE setPortNames NOTIFY portNamesChanged);
+    Q_PROPERTY(QSerialPort::Parity      parity      READ getParity       WRITE setParity      NOTIFY parityChanged);
+    Q_PROPERTY(QSerialPort::StopBits    stopBits    READ getStopBits     WRITE setStopBits    NOTIFY stopBitsChanged);
+    Q_PROPERTY(QSerialPort::BaudRate    baudRate    READ getBaudRate     WRITE setBaudRate    NOTIFY baudRateChanged);
+    Q_PROPERTY(QSerialPort::FlowControl flowControl READ getFlowControl  WRITE setFlowControl NOTIFY flowControlChanged);
+    Q_PROPERTY(QStringList              portNames   READ getPortNames    WRITE setPortNames   NOTIFY portNamesChanged);
 
 protected:
-    QSerialPort::Parity   parity;
-    QSerialPort::StopBits stopBits;
-    QSerialPort::BaudRate baudRate;
-    QStringList           portNames;
+    QSerialPort::Parity       parity;
+    QSerialPort::StopBits     stopBits;
+    QSerialPort::BaudRate     baudRate;
+    QSerialPort::FlowControl  flowControl;
+    QStringList               portNames;
 protected:
     virtual backend::PortFlowSettings prepareSettings() const = 0;
 
@@ -58,13 +60,18 @@ public slots:
     const QSerialPort::StopBits& getStopBits()  const;
     const QSerialPort::BaudRate& getBaudRate()  const;
     const QStringList&           getPortNames() const;
+    QSerialPort::FlowControl     getFlowControl() const;
 
     void setParity(const QSerialPort::Parity& newParity);
     void setStopBits(const QSerialPort::StopBits& newStopBits);
     void setBaudRate(const QSerialPort::BaudRate& newBaudRate);
     void setPortNames(const QStringList& newPortNames);
+    void setFlowControl(QSerialPort::FlowControl flowControl);
+
 
     void sendSettings(QString port_name);
+
+
 
 signals:
 
@@ -72,13 +79,13 @@ signals:
     void stopBitsChanged();
     void baudRateChanged();
     void portNamesChanged();
+    void flowControlChanged(QSerialPort::FlowControl flowControl);
 
     void settingsApplied(QSerialPortInfo port , backend::PortFlowSettings settings);
 
     QSerialPortInfo portRequest(QString port_name);
+
 };
-
-
 
 class TerminalSettings:
         public Settings

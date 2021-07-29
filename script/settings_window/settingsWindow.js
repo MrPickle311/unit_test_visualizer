@@ -37,3 +37,9 @@ const parity = new Map([
                              ["Space",  Port.SerialPort.SpaceParity   ] ,
                              ["Mark",  Port.SerialPort.MarkParity   ]
                    ]);
+
+const flowControl = new Map([
+                                ["No flow control",     Port.SerialPort.NoFlowControl    ] ,
+                                ["Hardware (RTS/CTS)",  Port.SerialPort.HardwareControl   ] ,
+                                ["Software (XON/XOFF)",  Port.SerialPort.SoftwareControl   ] ,
+                      ]);

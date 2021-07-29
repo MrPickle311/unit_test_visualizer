@@ -18,9 +18,6 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
 
-
-    using namespace bridge;
-
     QGuiApplication app(argc, argv);
 
     MainProgram program(
@@ -37,8 +34,6 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     engine.load(url);
-
-    backend::ByteBuffer buffer;
 
     return app.exec();
 }

@@ -65,6 +65,7 @@ Common.FramelessWindow{
                 //send to backend
                 Logic.sendData(data)
                 //update view
+                console.log(data)
                 Logic.refreshOutput(data)
             }
         }

@@ -41,12 +41,12 @@ Rectangle {
 
     //exporting functions
 
-    function appendTextToInput()   { Logic.appendTextToInput()   }
-    function replaceInputText()    { Logic.replaceInputText()    }
-    function resetInputTextArea()  { Logic.resetInputTextArea()  }
-    function appendTextToOutput()  { Logic.appendTextToOutput()  }
-    function replaceOutputText()   { Logic.replaceOutputText()   }
-    function resetOutputTextArea() { Logic.resetOutputTextArea() }
+    function appendTextToInput(txt)   { Logic.appendTextToInput(txt)   }
+    function replaceInputText(txt)    { Logic.replaceInputText(txt)    }
+    function resetInputTextArea()     { Logic.resetInputTextArea()     }
+    function appendTextToOutput(txt)  { Logic.appendTextToOutput(txt)  }
+    function replaceOutputText(txt)   { Logic.replaceOutputText(txt)   }
+    function resetOutputTextArea()    { Logic.resetOutputTextArea()    }
 
 
     TerminalTextArea{

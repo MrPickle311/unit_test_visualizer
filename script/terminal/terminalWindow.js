@@ -41,8 +41,8 @@ function changePortPage(){
 //update output text view
 function refreshOutput(data){
     var view_data = typeof(data) == "string" ?  data : data.map(String).toString() + '  '
-    terminalPage.appendTextToOutput(view_data)
     outputDataList[bar.currentIndex] += view_data
+    terminalPage.appendTextToOutput(view_data)
 }
 
 function resetOutput(){

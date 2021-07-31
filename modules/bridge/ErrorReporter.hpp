@@ -3,6 +3,9 @@
 #include <QObject>
 #include <QMutex>
 
+namespace bridge
+{
+
 class ErrorReporter : public QObject
 {
     Q_OBJECT
@@ -16,3 +19,4 @@ signals:
     void propagateError(QString what);
 };
 
+}

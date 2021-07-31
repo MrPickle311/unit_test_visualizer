@@ -1,5 +1,9 @@
 #include "ErrorReporter.hpp"
 
+namespace bridge
+{
+
+
 ErrorReporter::ErrorReporter(QObject *parent) : QObject(parent)
 {}
 
@@ -12,3 +16,4 @@ void ErrorReporter::errorService(std::logic_error error)
     emit propagateError(error_msg);
 }
 
+}

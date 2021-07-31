@@ -7,6 +7,19 @@
 namespace backend
 {
 
+/// Agregate for a converted unit test
+///
+/// Each field is QString type. It's fields have bindings to QML via Q_PROPERTY.
+/// It is Q_GADTED ,so this class is copyable. This class is also registered in
+/// the QML ,so it can be passed to a JS function
+/// Public fields:
+/// - type_descriptor_;
+/// - name_;
+/// - expecteted_value_;
+/// - current_value_;
+/// - lower_value_;
+/// - upper_value_;
+/// - test_result_;
 struct UnitTest
 {
     Q_GADGET;
@@ -29,19 +42,27 @@ public:
 
 }
 
-//this macro requires to be placed id the global namespace
+//this macro requires to be placed in the global namespace
 Q_DECLARE_METATYPE(backend::UnitTest);
 
 
 namespace backend
 {
 
+/// Agregate for a converted test case.
+///
+/// This class contains list of UnitTest and test case name(QString).
+/// This class does not have any binding to the QML.
 struct TestCase
 {
     QList<UnitTest> tests_;
     QString         test_case_name_;
 };
 
+/// Agregate for a converted test cases.
+///
+/// This class contains list of TestCase.
+/// This class does not have any binding to the QML.
 struct Transaction
 {
     QList<TestCase> cases_;

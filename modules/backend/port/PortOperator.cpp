@@ -53,7 +53,6 @@ QByteArray ByteBuffer::getAllBytes() noexcept
 
 QByteArray ByteBuffer::getBytes(size_t count)
 {
-    //or wait for count * bytes
     return splitByteArray(count);
 }
 

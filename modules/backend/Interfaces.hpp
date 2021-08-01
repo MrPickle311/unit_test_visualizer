@@ -11,6 +11,7 @@
 namespace interface
 {
 
+/// PortScanner common interface
 class PortScanner
 {
 public:
@@ -24,6 +25,7 @@ public:
     virtual void            rescan()                               = 0;
 };
 
+/// ByteBuffer common interface
 class ByteBuffer:
         public QObject
 {
@@ -42,11 +44,14 @@ signals:
    void bytesExtracted(size_t count);
 };
 
+/// Types that can be passed to ParserComponent::parseCommand()
+/// and be recognized in this method
 using AcceptedTypes = std::variant< QSharedPointer<backend::UnitTestDataPackage> ,
                                     QSharedPointer<backend::TestCaseDataPackage> ,
                                     QSharedPointer<backend::TransactionDataPackage> ,
                                     std::monostate >;
 
+/// ParserComponent common interface
 class ParserComponent
 {
 public:
@@ -63,6 +68,7 @@ public:
     virtual void                                            startProcessing(){};
 };
 
+/// Converter common interface
 class Converter
 {
 public:

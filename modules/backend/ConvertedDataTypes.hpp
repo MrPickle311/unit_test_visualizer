@@ -7,7 +7,7 @@
 namespace backend
 {
 
-/// Agregate for a converted unit test
+/// @brief Agregate for a converted unit test
 ///
 /// Each field is QString type. It's fields have bindings to QML via Q_PROPERTY.
 /// It is Q_GADTED ,so this class is copyable. This class is also registered in
@@ -49,7 +49,7 @@ Q_DECLARE_METATYPE(backend::UnitTest);
 namespace backend
 {
 
-/// Agregate for a converted test case.
+/// @brief Agregate for a converted test case.
 ///
 /// This class contains list of UnitTest and test case name(QString).
 /// This class does not have any binding to the QML.
@@ -59,7 +59,7 @@ struct TestCase
     QString         test_case_name_;
 };
 
-/// Agregate for a converted test cases.
+/// @brief Agregate for a converted test cases.
 ///
 /// This class contains list of TestCase.
 /// This class does not have any binding to the QML.

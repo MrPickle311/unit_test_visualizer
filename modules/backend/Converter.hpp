@@ -80,7 +80,7 @@ public:
     virtual QString getValue(const QByteArray& bytes) const override;
 };
 
-using ValueGenerator  =     global::StaticGenerator<TypeDescriptor , QSharedPointer<backend::AbstractValueConverter>>;
+using ValueGenerator  = global::StaticGenerator<TypeDescriptor , QSharedPointer<backend::AbstractValueConverter>>;
 using StringGenerator = global::StaticGenerator<TypeDescriptor , QString>;
 
 }

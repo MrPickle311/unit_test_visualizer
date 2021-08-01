@@ -41,6 +41,11 @@ QList<int> PortScanner::getProductIndetifiers() const
     return getSerialInfoList<int>(&QSerialPortInfo::productIdentifier);
 }
 
+QList<int> PortScanner::getVendorIndetifiers() const
+{
+    return getSerialInfoList<int>(&QSerialPortInfo::vendorIdentifier);
+}
+
 QStringList PortScanner::getPortNames() const
 {
    return getSerialInfoList<QString>(&QSerialPortInfo::portName);
@@ -54,6 +59,11 @@ QStringList PortScanner::getPortDescriptions() const
 QStringList PortScanner::getCompletePortData() const
 {
     return global::joinStringListElements( getPortNames() , getPortDescriptions() );
+}
+
+int PortScanner::portsCount() const
+{
+    return avalaible_ports_.size();
 }
 
 void PortScanner::rescan()

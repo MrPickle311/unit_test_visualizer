@@ -11,14 +11,14 @@ namespace backend
 using Code = char;
 
 /// These commands are used to maintain root parser
-enum GlobalCommand : uint8_t{ START					   = 0 ,  /// Start
-                              SENDING_TEST_CASE        = 1 , /// A test case arriving
-                              END_ENTIRE_TRANSACTION   = 2 , /// A transaction package is delivered
+enum GlobalCommand : uint8_t{ START					   = 0 ,  ///< Start
+                              SENDING_TEST_CASE        = 1 ,  ///< A test case arriving
+                              END_ENTIRE_TRANSACTION   = 2 ,  ///< A transaction package is delivered
                               GLOBAL_COMMAND_COUNT};
 
 /// These commands are used to maintain test case parser
-enum TestCaseCommand : uint8_t{ SENDING_UNIT_TEST_RESULT = 0 ,/// A unit test arriving
-                                END_SENDING_TEST_CASE    = 1 ,/// A unit test package is delivered
+enum TestCaseCommand : uint8_t{ SENDING_UNIT_TEST_RESULT = 0 ,///< A unit test arriving
+                                END_SENDING_TEST_CASE    = 1 ,///< A unit test package is delivered
                                 TEST_CASE_COMMAND_COUNT};
 
 /// These commands are used to maintain unit test parser
@@ -46,8 +46,8 @@ enum TypeDescriptor : uint8_t { UINT8_T  = 0  ,
 
                                 BOOL     = 8  ,
                                 CHAR     = 9  ,
-                                PTR	     = 10 , /// A pointer , NULL or not
-                                BIT	     = 11 , /// A bit , which is set at current position or not
+                                PTR	     = 10 , ///< A pointer , NULL or not
+                                BIT	     = 11 , ///< A bit , which is set at current position or not
                                 TYPES_COUNT};
 
 

@@ -10,6 +10,7 @@ namespace backend
 
 using Code = char;
 
+///
 enum GlobalCommand : uint8_t{ START					   = 0 ,
                               SENDING_TEST_CASE        = 1 ,
                               END_ENTIRE_TRANSACTION   = 2 ,

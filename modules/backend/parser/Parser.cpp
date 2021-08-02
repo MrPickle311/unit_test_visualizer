@@ -57,7 +57,7 @@ void ParserComponent::setParent(interface::ParserComponent* newParent)
     this->parent_ = newParent;
 }
 
-void ParserComponent::addChild(uint8_t cmd, QSharedPointer<interface::ParserComponent> child){}
+void ParserComponent::addChild(uint8_t cmd, QSharedPointer<interface::ParserComponent> child){}//empty
 
 bool ParserComponent::isComposite() const
 {
@@ -94,8 +94,6 @@ void ComplexParser::addChild(uint8_t cmd, QSharedPointer<interface::ParserCompon
 
 void ComplexParser::setBuffer(interface::ByteBuffer* newBuffer)
 {
-    //throwIf(newBuffer == nullptr , "ComplexParser::setBuffer : Passed a nullptr as buffer!");
-
     buffer_ = newBuffer;
 
     for(auto&& child : children_)
@@ -114,7 +112,7 @@ void ComplexParser::proccessingLoop()
     Code cmd {buffer_->getByte()};
     checkCode(cmd, typeid (*this).name() );
 
-    while (children_[cmd]->parseCommand(package_))//make a map further
+    while (children_[cmd]->parseCommand(package_))
     {
         cmd = buffer_->getByte();
         checkCode(cmd, typeid (*this).name() );

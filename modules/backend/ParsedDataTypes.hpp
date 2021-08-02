@@ -31,7 +31,7 @@ enum UnitTestCommand : uint8_t{ SENDING_TYPE_DESCRIPTOR 	 = 0 ,
                                 END_SENDING_UNIT_TEST_RESULT = 8 ,
                                 COMMANDS_COUNT};
 
-enum TypeDescriptor : uint8_t { UINT8_T  = 0  ,
+enum TypeDescriptor : uint8_t { UINT8_T  = 0  ,/// a message
                                 UINT16_T = 1  ,
                                 UINT32_T = 2  ,
                                 UINT64_T = 3  ,

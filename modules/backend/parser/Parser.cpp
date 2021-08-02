@@ -12,17 +12,22 @@ using Ptr = QSharedPointer<T>;
 template<>
 void backend::ReadyParsers::initValues()
 {
-    Ptr<backend::RootParser> parser{Ptr<backend::RootParser>::create()};
+    ///As you can see here parser tree is created.
 
-    Ptr<backend::EndParser> end {Ptr<backend::EndParser>::create()};
+    auto parser{Ptr<backend::RootParser>::create()};///root of the tree
 
-    Ptr<backend::TestCaseParser> case_parser {Ptr<backend::TestCaseParser>::create()};
+    auto end {Ptr<backend::EndParser>::create()};
+    auto case_parser {Ptr<backend::TestCaseParser>::create()};
+
+    /// binding parsers to the commands
+    /// when a certain command will come from a buffer then
+    /// corresponding parser is activated and parse further incoming bytes
 
     parser->addChild(backend::GlobalCommand::START ,                 Ptr<backend::GlobalStartParser>::create());
     parser->addChild(backend::GlobalCommand::SENDING_TEST_CASE,      case_parser);
     parser->addChild(backend::GlobalCommand::END_ENTIRE_TRANSACTION, end);
 
-    Ptr<backend::UnitTestParser> unit_parser{Ptr<backend::UnitTestParser>::create()};
+    auto unit_parser{Ptr<backend::UnitTestParser>::create()};
 
     case_parser->addChild(backend::TestCaseCommand::SENDING_UNIT_TEST_RESULT , unit_parser);
     case_parser->addChild(backend::TestCaseCommand::END_SENDING_TEST_CASE ,    end);
@@ -36,7 +41,7 @@ void backend::ReadyParsers::initValues()
     unit_parser->addChild(backend::UnitTestCommand::SENDING_LOWER_VALUE ,          Ptr<backend::LowerValueParser>::create());
     unit_parser->addChild(backend::UnitTestCommand::END_SENDING_UNIT_TEST_RESULT , end);
 
-    variables_[backend::ParserImplementations::FirstImplementation] = parser;
+    variables_[backend::ParserImplementations::FirstImplementation] = parser;///add first implementation to the map
 }
 
 }

@@ -16,12 +16,15 @@ namespace bridge
 template<typename  T>
 using Ptr = QSharedPointer<T>;
 
+/// @brief This is base class  for a tests window direct binding
+///
+/// This abstract class provides also necessary signals to comunicate with UI
 class TestsBody:
         public QObject
 {
     Q_OBJECT
 protected:
-    QSharedPointer<QMetaObject::Connection> parser_connection_;
+    QSharedPointer<QMetaObject::Connection> parser_connection_;//it exists to connect/disconnect signal
 public:
     explicit TestsBody(QObject *parent = nullptr):
         QObject{parent},
@@ -31,11 +34,23 @@ public slots:
     virtual void applySettings(QSerialPortInfo port , backend::PortFlowSettings settings) = 0;
     virtual void run()                                                                    = 0;
 signals:
+    /// This signal is used to sending test cases to QML
+    /// @param test_case_name Name of test case to send
     void sendTestCase(QString test_case_name);
+    /// This signal is used to sending unit test to QML
+    /// @param test_case_nmbr This number indicates a test case number to which unit test belongs
+    /// @param unit_test Unit test to send
+    /// @param is_range_test Indicates that it is test which expected value is between upper and lower value
     void sendUnitTest(int test_case_nmbr ,  backend::UnitTest unit_test, bool is_range_test);
+    /// This signal is emitted after an error has occurred
+    /// @param error Error object to send
     void errorOccurred(const std::logic_error& error);
 };
 
+/// @brief This class object is direct binding with terminal window in QML
+///
+/// It provides frontend <-> backend communication. Backend is placed by
+/// composition
 template<typename BufferType,
          typename PortOperatortType>
 class Tests:
@@ -50,6 +65,7 @@ private:
     Ptr<interface::Converter>        converter_;
     backend::Transaction             result_;
 private:
+    /// After finished processing it sends all unit tests to QML list model
     void sendDataToFrontend()
     {
         bool is_range_test{false};
@@ -68,14 +84,16 @@ private:
             is_range_test = false;
         }
     }
+    /// It only sets a buffer
     virtual void configureParser()
     {
         parser_->setBuffer(&input_buffer_);
     }
+    /// This is engine which covers parsing , converting and sending data
     void process([[maybe_unused]] size_t count)
     {
-        QObject::disconnect(*parser_connection_);
-        try
+        QObject::disconnect(*parser_connection_);///<- disconnecting prevents parser from
+        try                                      /// unexpected auto-restarting
         {
             parser_->startProcessing();
             data_result_ = *parser_->getPackage();
@@ -89,11 +107,13 @@ private:
             emit errorOccurred(error);
         }
     }
+    /// Make and store connection to the buffer
     void makeConnections()
     {
         *parser_connection_ = QObject::connect(&input_buffer_ ,&interface::ByteBuffer::bytesArrived,
                                                this , &Tests::process  );
     }
+    /// Clear all containters
     void clearAll()
     {
         data_result_.clear();
@@ -101,6 +121,10 @@ private:
         converter_->reset();
     }
 public:
+    /// This method is invoked from UI by user when he confirm port settings.
+    /// Tests module operates only on one port ,so ports can be changed flexible
+    /// @param port Info about a port to set up
+    /// @param settings New settings
     virtual void applySettings(QSerialPortInfo port, backend::PortFlowSettings settings) override
     {
         QString port_name{port.portName()};
@@ -108,15 +132,17 @@ public:
         operator_.changeSettings(settings);
         operator_.changePort(port);
     }
+    /// This method runs all parsing,converting algorithm.
+    /// It communicates with the tested davice and pulls data from it.
     virtual void run() override
     {
         clearAll();
 
-        try
+        try//two way of error reporting : by returing false or throwing an exception
         {
             if(operator_.openPort())
             {
-                makeConnections();
+                makeConnections();//single shot connection
                 output_buffer_.appendByte(51);
             }
             else throw std::logic_error{" Error occured at opening port : " +
@@ -128,6 +154,11 @@ public:
         }
 
     }
+    /// This constructor applies pointer implementation dependencies which
+    /// interfaces are compatible with interfaces in interface namespace
+    /// @param converter Parsed data converter implementation
+    /// @param parser Parser implementation
+    /// @param parent QObjecy parent pointer
     Tests(QSharedPointer<interface::Converter> converter,
           QSharedPointer<interface::ParserComponent> parser,
           QObject* parent = nullptr):

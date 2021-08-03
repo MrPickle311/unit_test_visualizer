@@ -47,6 +47,13 @@ signals:
     void errorOccurred(const std::logic_error& error);
 };
 
+/// This value is sending to the device
+/// so that repeat all process. If device
+/// receive this value then resend all data
+/// This value depends on in-device unit test
+/// implementation
+#define REPEAT_VALUE 51
+
 /// @brief This class object is direct binding with terminal window in QML
 ///
 /// It provides frontend <-> backend communication. Backend is placed by
@@ -143,7 +150,7 @@ public:
             if(operator_.openPort())
             {
                 makeConnections();//single shot connection
-                output_buffer_.appendByte(51);
+                output_buffer_.appendByte(51);// i send 51 value
             }
             else throw std::logic_error{" Error occured at opening port : " +
                                         operator_.getError().toStdString() };

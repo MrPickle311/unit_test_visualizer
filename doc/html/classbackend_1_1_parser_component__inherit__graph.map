@@ -1,0 +1,18 @@
+<map id="backend::ParserComponent" name="backend::ParserComponent">
+<area shape="rect" id="node1" title="This is the base class for all parsers in the parsing tree." alt="" coords="872,248,1087,443"/>
+<area shape="rect" id="node3" href="$classbackend_1_1_complex_parser.html" title="This class provides composite objects which can have children." alt="" coords="200,491,423,700"/>
+<area shape="rect" id="node7" href="$classbackend_1_1_end_parser.html" title="Returns false ,so parsing of all package is finished." alt="" coords="447,557,613,634"/>
+<area shape="rect" id="node8" href="$classbackend_1_1_global_start_parser.html" title="This parser recognizes start signal and returns true." alt="" coords="637,557,868,634"/>
+<area shape="rect" id="node9" href="$classbackend_1_1_name_parser.html" title="Parses unit test expression name." alt="" coords="892,557,1067,634"/>
+<area shape="rect" id="node10" href="$classbackend_1_1_test_result_parser.html" title="This parser reads unit test result from the buffer." alt="" coords="1091,557,1313,634"/>
+<area shape="rect" id="node11" href="$classbackend_1_1_type_descriptor_parser.html" title="Parses unit test type descriptor." alt="" coords="1337,557,1592,634"/>
+<area shape="rect" id="node12" href="$classbackend_1_1_value_parser.html" title="Base class for parsers which parses a numeric value." alt="" coords="1616,549,1815,641"/>
+<area shape="rect" id="node2" href="$classinterface_1_1_parser_component.html" title="ParserComponent common interface." alt="" coords="864,5,1095,200"/>
+<area shape="rect" id="node4" href="$classbackend_1_1_root_parser.html" title="Root of the processing tree." alt="" coords="5,748,180,869"/>
+<area shape="rect" id="node5" href="$classbackend_1_1_test_case_parser.html" title="Parses all test case. It receives commands from buffer and processes it. Recognizes commands from Tes..." alt="" coords="204,755,419,862"/>
+<area shape="rect" id="node6" href="$classbackend_1_1_unit_test_parser.html" title="Parses all unit test It receives commands from buffer and processes it. Recognizes commands from Unit..." alt="" coords="443,763,657,855"/>
+<area shape="rect" id="node13" href="$classbackend_1_1_current_value_parser.html" title="Redirects number&#39;s bytes to unit test current value." alt="" coords="1200,770,1439,847"/>
+<area shape="rect" id="node14" href="$classbackend_1_1_expected_value_parser.html" title="Redirects number&#39;s bytes to unit test expected value." alt="" coords="1463,770,1709,847"/>
+<area shape="rect" id="node15" href="$classbackend_1_1_lower_value_parser.html" title="Redirects number&#39;s bytes to unit test lower value." alt="" coords="1733,770,1956,847"/>
+<area shape="rect" id="node16" href="$classbackend_1_1_upper_value_parser.html" title="Redirects number&#39;s bytes to unit test upper value." alt="" coords="1980,770,2203,847"/>
+</map>

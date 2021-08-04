@@ -1,0 +1,4 @@
+<map id="bridge::Settings::stopBitsChanged" name="bridge::Settings::stopBitsChanged">
+<area shape="rect" id="node1" title="This signal is emitted after stop bits setting have been changed." alt="" coords="308,5,539,47"/>
+<area shape="rect" id="node2" href="$classbridge_1_1_settings.html#ab649e8e65e15d95c0afb750047457b7c" title=" " alt="" coords="5,13,260,39"/>
+</map>

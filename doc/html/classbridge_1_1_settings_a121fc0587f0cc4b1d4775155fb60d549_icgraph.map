@@ -1,0 +1,4 @@
+<map id="bridge::Settings::parityChanged" name="bridge::Settings::parityChanged">
+<area shape="rect" id="node1" title="This signal is emitted after parity setting has been changed." alt="" coords="292,5,507,47"/>
+<area shape="rect" id="node2" href="$classbridge_1_1_settings.html#ad2bb40b27205178809eacadd570eed4b" title=" " alt="" coords="5,13,244,39"/>
+</map>

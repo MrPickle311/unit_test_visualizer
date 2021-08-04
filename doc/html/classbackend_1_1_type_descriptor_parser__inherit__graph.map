@@ -1,0 +1,5 @@
+<map id="backend::TypeDescriptorParser" name="backend::TypeDescriptorParser">
+<area shape="rect" id="node1" title="Parses unit test type descriptor." alt="" coords="5,491,260,568"/>
+<area shape="rect" id="node2" href="$classbackend_1_1_parser_component.html" title="This is the base class for all parsers in the parsing tree." alt="" coords="25,248,240,443"/>
+<area shape="rect" id="node3" href="$classinterface_1_1_parser_component.html" title="ParserComponent common interface." alt="" coords="17,5,248,200"/>
+</map>

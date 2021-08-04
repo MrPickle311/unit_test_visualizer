@@ -1,0 +1,4 @@
+<map id="interface::PortScanner" name="interface::PortScanner">
+<area shape="rect" id="node1" title="PortScanner common interface." alt="" coords="5,5,228,185"/>
+<area shape="rect" id="node2" href="$classbackend_1_1_port_scanner.html" title="Objects of this class are looking for avalaible RS232 ports." alt="" coords="5,233,228,457"/>
+</map>

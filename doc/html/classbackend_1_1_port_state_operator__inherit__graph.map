@@ -1,0 +1,8 @@
+<map id="backend::PortStateOperator" name="backend::PortStateOperator">
+<area shape="rect" id="node1" title="This base class provides basic RS232 port operators." alt="" coords="17,256,248,480"/>
+<area shape="rect" id="node5" href="$classbackend_1_1_port_flow_operator.html" title="Extended PortStateOperator which allows to exchange data." alt="" coords="21,528,244,664"/>
+<area shape="rect" id="node2" title=" " alt="" coords="15,131,93,208"/>
+<area shape="rect" id="node3" href="$classglobal_1_1_program_object.html" title="This class is used to provide basic program functionalites for objects." alt="" coords="117,131,308,208"/>
+<area shape="rect" id="node4" href="$classglobal_1_1_throwing_object.html" title="This is base class which allows us to check statements at runtime." alt="" coords="113,5,312,83"/>
+<area shape="rect" id="node6" href="$classbackend_1_1_buffered_port_flow_operator.html" title="Extended PortFlowOperator which operates on the buffers." alt="" coords="5,712,260,907"/>
+</map>

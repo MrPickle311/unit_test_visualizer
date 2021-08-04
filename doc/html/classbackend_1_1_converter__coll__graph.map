@@ -1,0 +1,4 @@
+<map id="backend::Converter" name="backend::Converter">
+<area shape="rect" id="node1" title="This class converts TransactionDataPackage objects to Transaction." alt="" coords="5,160,244,281"/>
+<area shape="rect" id="node2" href="$classinterface_1_1_converter.html" title="Converter common interface." alt="" coords="5,5,244,112"/>
+</map>

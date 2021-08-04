@@ -1,0 +1,7 @@
+<map id="backend::ParserComponent" name="backend::ParserComponent">
+<area shape="rect" id="node1" title="This is the base class for all parsers in the parsing tree." alt="" coords="163,389,377,540"/>
+<area shape="rect" id="node2" href="$classinterface_1_1_parser_component.html" title="ParserComponent common interface." alt="" coords="5,132,236,327"/>
+<area shape="rect" id="node3" title=" " alt="" coords="260,191,387,268"/>
+<area shape="rect" id="node4" href="$classinterface_1_1_byte_buffer.html" title="ByteBuffer common interface." alt="" coords="411,139,601,319"/>
+<area shape="rect" id="node5" title=" " alt="" coords="467,5,545,83"/>
+</map>

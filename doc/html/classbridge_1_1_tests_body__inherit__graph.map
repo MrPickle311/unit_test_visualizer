@@ -1,0 +1,5 @@
+<map id="bridge::TestsBody" name="bridge::TestsBody">
+<area shape="rect" id="node1" title="This is base class for a tests window direct binding." alt="" coords="29,131,212,237"/>
+<area shape="rect" id="node3" href="$classbridge_1_1_tests.html" title="This class object is direct binding with terminal window in QML." alt="" coords="5,285,236,407"/>
+<area shape="rect" id="node2" title=" " alt="" coords="81,5,160,83"/>
+</map>

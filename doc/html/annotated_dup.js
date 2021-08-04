@@ -1,0 +1,68 @@
+var annotated_dup =
+[
+    [ "backend", "namespacebackend.html", [
+      [ "UnitTest", "structbackend_1_1_unit_test.html", "structbackend_1_1_unit_test" ],
+      [ "TestCase", "structbackend_1_1_test_case.html", "structbackend_1_1_test_case" ],
+      [ "Transaction", "structbackend_1_1_transaction.html", "structbackend_1_1_transaction" ],
+      [ "AbstractValueConverter", "classbackend_1_1_abstract_value_converter.html", "classbackend_1_1_abstract_value_converter" ],
+      [ "Int8NumericValueConverter", "classbackend_1_1_int8_numeric_value_converter.html", "classbackend_1_1_int8_numeric_value_converter" ],
+      [ "Int16NumericValueConverter", "classbackend_1_1_int16_numeric_value_converter.html", "classbackend_1_1_int16_numeric_value_converter" ],
+      [ "Int32NumericValueConverter", "classbackend_1_1_int32_numeric_value_converter.html", "classbackend_1_1_int32_numeric_value_converter" ],
+      [ "Int64NumericValueConverter", "classbackend_1_1_int64_numeric_value_converter.html", "classbackend_1_1_int64_numeric_value_converter" ],
+      [ "UnsignedNumericValueConverter", "classbackend_1_1_unsigned_numeric_value_converter.html", "classbackend_1_1_unsigned_numeric_value_converter" ],
+      [ "BoolValueConverter", "classbackend_1_1_bool_value_converter.html", "classbackend_1_1_bool_value_converter" ],
+      [ "PtrValueConverter", "classbackend_1_1_ptr_value_converter.html", "classbackend_1_1_ptr_value_converter" ],
+      [ "BitValueConverter", "classbackend_1_1_bit_value_converter.html", "classbackend_1_1_bit_value_converter" ],
+      [ "CharValueConverter", "classbackend_1_1_char_value_converter.html", "classbackend_1_1_char_value_converter" ],
+      [ "UnitTestConverter", "classbackend_1_1_unit_test_converter.html", "classbackend_1_1_unit_test_converter" ],
+      [ "TestCaseConverter", "classbackend_1_1_test_case_converter.html", "classbackend_1_1_test_case_converter" ],
+      [ "Converter", "classbackend_1_1_converter.html", "classbackend_1_1_converter" ],
+      [ "UnitTestDataPackage", "classbackend_1_1_unit_test_data_package.html", "classbackend_1_1_unit_test_data_package" ],
+      [ "TestCaseDataPackage", "classbackend_1_1_test_case_data_package.html", "classbackend_1_1_test_case_data_package" ],
+      [ "TransactionDataPackage", "classbackend_1_1_transaction_data_package.html", "classbackend_1_1_transaction_data_package" ],
+      [ "ParserComponent", "classbackend_1_1_parser_component.html", "classbackend_1_1_parser_component" ],
+      [ "ComplexParser", "classbackend_1_1_complex_parser.html", "classbackend_1_1_complex_parser" ],
+      [ "RootParser", "classbackend_1_1_root_parser.html", "classbackend_1_1_root_parser" ],
+      [ "GlobalStartParser", "classbackend_1_1_global_start_parser.html", "classbackend_1_1_global_start_parser" ],
+      [ "EndParser", "classbackend_1_1_end_parser.html", "classbackend_1_1_end_parser" ],
+      [ "TestCaseParser", "classbackend_1_1_test_case_parser.html", "classbackend_1_1_test_case_parser" ],
+      [ "UnitTestParser", "classbackend_1_1_unit_test_parser.html", "classbackend_1_1_unit_test_parser" ],
+      [ "NameParser", "classbackend_1_1_name_parser.html", "classbackend_1_1_name_parser" ],
+      [ "TypeDescriptorParser", "classbackend_1_1_type_descriptor_parser.html", "classbackend_1_1_type_descriptor_parser" ],
+      [ "ValueParser", "classbackend_1_1_value_parser.html", "classbackend_1_1_value_parser" ],
+      [ "CurrentValueParser", "classbackend_1_1_current_value_parser.html", "classbackend_1_1_current_value_parser" ],
+      [ "ExpectedValueParser", "classbackend_1_1_expected_value_parser.html", "classbackend_1_1_expected_value_parser" ],
+      [ "LowerValueParser", "classbackend_1_1_lower_value_parser.html", "classbackend_1_1_lower_value_parser" ],
+      [ "UpperValueParser", "classbackend_1_1_upper_value_parser.html", "classbackend_1_1_upper_value_parser" ],
+      [ "TestResultParser", "classbackend_1_1_test_result_parser.html", "classbackend_1_1_test_result_parser" ],
+      [ "ByteBuffer", "classbackend_1_1_byte_buffer.html", "classbackend_1_1_byte_buffer" ],
+      [ "PortStateOperator", "classbackend_1_1_port_state_operator.html", "classbackend_1_1_port_state_operator" ],
+      [ "PortFlowOperator", "classbackend_1_1_port_flow_operator.html", "classbackend_1_1_port_flow_operator" ],
+      [ "BufferedPortFlowOperator", "classbackend_1_1_buffered_port_flow_operator.html", "classbackend_1_1_buffered_port_flow_operator" ],
+      [ "PortScanner", "classbackend_1_1_port_scanner.html", "classbackend_1_1_port_scanner" ],
+      [ "PortFlowSettings", "classbackend_1_1_port_flow_settings.html", "classbackend_1_1_port_flow_settings" ]
+    ] ],
+    [ "bridge", "namespacebridge.html", [
+      [ "Program", "classbridge_1_1_program.html", "classbridge_1_1_program" ],
+      [ "ErrorReporter", "classbridge_1_1_error_reporter.html", "classbridge_1_1_error_reporter" ],
+      [ "Scanner", "classbridge_1_1_scanner.html", "classbridge_1_1_scanner" ],
+      [ "Settings", "classbridge_1_1_settings.html", "classbridge_1_1_settings" ],
+      [ "TerminalSettings", "classbridge_1_1_terminal_settings.html", "classbridge_1_1_terminal_settings" ],
+      [ "TestsSettings", "classbridge_1_1_tests_settings.html", "classbridge_1_1_tests_settings" ],
+      [ "TerminalBase", "classbridge_1_1_terminal_base.html", "classbridge_1_1_terminal_base" ],
+      [ "Terminal", "classbridge_1_1_terminal.html", "classbridge_1_1_terminal" ],
+      [ "TestsBody", "classbridge_1_1_tests_body.html", "classbridge_1_1_tests_body" ],
+      [ "Tests", "classbridge_1_1_tests.html", "classbridge_1_1_tests" ]
+    ] ],
+    [ "global", "namespaceglobal.html", [
+      [ "ThrowingObject", "classglobal_1_1_throwing_object.html", "classglobal_1_1_throwing_object" ],
+      [ "ProgramObject", "classglobal_1_1_program_object.html", null ],
+      [ "StaticGenerator", "classglobal_1_1_static_generator.html", "classglobal_1_1_static_generator" ]
+    ] ],
+    [ "interface", "namespaceinterface.html", [
+      [ "PortScanner", "classinterface_1_1_port_scanner.html", "classinterface_1_1_port_scanner" ],
+      [ "ByteBuffer", "classinterface_1_1_byte_buffer.html", "classinterface_1_1_byte_buffer" ],
+      [ "ParserComponent", "classinterface_1_1_parser_component.html", "classinterface_1_1_parser_component" ],
+      [ "Converter", "classinterface_1_1_converter.html", "classinterface_1_1_converter" ]
+    ] ]
+];

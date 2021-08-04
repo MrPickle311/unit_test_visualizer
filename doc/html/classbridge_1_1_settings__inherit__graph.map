@@ -1,0 +1,6 @@
+<map id="bridge::Settings" name="bridge::Settings">
+<area shape="rect" id="node1" title="This class is common base for other settings classes." alt="" coords="139,131,313,443"/>
+<area shape="rect" id="node3" href="$classbridge_1_1_terminal_settings.html" title="This class object is direct binding with terminal settings window in QML." alt="" coords="5,491,220,597"/>
+<area shape="rect" id="node4" href="$classbridge_1_1_tests_settings.html" title="This class object is direct binding with tests settings window in QML." alt="" coords="244,505,435,583"/>
+<area shape="rect" id="node2" title=" " alt="" coords="187,5,265,83"/>
+</map>

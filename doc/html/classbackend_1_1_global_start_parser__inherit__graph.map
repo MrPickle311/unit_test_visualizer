@@ -1,0 +1,5 @@
+<map id="backend::GlobalStartParser" name="backend::GlobalStartParser">
+<area shape="rect" id="node1" title="This parser recognizes start signal and returns true." alt="" coords="5,491,236,568"/>
+<area shape="rect" id="node2" href="$classbackend_1_1_parser_component.html" title="This is the base class for all parsers in the parsing tree." alt="" coords="13,248,228,443"/>
+<area shape="rect" id="node3" href="$classinterface_1_1_parser_component.html" title="ParserComponent common interface." alt="" coords="5,5,236,200"/>
+</map>

@@ -1,0 +1,12 @@
+digraph "backend::PortFlowSettings::setFlowControl"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="JetBrains Mono",fontsize="10",labelfontname="JetBrains Mono",labelfontsize="10"];
+  node [fontname="JetBrains Mono",fontsize="10",shape=record];
+  rankdir="RL";
+  Node1 [label="backend::PortFlowSettings\l::setFlowControl",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="JetBrains Mono"];
+  Node2 [label="bridge::TerminalSettings\l::prepareSettings",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classbridge_1_1_terminal_settings.html#a36901a5b8e7c7401d16847062020cbeb",tooltip=" "];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="JetBrains Mono"];
+  Node3 [label="bridge::TestsSettings\l::prepareSettings",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classbridge_1_1_tests_settings.html#a5c219fa7a990bb9ba5117cde932c9604",tooltip=" "];
+}

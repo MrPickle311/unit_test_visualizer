@@ -1,0 +1,5 @@
+<map id="backend::TestResultParser" name="backend::TestResultParser">
+<area shape="rect" id="node1" title="This parser reads unit test result from the buffer." alt="" coords="9,491,232,568"/>
+<area shape="rect" id="node2" href="$classbackend_1_1_parser_component.html" title="This is the base class for all parsers in the parsing tree." alt="" coords="13,248,228,443"/>
+<area shape="rect" id="node3" href="$classinterface_1_1_parser_component.html" title="ParserComponent common interface." alt="" coords="5,5,236,200"/>
+</map>

@@ -1,0 +1,28 @@
+var classbridge_1_1_settings =
+[
+    [ "Settings", "classbridge_1_1_settings.html#adfa40b64aa0a5842fa68cfa9f0597ba7", null ],
+    [ "baudRateChanged", "classbridge_1_1_settings.html#abbf605780e8df4d7c030d99f292214aa", null ],
+    [ "flowControlChanged", "classbridge_1_1_settings.html#ab9621a657f5ba257bd39e7fdabd832a6", null ],
+    [ "getBaudRate", "classbridge_1_1_settings.html#a1bbf15c3f138a7fd311cea8c6e6527bc", null ],
+    [ "getFlowControl", "classbridge_1_1_settings.html#a781e2aa3b60271fddb8efda8742f21b9", null ],
+    [ "getParity", "classbridge_1_1_settings.html#afc8763dc747f8f66c049686703b30e66", null ],
+    [ "getPortNames", "classbridge_1_1_settings.html#abd0a9d820c6ff24567c20ee2effe6a50", null ],
+    [ "getStopBits", "classbridge_1_1_settings.html#a525055f514e8f1b0cf4d85a6bc044ed5", null ],
+    [ "parityChanged", "classbridge_1_1_settings.html#a121fc0587f0cc4b1d4775155fb60d549", null ],
+    [ "portNamesChanged", "classbridge_1_1_settings.html#adde4f2d88dfeeb6c488b1d1e7a1a7557", null ],
+    [ "portRequest", "classbridge_1_1_settings.html#a9242f62be24889e17969e63c3517cd61", null ],
+    [ "prepareSettings", "classbridge_1_1_settings.html#ad77170988c1bec6eb4e053db22013a02", null ],
+    [ "sendSettings", "classbridge_1_1_settings.html#afd6666fe4d96ebb3fdbfd054fd48e86b", null ],
+    [ "setBaudRate", "classbridge_1_1_settings.html#a7923cf5101a27e784d09ee8f6dc6f759", null ],
+    [ "setFlowControl", "classbridge_1_1_settings.html#a249ba9e5b59400766fa14335ac708905", null ],
+    [ "setParity", "classbridge_1_1_settings.html#ad2bb40b27205178809eacadd570eed4b", null ],
+    [ "setPortNames", "classbridge_1_1_settings.html#ab43f16093e693793530360735fc45992", null ],
+    [ "setStopBits", "classbridge_1_1_settings.html#ab649e8e65e15d95c0afb750047457b7c", null ],
+    [ "settingsApplied", "classbridge_1_1_settings.html#a9b5f1ec365197e7bab99942b09b8681f", null ],
+    [ "stopBitsChanged", "classbridge_1_1_settings.html#ada8b6f21dba0281bfbc3489ad88f3996", null ],
+    [ "baudRate", "classbridge_1_1_settings.html#af08e33c859e682713394aae03311c470", null ],
+    [ "flowControl", "classbridge_1_1_settings.html#af6d2d969a9423747bc529e622e89e863", null ],
+    [ "parity", "classbridge_1_1_settings.html#a1e57ad182f4a14f35a8f5a7cdb493ff7", null ],
+    [ "portNames", "classbridge_1_1_settings.html#a2a73fee893691f892eb78e7920f10062", null ],
+    [ "stopBits", "classbridge_1_1_settings.html#a14f5105b1e0f98e2aeb665b9e666ef47", null ]
+];

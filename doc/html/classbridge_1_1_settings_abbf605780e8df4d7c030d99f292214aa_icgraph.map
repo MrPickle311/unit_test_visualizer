@@ -1,0 +1,4 @@
+<map id="bridge::Settings::baudRateChanged" name="bridge::Settings::baudRateChanged">
+<area shape="rect" id="node1" title="This signal is emitted after baud rate setting has been changed." alt="" coords="308,5,539,47"/>
+<area shape="rect" id="node2" href="$classbridge_1_1_settings.html#a7923cf5101a27e784d09ee8f6dc6f759" title=" " alt="" coords="5,13,260,39"/>
+</map>

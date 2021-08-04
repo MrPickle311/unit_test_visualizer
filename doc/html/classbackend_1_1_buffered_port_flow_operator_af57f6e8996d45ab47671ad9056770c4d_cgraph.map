@@ -1,0 +1,6 @@
+<map id="backend::BufferedPortFlowOperator::sendDataFromBufferToPort" name="backend::BufferedPortFlowOperator::sendDataFromBufferToPort">
+<area shape="rect" id="node1" title=" " alt="" coords="5,39,300,80"/>
+<area shape="rect" id="node2" href="$classbackend_1_1_byte_buffer.html#a5b209f927506b8d069300a2c8c0b4806" title=" " alt="" coords="348,39,523,80"/>
+<area shape="rect" id="node3" href="$classbackend_1_1_byte_buffer.html#a9c2e1cb7e4bb27ba0289715a96a484dc" title=" " alt="" coords="571,5,745,47"/>
+<area shape="rect" id="node4" href="$classbackend_1_1_byte_buffer.html#a772302de15163276f0c77d8d02b40a48" title=" " alt="" coords="571,71,745,112"/>
+</map>

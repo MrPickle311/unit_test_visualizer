@@ -1,0 +1,10 @@
+<map id="backend::ComplexParser" name="backend::ComplexParser">
+<area shape="rect" id="node1" title="This class provides composite objects which can have children." alt="" coords="324,589,547,799"/>
+<area shape="rect" id="node2" href="$classbackend_1_1_parser_component.html" title="This is the base class for all parsers in the parsing tree." alt="" coords="216,389,431,540"/>
+<area shape="rect" id="node3" href="$classinterface_1_1_parser_component.html" title="ParserComponent common interface." alt="" coords="5,132,236,327"/>
+<area shape="rect" id="node4" title=" " alt="" coords="260,191,387,268"/>
+<area shape="rect" id="node5" href="$classinterface_1_1_byte_buffer.html" title="ByteBuffer common interface." alt="" coords="411,139,601,319"/>
+<area shape="rect" id="node6" title=" " alt="" coords="467,5,545,83"/>
+<area shape="rect" id="node7" href="$classglobal_1_1_program_object.html" title="This class is used to provide basic program functionalites for objects." alt="" coords="541,426,732,503"/>
+<area shape="rect" id="node8" href="$classglobal_1_1_throwing_object.html" title="This is base class which allows us to check statements at runtime." alt="" coords="625,191,824,268"/>
+</map>

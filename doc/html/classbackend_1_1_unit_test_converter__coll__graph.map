@@ -1,0 +1,5 @@
+<map id="backend::UnitTestConverter" name="backend::UnitTestConverter">
+<area shape="rect" id="node1" title="This class converts UnitTestDataPackage objects to UnitTest object which can be send to QML or JS fun..." alt="" coords="5,256,236,392"/>
+<area shape="rect" id="node2" href="$classglobal_1_1_program_object.html" title="This class is used to provide basic program functionalites for objects." alt="" coords="25,131,216,208"/>
+<area shape="rect" id="node3" href="$classglobal_1_1_throwing_object.html" title="This is base class which allows us to check statements at runtime." alt="" coords="21,5,220,83"/>
+</map>

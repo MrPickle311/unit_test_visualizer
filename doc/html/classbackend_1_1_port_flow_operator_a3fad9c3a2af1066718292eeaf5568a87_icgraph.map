@@ -1,0 +1,4 @@
+<map id="backend::PortFlowOperator::dataSent" name="backend::PortFlowOperator::dataSent">
+<area shape="rect" id="node1" title="This signal is emmited when bytes are sent to the port." alt="" coords="348,5,571,47"/>
+<area shape="rect" id="node2" href="$classbackend_1_1_buffered_port_flow_operator.html#af57f6e8996d45ab47671ad9056770c4d" title=" " alt="" coords="5,5,300,47"/>
+</map>

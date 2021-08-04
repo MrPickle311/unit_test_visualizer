@@ -1,0 +1,10 @@
+digraph "global::joinStringListElements"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="JetBrains Mono",fontsize="10",labelfontname="JetBrains Mono",labelfontsize="10"];
+  node [fontname="JetBrains Mono",fontsize="10",shape=record];
+  rankdir="RL";
+  Node1 [label="global::joinStringListElements",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="JetBrains Mono"];
+  Node2 [label="backend::PortScanner\l::getCompletePortData",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classbackend_1_1_port_scanner.html#a746ff44a849931540db180e68cf96191",tooltip=" "];
+}

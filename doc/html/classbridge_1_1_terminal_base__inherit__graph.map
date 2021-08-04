@@ -1,0 +1,6 @@
+<map id="bridge::TerminalBase" name="bridge::TerminalBase">
+<area shape="rect" id="node1" title="This is base class for a terminal window direct binding." alt="" coords="20,132,203,268"/>
+<area shape="rect" id="node3" href="$classbridge_1_1_terminal.html" title=" " alt="" coords="5,545,228,696"/>
+<area shape="rect" id="node4" href="$classbridge_1_1_terminal.html" title="This class object is direct binding with terminal window in QML." alt="" coords="133,317,348,468"/>
+<area shape="rect" id="node2" title=" " alt="" coords="72,5,151,83"/>
+</map>

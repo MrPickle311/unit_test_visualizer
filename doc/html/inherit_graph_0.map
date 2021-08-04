@@ -1,0 +1,12 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classbackend_1_1_abstract_value_converter.html" title="This is interface for all value converters." alt="" coords="5,231,276,257"/>
+<area shape="rect" id="node2" href="$classbackend_1_1_bit_value_converter.html" title="Converts a 1&#45;byte value to a bit type." alt="" coords="328,5,559,32"/>
+<area shape="rect" id="node3" href="$classbackend_1_1_bool_value_converter.html" title="Converts a 1&#45;byte value to a bool type." alt="" coords="324,56,563,83"/>
+<area shape="rect" id="node4" href="$classbackend_1_1_char_value_converter.html" title="Converts a 1&#45;byte value to a char." alt="" coords="324,107,563,133"/>
+<area shape="rect" id="node5" href="$classbackend_1_1_int16_numeric_value_converter.html" title="This converter converts 2&#45;byte value to stringlized int16_t type." alt="" coords="328,158,559,199"/>
+<area shape="rect" id="node6" href="$classbackend_1_1_int32_numeric_value_converter.html" title="This converter converts 4&#45;byte value to stringlized int32_t type." alt="" coords="328,223,559,265"/>
+<area shape="rect" id="node7" href="$classbackend_1_1_int64_numeric_value_converter.html" title="This converter converts 8&#45;byte value to stringlized int64_t type." alt="" coords="328,289,559,330"/>
+<area shape="rect" id="node8" href="$classbackend_1_1_int8_numeric_value_converter.html" title="This converter converts 1&#45;byte value to stringlized int8_t type." alt="" coords="332,354,555,395"/>
+<area shape="rect" id="node9" href="$classbackend_1_1_ptr_value_converter.html" title="Converts a 1&#45;byte value to a pointer type." alt="" coords="328,420,559,447"/>
+<area shape="rect" id="node10" href="$classbackend_1_1_unsigned_numeric_value_converter.html" title="This converter converts several bytes to unsigned numeric value." alt="" coords="336,471,551,513"/>
+</map>

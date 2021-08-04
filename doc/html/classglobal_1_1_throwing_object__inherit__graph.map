@@ -1,0 +1,14 @@
+<map id="global::ThrowingObject" name="global::ThrowingObject">
+<area shape="rect" id="node1" title="This is base class which allows us to check statements at runtime." alt="" coords="463,5,661,83"/>
+<area shape="rect" id="node2" href="$classglobal_1_1_program_object.html" title="This class is used to provide basic program functionalites for objects." alt="" coords="467,131,657,208"/>
+<area shape="rect" id="node3" href="$classbackend_1_1_byte_buffer.html" title="Objects of this class are buffers which can be shared and modified by several objects." alt="" coords="5,271,180,465"/>
+<area shape="rect" id="node4" href="$classbackend_1_1_complex_parser.html" title="This class provides composite objects which can have children." alt="" coords="204,263,427,473"/>
+<area shape="rect" id="node8" href="$classbackend_1_1_port_scanner.html" title="Objects of this class are looking for avalaible RS232 ports." alt="" coords="451,256,673,480"/>
+<area shape="rect" id="node9" href="$classbackend_1_1_port_state_operator.html" title="This base class provides basic RS232 port operators." alt="" coords="697,256,928,480"/>
+<area shape="rect" id="node12" href="$classbackend_1_1_unit_test_converter.html" title="This class converts UnitTestDataPackage objects to UnitTest object which can be send to QML or JS fun..." alt="" coords="952,300,1183,436"/>
+<area shape="rect" id="node5" href="$classbackend_1_1_root_parser.html" title="Root of the processing tree." alt="" coords="9,535,184,657"/>
+<area shape="rect" id="node6" href="$classbackend_1_1_test_case_parser.html" title="Parses all test case. It receives commands from buffer and processes it. Recognizes commands from Tes..." alt="" coords="208,543,423,649"/>
+<area shape="rect" id="node7" href="$classbackend_1_1_unit_test_parser.html" title="Parses all unit test It receives commands from buffer and processes it. Recognizes commands from Unit..." alt="" coords="447,550,661,642"/>
+<area shape="rect" id="node10" href="$classbackend_1_1_port_flow_operator.html" title="Extended PortStateOperator which allows to exchange data." alt="" coords="701,528,924,664"/>
+<area shape="rect" id="node11" href="$classbackend_1_1_buffered_port_flow_operator.html" title="Extended PortFlowOperator which operates on the buffers." alt="" coords="685,712,940,907"/>
+</map>

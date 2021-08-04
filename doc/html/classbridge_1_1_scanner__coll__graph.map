@@ -1,0 +1,4 @@
+<map id="bridge::Scanner" name="bridge::Scanner">
+<area shape="rect" id="node1" title="This class is proxy for the types compatible with interface::PortScanner interface." alt="" coords="5,131,164,237"/>
+<area shape="rect" id="node2" title=" " alt="" coords="45,5,124,83"/>
+</map>

@@ -46,7 +46,52 @@ which uses MCU unit test library from this
 
 # Usage
 
-To use this application 
+### Terminal module
+
+After opening this application you must setup port by clicking setup icon.
+
+![image](https://user-images.githubusercontent.com/59508136/128140001-65f5d909-2579-4c93-870a-29deccf5921d.png)
+
+In the left corner you can choose for which module you want to setup port.
+
+![image](https://user-images.githubusercontent.com/59508136/128140251-7bcf8ca5-a332-4d32-a972-af3b2a2527f5.png)
+
+At first you have to rescan for avalaible ports.
+
+![image](https://user-images.githubusercontent.com/59508136/128140499-04f2e0e5-52ba-4073-bd72-8f7d43df79f4.png)
+
+![image](https://user-images.githubusercontent.com/59508136/128140612-18a6d9e4-f303-433f-868d-9e7b2851cd7f.png)
+
+And now you can customize your port settings and click apply to create port entry.
+
+![image](https://user-images.githubusercontent.com/59508136/128140805-0d63d6aa-645b-4521-9955-0c03ed458631.png)
+
+Your port is ready , so go to the terminal module
+
+![image](https://user-images.githubusercontent.com/59508136/128141024-8fdc21a8-ee75-4d70-a13b-99b54a7e370c.png)
+
+and click Open port.
+
+![image](https://user-images.githubusercontent.com/59508136/128141165-5239cdd1-43ac-40e3-972d-e27b4e89a192.png)
+
+And now if you want you can add more ports.
+
+### Tests module 
+
+Configuration is very similar to terminal configuration , but you choose
+device on which the tests are carried out.
+
+![image](https://user-images.githubusercontent.com/59508136/128142118-468ad10c-be2e-441a-ba42-1982c80ff33e.png)
+
+Now you will see empty window. To pull tests results just click refresh
+button.
+
+![image](https://user-images.githubusercontent.com/59508136/128142289-d1346298-01a9-457f-bcc7-ed48b5b46f13.png)
+
+After this tests results are loaded here.
+
+![image](https://user-images.githubusercontent.com/59508136/128142746-b42e7871-8436-4b8a-bbde-07b57204302e.png)
+
 
 # Technical description
 

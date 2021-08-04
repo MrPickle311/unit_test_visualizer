@@ -40,9 +40,16 @@ which uses MCU unit test library from this
 - QtQuick 2.15
 - CMake
 
-# Setup
+# How to build
 
-//TODO
+## Use QtCreator 
+
+1. Clone repository 
+2. Just open main CMakeLists.txt via QtCreator and click 'build'
+
+## Use CMake and make 
+
+
 
 # Usage
 
